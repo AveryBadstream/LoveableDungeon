@@ -3,6 +3,7 @@ extends TileMap
 signal update_room_count(room_count)
 signal update_current_room(current_room)
 signal build_finished()
+signal mst_build(path_zones)
 
 onready var MapZone = preload("res://map/MapZone.gd")
 
@@ -16,8 +17,9 @@ var rooms = []
 var toggle = false
 var inspect_room = 0
 var build_rng: RandomNumberGenerator
-var path_astar = AStar2D.new()
+var path_zones = AStar2D.new()
 var zones = []
+var leafs = []
 export(Vector2) var minimum_room_size
 export(Vector2) var maximum_room_size
 export(Vector2) var map_size
@@ -30,6 +32,7 @@ export(float, .2, 1.00, 0.01) var maximum_width_percent
 export(float, .1, .99, 0.01) var minimum_height_percent
 export(float, .2, 1.00, 0.01) var maximum_height_percent
 export(float, .0, .99, 0.01) var split_stop_chance
+export(float, 0, 1.00, 0.1) var termina_loop_chance
 export(int, 1, 1000) var max_failures
 export(int, 1, 1000) var minimum_fail_depth
 export(int, 0, 1000) var max_rectification_passes
@@ -79,11 +82,62 @@ func build_map(rng = null):
 	split_stop_chance = prev_stop_chance
 	for zone in zones:
 		if zone.leaf:
+			leafs.append(zone)
+	for zone in leafs:
+		if zone.leaf:
 			var room = make_room(zone.rect)
 			rooms.append(room)
-			zone.features.append(room)
+			zone.build_rng = build_rng
+			if zone.place_feature(room) and !zone.leaf:
+				zones.append_array(zone.children)
 			fill_room(room, TileType.Floor)
 			wall_room(room, TileType.Wall)
+	leafs = []
+	for zone in zones:
+		if zone.leaf:
+			leafs.append(zone)
+			for zone2 in zones:
+				zone.mark_if_adjacent(zone2)
+	var mst_nodes = leafs.duplicate()
+	var mst_zone = mst_nodes.pop_back()
+	mst_zone.path_id = path_zones.get_available_point_id()
+	path_zones.add_point(mst_zone.path_id, mst_zone.center)
+	while mst_nodes:
+		var min_dist = INF
+		var min_p = null
+		var p = null
+		
+		for point_id in path_zones.get_points():
+			var point_pos = path_zones.get_point_position(point_id)
+			
+			for zone in mst_nodes:
+				if point_pos.distance_to(zone.center) < min_dist:
+					var neighbor = false
+					for zone2 in leafs:
+						if zone2.path_id == point_id:
+							if zone in zone2.neighbors:
+								neighbor = true 
+					if not neighbor:
+						continue
+					min_dist = point_pos.distance_to(zone.center)
+					min_p = zone
+					p = point_id
+		min_p.path_id = path_zones.get_available_point_id()
+		path_zones.add_point(min_p.path_id, min_p.center)
+		path_zones.connect_points(p, min_p.path_id)
+		mst_nodes.erase(min_p)
+		
+	for zone in leafs:
+		if !zone.features.size() and path_zones.get_point_connections(zone.path_id).size() > 1 and build_rng.randf() < termina_loop_chance:
+			var candidates = []
+			for neighbor in zone.neighbors:
+				if !path_zones.are_points_connected(zone.path_id, neighbor.path_id):
+					candidates.append(neighbor)
+			if candidates.size() > 0:
+				path_zones.connect_points(zone.path_id, candidates[build_rng.randi() % candidates.size()].path_id)
+				
+	emit_signal("mst_build", path_zones)
+
 	update_bitmask_region(Vector2(0,0), map_size )
 	emit_signal("build_finished")
 
@@ -115,11 +169,11 @@ func untraverse_zones():
 
 
 func make_room(room):
-	var width = clamp(int(build_rng.randf_range(minimum_width_percent, maximum_width_percent) * room.size.x - 4), minimum_room_size.x, room.size.x - 4)
-	var height = clamp(int(build_rng.randf_range(minimum_height_percent, maximum_height_percent) * room.size.y - 4), minimum_room_size.y, room.size.y - 4)
+	var width = clamp(int(build_rng.randf_range(minimum_width_percent, maximum_width_percent) * room.size.x - 2), minimum_room_size.x, room.size.x - 1)
+	var height = clamp(int(build_rng.randf_range(minimum_height_percent, maximum_height_percent) * room.size.y - 2), minimum_room_size.y, room.size.y - 1)
 	
-	var x_position = build_rng.randi_range(room.position.x + 2, room.end.x - width - 2)
-	var y_position = build_rng.randi_range(room.position.y + 2, room.end.y - height - 2)
+	var x_position = build_rng.randi_range(room.position.x, room.end.x - width)
+	var y_position = build_rng.randi_range(room.position.y, room.end.y - height)
 	
 	return Rect2(Vector2(x_position, y_position), Vector2(width, height))
 	
@@ -196,6 +250,7 @@ func bsp_split(zone):
 	zones.append(right_child)
 	zone.left = left_child
 	zone.right = right_child
+		
 	
 func find_nearest_pair(connected_rooms, unconnected_rooms):
 	var lowest_distance = INF
@@ -213,19 +268,13 @@ func find_nearest_pair(connected_rooms, unconnected_rooms):
 	return [from, to]
 	
 func split_rect_x(rect):
-	var children = []
-	var split_x = int(build_rng.randf_range(minimum_split_range, maximum_split_range) * rect.size.x)
-	if split_x < minimum_room_size.x or rect.size.x - split_x < minimum_room_size.x:
-		split_x = int(rect.size.x/2)
+	var split_x = clamp(int(build_rng.randf_range(minimum_split_range, maximum_split_range) * rect.size.x),minimum_room_size.x, rect.size.x - minimum_room_size.x)
 	var lcr = Rect2(rect.position, Vector2(split_x, rect.size.y))
 	var rcr = Rect2(Vector2(rect.position.x + split_x, rect.position.y), Vector2(rect.size.x - split_x, rect.size.y))
 	return [lcr, rcr]
 
 func split_rect_y(rect):
-	var children = []
-	var split_y = int(build_rng.randf_range(minimum_split_range, maximum_split_range) * rect.size.y)
-	if split_y < minimum_room_size.y or rect.size.y - split_y < minimum_room_size.y:
-		split_y = int(rect.size.y/2)
+	var split_y = clamp(int(build_rng.randf_range(minimum_split_range, maximum_split_range) * rect.size.y),minimum_room_size.y, rect.size.y - minimum_room_size.y)
 	var lcr = Rect2(rect.position, Vector2(rect.size.x, split_y))
 	var rcr = Rect2(Vector2(rect.position.x, rect.position.y + split_y), Vector2(rect.size.x, rect.size.y - split_y))
 	return [lcr, rcr]
@@ -236,12 +285,12 @@ func fill_room(room, tile=TileType.Floor):
 			set_cell(x,y,tile)
 			
 func wall_room(room, tile=TileType.Wall):
-	for x in range(room.position.x - 1, room.end.x + 1):
-		set_cell(x, room.position.y - 1, tile)
-		set_cell(x, room.end.y, tile)
-	for y in range(room.position.y, room.end.y + 1):
-		set_cell(room.position.x - 1, y, tile)
-		set_cell(room.end.x, y, tile)
+	for x in range(room.position.x, room.end.x):
+		set_cell(x, room.position.y, tile)
+		set_cell(x, room.end.y - 1, tile)
+	for y in range(room.position.y + 1, room.end.y):
+		set_cell(room.position.x, y, tile)
+		set_cell(room.end.x - 1, y, tile)
 
 func make_wall_v(room, x, tile=0):
 	for y in range(room.position.y, room.end.y + 1):
