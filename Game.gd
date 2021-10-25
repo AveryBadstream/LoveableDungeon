@@ -30,6 +30,7 @@ func _on_world_ready():
 	MSG.LogBox = $CanvasLayer/VBoxContainer/ScrollContainer/LogBox
 	WRLD.GameWorld = $GameWorld
 	WRLD.TMap = $GameWorld/LoveableBasic
+	GameWorld.update_fov(Player.game_position)
 	Player.active()
 
 
@@ -39,6 +40,8 @@ func _on_GameWorld_action_failed(actor):
 
 func _on_action_complete(actor, target, action_type):
 	emit_signal("log_action", actor, target, action_type)
+	if actor.is_player and action_type == ACT.Type.Move:
+		GameWorld.update_fov(actor.game_position)
 	actor.active()
 
 
@@ -48,7 +51,3 @@ func _on_action_failed(actor, target, action_type):
 
 func _on_action_impossible(actor, target, action_type):
 	actor.active() # Replace with function body.
-
-
-func _on_GameWorld_world_ready():
-	pass # Replace with function body.

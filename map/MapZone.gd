@@ -104,19 +104,19 @@ func place_connecting_feature(t_map):
 		corridor_points(t_map, connecting_points[0], connecting_points[1])
 		return
 	elif connecting_points.size() == 1:
-		corridor_points(t_map, connecting_points[0], Vector2(int(self.center.x), int(self.center.y)))
+		corridor_points(t_map, connecting_points[0], Vector2(clamp(ceil(self.center.x), self.rect.position.x, self.rect.end.x-1), clamp(ceil(self.center.y), self.rect.position.y, self.rect.end.y-1)))
 		return
 	for i in range(connecting_points.size()):
-		corridor_points(t_map, connecting_points[i], Vector2(int(self.center.x), int(self.center.y)))
+		corridor_points(t_map, connecting_points[i], Vector2(clamp(ceil(self.center.x), self.rect.position.x, self.rect.end.x-1), clamp(ceil(self.center.y), self.rect.position.y, self.rect.end.y-1)))
 
 func corridor_points(t_map, from_p, to_p):
 	var walk_point = from_p
 	t_map.set_cell(from_p.x, from_p.y, TIL.Type.Ground)
 	walk_point = from_p
 	while walk_point != to_p:
-		if walk_point.x == to_p.x:
+		if walk_point.x == to_p.x: # or walk_point.x == rect.position.x or walk_point.x == rect.end.x:
 			walk_point.y += int(clamp(to_p.y - walk_point.y, -1, 1))
-		elif walk_point.y == to_p.y:
+		elif walk_point.y == to_p.y: # or walk_point.y == rect.position.y or walk_point.y == rect.end.y:
 			walk_point.x += int(clamp(to_p.x - walk_point.x, -1, 1))
 		elif build_rng.randi() % 2:
 			walk_point.y += int(clamp(to_p.y - walk_point.y, -1, 1))
@@ -127,36 +127,52 @@ func corridor_points(t_map, from_p, to_p):
 func connect_to_neighbor(neighbor):
 	if !neighbors.has(neighbor):
 		return false
-	var connection
-	var am_room = features.size() * 2
-	var n_room = neighbor.features.size() * 2
+	var connection = Vector2(0,0)
+	var am_room = features.size()
+	var n_room = neighbor.features.size()
 	if neighbor.rect.end.x == rect.position.x: #Neighbor is to the left
-		connection = Vector2(rect.position.x, build_rng.randi_range(max(rect.position.y + am_room, neighbor.rect.position.y + n_room), min(rect.end.y - 1 - am_room , neighbor.rect.end.y - 1 - n_room)))
+		connection.x = rect.position.x
+		connection.y = build_rng.randi_range(max(rect.position.y + am_room, neighbor.rect.position.y + n_room), min(rect.end.y -1 - am_room, neighbor.rect.end.y - 1 - n_room))
+		#connection = Vector2(rect.position.x, build_rng.randi_range(max(rect.position.y + am_room, neighbor.rect.position.y + n_room), min(rect.end.y - 1 - am_room , neighbor.rect.end.y - 1 - n_room)))
 		neighbor.connecting_points.append(connection + Vector2.LEFT)
 	elif neighbor.rect.end.y == rect.position.y: #Neighbor is to the up
-		connection = Vector2(build_rng.randi_range(max(rect.position.x + am_room, neighbor.rect.position.x + n_room), min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room)), rect.position.y)
+		var min_x = max(rect.position.x + am_room, neighbor.rect.position.x + n_room)
+		var max_x = min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room)
+		connection.x = build_rng.randi_range(max(rect.position.x + am_room, neighbor.rect.position.x + n_room), min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room))
+		connection.y = rect.position.y
+		#connection = Vector2(build_rng.randi_range(max(rect.position.x + am_room, neighbor.rect.position.x + n_room), min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room)), rect.position.y + 1)
 		neighbor.connecting_points.append(connection + Vector2.UP)
 	elif neighbor.rect.position.x == rect.end.x: #Neighbor is to the right
-		connection = Vector2(rect.end.x - 1, build_rng.randi_range(max(rect.position.y + am_room, neighbor.rect.position.y + n_room), min(rect.end.y - 1 - am_room, neighbor.rect.end.y - 1 - n_room)))
+		connection.x = rect.end.x - 1
+		connection.y = build_rng.randi_range(max(rect.position.y + am_room, neighbor.rect.position.y + n_room), min(rect.end.y - 1 - am_room, neighbor.rect.end.y - 1 - n_room))
+		#connection = Vector2(rect.end.x - 1, build_rng.randi_range(max(rect.position.y + am_room, neighbor.rect.position.y + n_room), min(rect.end.y - 1 - am_room, neighbor.rect.end.y - 1 - n_room)))
 		neighbor.connecting_points.append(connection + Vector2.RIGHT)
 	elif neighbor.rect.position.y == rect.end.y: #Neighbor is to the down
-		connection = Vector2(build_rng.randi_range(max(rect.position.x + am_room, neighbor.rect.position.x + n_room), min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room )), rect.end.y - 1)
+		connection.x = build_rng.randi_range(max(rect.position.x + am_room, neighbor.rect.position.x + n_room), min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room))
+		connection.y = rect.end.y - 1
+		#connection = Vector2(build_rng.randi_range(max(rect.position.x + am_room, neighbor.rect.position.x + n_room), min(rect.end.x - 1 - am_room, neighbor.rect.end.x - 1 - n_room )), rect.end.y - 1)
 		neighbor.connecting_points.append(connection + Vector2.DOWN)
 	else:
 		return false
+	if connection.x >= 80 or connection.y >= 45:
+		pass
 	self.connecting_points.append(connection)
 	return connection
 
 func mark_if_adjacent(zone):
-	if zone != self and self.rect.intersects(zone.rect, true):
-		if self.features.size() or zone.features.size():
-			if (rect.position.x == zone.rect.end.x or rect.end.x == zone.rect.position.x) and (zone.rect.end.y - rect.position.y == 1 or rect.end.y - zone.rect.position.y == 1 ): #Left or Right neighbor
-				return false #not able to connect reliably
-			elif (rect.position.y == zone.rect.end.y or rect.end.y == zone.rect.position.y) and (zone.rect.end.x - rect.position.x == 1 or rect.end.x - zone.rect.position.x == 1 ): #Up or Down neighbor
-				return false #not able to connect reliably
-		if !neighbors.has(zone):
-			self.neighbors.append(zone)
-			return true
+	if zone == self:
+		return false
+	var am_room = features.size()
+	var n_room = features.size()
+	if (rect.position.x == zone.rect.end.x or rect.end.x == zone.rect.position.x): #left or right room
+		if max(rect.position.y + am_room, zone.rect.position.y + n_room) - min (rect.end.y - 1 - am_room, zone.rect.end.y - 1 - n_room) > 0:
+			return false
+	elif (rect.position.y == zone.rect.end.y or rect.end.y == zone.rect.position.y):
+		if max(rect.position.x + am_room, zone.rect.position.x + n_room) - min (rect.end.x - 1 - am_room, zone.rect.end.x - 1 - n_room) > 0:
+			return false
+	if !neighbors.has(zone) and rect.intersects(zone.rect, true):
+		self.neighbors.append(zone)
+		return true
 	return false
 
 func get_left():

@@ -1,15 +1,17 @@
 extends TileMap
 
-signal tiles_ready()
+signal tiles_ready(fov_block_tiles)
 
 
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 
+#Mapping between TIL.Type and actual tile indexes
 export(Array, TIL.Type) var tile_type_map
 
 var dimensions
+var visibility_blocking_tiles
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,12 +22,15 @@ func _on_export_generator_config(signal_type, value):
 		dimensions = value
 
 func _on_build_finished(tiles):
+	var fov_block_tiles = []
 	for x in range(tiles.size()):
+		fov_block_tiles.append([])
 		for y in range(tiles[x].size()):
 			var tile_type = tiles[x][y]
 			set_tile(x, y, tile_type)
+			fov_block_tiles[x].append(TIL.TILE_BLOCK_FOV[tile_type])
 	update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
-	emit_signal("tiles_ready")
+	emit_signal("tiles_ready", fov_block_tiles)
 
 func set_tilev(pos: Vector2, tile_type: int):
 	var tile_i = tile_type_map.find(tile_type)

@@ -11,9 +11,13 @@ onready var TMap = $LoveableBasic
 onready var LevelObjects = $LevelObjects
 onready var LevelActors = $LevelActors
 onready var Player = $LevelActors/Player
-var LevelGenerator = preload("res://map/Generators/basic_levelgen.tres")
+onready var FogOfWar = $FogOfWar
+onready var Unexplored = $Unexplored
+var LevelGenerator = load("res://map/Generators/basic_levelgen.tres")
 
+const FOV = preload("res://constants/FOVRPAS.gd")
 const Door = preload("res://objects/Door.tscn")
+var fov_block_map
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -32,9 +36,8 @@ func _ready():
 	LevelGenerator.connect("build_finished", TMap, "_on_build_finished")
 	LevelGenerator.connect("place_door", self, "_on_place_door")
 	LevelGenerator.connect("player_start_position", self, "_on_player_start_position")
-	LevelGenerator.connect("export_generator_config", TMap, "_on_export_generator_config")
+	LevelGenerator.connect("export_generator_config", WRLD, "_on_export_generator_config")
 	TMap.connect("tiles_ready", self, "_on_tiles_ready")
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
@@ -93,5 +96,19 @@ func thing_at_position(position, prefer_actor=true):
 func _on_player_start_position(start_pos):
 	Player.game_position = start_pos # Replace with function body.
 	
-func _on_tiles_ready():
+func _on_tiles_ready(fov_block_tiles):
+	fov_block_map = fov_block_tiles
+	for x in range(WRLD.world_dimensions.x):
+		for y in range(WRLD.world_dimensions.y):
+			FogOfWar.set_cell(x, y, 0)
+			Unexplored.set_cell(x, y, 0)
 	emit_signal("world_ready")
+	
+func update_fov(from_position):
+	for x in range(WRLD.world_dimensions.x):
+		for y in range(WRLD.world_dimensions.y):
+			FogOfWar.set_cell(x, y, 0)
+	var cells = FOV.calc_visible_cells_from(from_position.x, from_position.y, WRLD.SIGHT_RANGE, fov_block_map)
+	for cell in cells:
+		FogOfWar.set_cellv(cell, -1)
+		Unexplored.set_cellv(cell, -1)

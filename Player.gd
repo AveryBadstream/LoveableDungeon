@@ -2,9 +2,6 @@ extends GameActor
 
 
 signal message_0(msg)
-signal try_move(actor, direction)
-signal try_open(actor, direction)
-signal try_close(actor, direction)
 signal try_action_at(actor, action, action_position)
 
 enum ActionState {Act, Wait}

@@ -43,6 +43,7 @@ export(int, 1, 1000) var minimum_fail_depth
 export(int, 0, 1000) var max_rectification_passes
 export(bool) var merge_rooms
 export(bool) var prefer_connecting_loop
+export(bool) var always_loop_corridors
 
 func initialize():
 	for x in range(map_size.x):
@@ -147,7 +148,7 @@ func build_map(rng = null):
 		mst_nodes.erase(min_p)
 		
 	for zone in leafs:
-		if !zone.features.size() and path_zones.get_point_connections(zone.path_id).size() == 1 and build_rng.randf() < termina_loop_chance:
+		if !zone.features.size() and path_zones.get_point_connections(zone.path_id).size() == 1 and build_rng.randf() <= termina_loop_chance:
 			var candidates = []
 			var prefer_candidates = []
 			for neighbor in zone.neighbors:
