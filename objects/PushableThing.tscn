@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://objects/PushableThing.gd" type="Script" id=1]
+[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=2]
+
+[node name="PushableThing" type="Sprite"]
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 128, 160, 16, 16 )
+script = ExtResource( 1 )
+default_action = 4
+display_name = "Thing"

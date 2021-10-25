@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://art/loveable_rogue_godotmap.png" type="Texture" id=1]
+[ext_resource path="res://objects/Door.gd" type="Script" id=2]
+
+[node name="Door" type="Sprite"]
+texture = ExtResource( 1 )
+centered = false
+vframes = 2
+region_enabled = true
+region_rect = Rect2( 64, 32, 16, 32 )
+script = ExtResource( 2 )
+default_action = 2
+display_name = "Door"
+is_phaseable = true
+supported_actions = [ 2, 3 ]

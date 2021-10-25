@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://art/loveable_rogue_godotmap.png" type="Texture" id=1]
 [ext_resource path="res://IndoorBSP.gd" type="Script" id=2]
@@ -9,8 +9,79 @@
 [ext_resource path="res://NodeTree.gd" type="Script" id=7]
 [ext_resource path="res://RectrRoomHighlighter.gd" type="Script" id=8]
 [ext_resource path="res://Hider.gd" type="Script" id=9]
+[ext_resource path="res://GameWorld.gd" type="Script" id=10]
+[ext_resource path="res://Player.gd" type="Script" id=11]
+[ext_resource path="res://objects/PushableThing.tscn" type="PackedScene" id=12]
+[ext_resource path="res://map/LoveableBasic.gd" type="Script" id=13]
 
 [sub_resource type="TileSet" id=1]
+0/name = "loveable_rogue_godotmap.png 0"
+0/texture = ExtResource( 1 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 64, 64 )
+0/tile_mode = 1
+0/autotile/bitmask_mode = 1
+0/autotile/bitmask_flags = [ Vector2( 0, 0 ), 144, Vector2( 0, 1 ), 146, Vector2( 0, 2 ), 2, Vector2( 0, 3 ), 16, Vector2( 1, 0 ), 16777392, Vector2( 1, 1 ), 17039538, Vector2( 1, 2 ), 262194, Vector2( 1, 3 ), 48, Vector2( 2, 0 ), 20971704, Vector2( 2, 1 ), 21299386, Vector2( 2, 2 ), 327738, Vector2( 2, 3 ), 56, Vector2( 3, 0 ), 4194456, Vector2( 3, 1 ), 4259994, Vector2( 3, 2 ), 65562, Vector2( 3, 3 ), 8 ]
+0/autotile/icon_coordinate = Vector2( 0, 0 )
+0/autotile/tile_size = Vector2( 16, 16 )
+0/autotile/spacing = 0
+0/autotile/occluder_map = [  ]
+0/autotile/navpoly_map = [  ]
+0/autotile/priority_map = [  ]
+0/autotile/z_index_map = [  ]
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+1/name = "loveable_rogue_godotmap.png 1"
+1/texture = ExtResource( 1 )
+1/tex_offset = Vector2( 0, 0 )
+1/modulate = Color( 1, 1, 1, 1 )
+1/region = Rect2( 64, 0, 16, 16 )
+1/tile_mode = 0
+1/occluder_offset = Vector2( 0, 0 )
+1/navigation_offset = Vector2( 0, 0 )
+1/shape_offset = Vector2( 0, 0 )
+1/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+1/shape_one_way = false
+1/shape_one_way_margin = 0.0
+1/shapes = [  ]
+1/z_index = 0
+2/name = "loveable_rogue_godotmap.png 2"
+2/texture = ExtResource( 1 )
+2/tex_offset = Vector2( 0, 0 )
+2/modulate = Color( 1, 1, 1, 1 )
+2/region = Rect2( 64, 16, 16, 16 )
+2/tile_mode = 0
+2/occluder_offset = Vector2( 0, 0 )
+2/navigation_offset = Vector2( 0, 0 )
+2/shape_offset = Vector2( 0, 0 )
+2/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+2/shape_one_way = false
+2/shape_one_way_margin = 0.0
+2/shapes = [  ]
+2/z_index = 0
+3/name = "loveable_rogue.png 3"
+3/texture = ExtResource( 4 )
+3/tex_offset = Vector2( 0, 0 )
+3/modulate = Color( 1, 1, 1, 1 )
+3/region = Rect2( 96, 96, 16, 16 )
+3/tile_mode = 0
+3/occluder_offset = Vector2( 0, 0 )
+3/navigation_offset = Vector2( 0, 0 )
+3/shape_offset = Vector2( 0, 0 )
+3/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+3/shape_one_way = false
+3/shape_one_way_margin = 0.0
+3/shapes = [  ]
+3/z_index = 0
+
+[sub_resource type="TileSet" id=2]
 0/name = "Wall"
 0/texture = ExtResource( 1 )
 0/tex_offset = Vector2( 0, 0 )
@@ -38,7 +109,7 @@
 1/texture = ExtResource( 1 )
 1/tex_offset = Vector2( 0, 0 )
 1/modulate = Color( 1, 1, 1, 1 )
-1/region = Rect2( 64, 0, 16, 16 )
+1/region = Rect2( 64, 16, 16, 16 )
 1/tile_mode = 0
 1/occluder_offset = Vector2( 0, 0 )
 1/navigation_offset = Vector2( 0, 0 )
@@ -52,7 +123,7 @@
 2/texture = ExtResource( 1 )
 2/tex_offset = Vector2( 0, 0 )
 2/modulate = Color( 1, 1, 1, 1 )
-2/region = Rect2( 64, 16, 16, 16 )
+2/region = Rect2( 64, 0, 16, 16 )
 2/tile_mode = 0
 2/occluder_offset = Vector2( 0, 0 )
 2/navigation_offset = Vector2( 0, 0 )
@@ -104,18 +175,43 @@
 5/shape_one_way_margin = 0.0
 5/shapes = [  ]
 5/z_index = 0
+6/name = "Stair"
+6/texture = ExtResource( 4 )
+6/tex_offset = Vector2( 0, 0 )
+6/modulate = Color( 1, 1, 1, 1 )
+6/region = Rect2( 80, 160, 16, 16 )
+6/tile_mode = 0
+6/occluder_offset = Vector2( 0, 0 )
+6/navigation_offset = Vector2( 0, 0 )
+6/shape_offset = Vector2( 0, 0 )
+6/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+6/shape_one_way = false
+6/shape_one_way_margin = 0.0
+6/shapes = [  ]
+6/z_index = 0
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
+random_seed = -4554876820186044928
+use_seed = true
 
 [node name="GameWorld" type="Node2D" parent="."]
+script = ExtResource( 10 )
 
-[node name="IndoorBSP" type="TileMap" parent="GameWorld"]
+[node name="LoveableBasic" type="TileMap" parent="GameWorld"]
 tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
+script = ExtResource( 13 )
+tile_type_map = [ 1, 0, 2, 3 ]
+
+[node name="IndoorBSP" type="TileMap" parent="GameWorld"]
+tile_set = SubResource( 2 )
+cell_size = Vector2( 16, 16 )
+format = 1
+tile_data = PoolIntArray( 196660, 4, 0, 196661, 4, 0, 262194, 4, 0, 262195, 4, 0, 262198, 4, 0, 327728, 4, 0, 327729, 4, 0, 327735, 4, 0, 393262, 4, 0, 393263, 4, 0, 393272, 4, 0, 458796, 4, 0, 458797, 4, 0, 458809, 4, 0, 524331, 4, 0, 524345, 4, 0, 589865, 4, 0, 589866, 4, 0, 589882, 4, 0, 655398, 4, 0, 655399, 4, 0, 655400, 4, 0, 655418, 4, 0, 720931, 4, 0, 720932, 4, 0, 720933, 4, 0, 720955, 4, 0, 786462, 4, 0, 786463, 4, 0, 786464, 4, 0, 786465, 4, 0, 786466, 4, 0, 786491, 4, 0, 851996, 4, 0, 851997, 4, 0, 852027, 4, 0, 917532, 4, 0, 917563, 4, 0, 983080, 4, 0, 983081, 4, 0, 983082, 4, 0, 983083, 4, 0, 983084, 4, 0, 983085, 4, 0, 983086, 4, 0, 983087, 4, 0, 983099, 4, 0, 1048614, 4, 0, 1048615, 4, 0, 1048624, 4, 0, 1048625, 4, 0, 1048626, 4, 0, 1048634, 4, 0, 1114148, 4, 0, 1114149, 4, 0, 1114163, 4, 0, 1114164, 4, 0, 1114170, 4, 0, 1179682, 4, 0, 1179683, 4, 0, 1179701, 4, 0, 1179702, 4, 0, 1179703, 4, 0, 1179704, 4, 0, 1179705, 4, 0, 1245214, 4, 0, 1245215, 4, 0, 1245216, 4, 0, 1245217, 4, 0, 1310747, 4, 0, 1310748, 4, 0, 1310749, 4, 0, 1310750, 4, 0, 1310751, 4, 0, 1310752, 4, 0, 1310753, 4, 0, 1310754, 4, 0, 1310755, 4, 0, 1310756, 4, 0, 1376282, 4, 0, 1376283, 4, 0, 1376293, 4, 0, 1376294, 4, 0, 1376295, 4, 0, 1376296, 4, 0, 1441816, 4, 0, 1441817, 4, 0, 1441818, 4, 0, 1507350, 4, 0, 1507351, 4, 0, 1507354, 4, 0, 1572884, 4, 0, 1572885, 4, 0, 1572890, 4, 0, 1638419, 4, 0, 1638426, 4, 0, 1703954, 4, 0, 1703962, 4, 0, 1769489, 4, 0, 1769498, 4, 0, 1835025, 4, 0, 1835034, 4, 0, 1900560, 4, 0, 1900570, 4, 0, 1900571, 4, 0, 1966096, 4, 0, 1966108, 4, 0, 1966128, 4, 0, 1966129, 4, 0, 1966130, 4, 0, 1966131, 4, 0, 1966132, 4, 0, 1966133, 4, 0, 1966134, 4, 0, 1966135, 4, 0, 1966136, 4, 0, 1966137, 4, 0, 1966138, 4, 0, 1966139, 4, 0, 1966140, 4, 0, 1966141, 4, 0, 1966142, 4, 0, 1966143, 4, 0, 1966144, 4, 0, 2031632, 4, 0, 2031645, 4, 0, 2031646, 4, 0, 2031647, 4, 0, 2031657, 4, 0, 2031658, 4, 0, 2031659, 4, 0, 2031660, 4, 0, 2031661, 4, 0, 2031662, 4, 0, 2031663, 4, 0, 2031679, 4, 0, 2031680, 4, 0, 2097168, 4, 0, 2097184, 4, 0, 2097185, 4, 0, 2097186, 4, 0, 2097187, 4, 0, 2097188, 4, 0, 2097189, 4, 0, 2097190, 4, 0, 2097191, 4, 0, 2097192, 4, 0, 2097214, 4, 0, 2162705, 4, 0, 2162748, 4, 0, 2162749, 4, 0, 2228242, 4, 0, 2228282, 4, 0, 2228283, 4, 0, 2293779, 4, 0, 2293816, 4, 0, 2293817, 4, 0, 2359316, 4, 0, 2359317, 4, 0, 2359318, 4, 0, 2359319, 4, 0, 2359320, 4, 0, 2359321, 4, 0, 2359322, 4, 0, 2359350, 4, 0, 2359351, 4, 0, 2424859, 4, 0, 2424860, 4, 0, 2424861, 4, 0, 2424862, 4, 0, 2424863, 4, 0, 2424864, 4, 0, 2424865, 4, 0, 2424866, 4, 0, 2424867, 4, 0, 2424868, 4, 0, 2424869, 4, 0, 2424870, 4, 0, 2424871, 4, 0, 2424872, 4, 0, 2424873, 4, 0, 2424881, 4, 0, 2424882, 4, 0, 2424883, 4, 0, 2424884, 4, 0, 2424885, 4, 0, 2490410, 4, 0, 2490411, 4, 0, 2490412, 4, 0, 2490413, 4, 0, 2490414, 4, 0, 2490415, 4, 0, 2490416, 4, 0 )
 script = ExtResource( 2 )
-minimum_room_size = Vector2( 5, 5 )
+minimum_room_size = Vector2( 7, 7 )
 maximum_room_size = Vector2( 10, 10 )
 map_size = Vector2( 80, 45 )
 minimum_zone_size = Vector2( 14, 14 )
@@ -126,34 +222,22 @@ minimum_width_percent = 0.18
 maximum_width_percent = 0.81
 minimum_height_percent = 0.8
 maximum_height_percent = 1.0
-termina_loop_chance = 1.0
+split_stop_chance = 0.54
+termina_loop_chance = 0.8
 max_failures = 6
 minimum_fail_depth = 2
 max_rectification_passes = 500
+merge_rooms = true
+prefer_connecting_loop = true
 
-[node name="Player" type="Sprite" parent="."]
-position = Vector2( 122.112, 155.075 )
-texture = ExtResource( 4 )
-centered = false
-region_enabled = true
-region_rect = Rect2( 96, 144, 16, 16 )
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2( -122.861, -155.824 )
-offset = Vector2( 640, 360 )
-current = true
-drag_margin_left = 0.0
-drag_margin_top = 0.0
-drag_margin_right = 0.0
-drag_margin_bottom = 0.0
-
-[node name="DebugGui" type="CanvasLayer" parent="."]
+[node name="DebugGui" type="CanvasLayer" parent="GameWorld/IndoorBSP"]
 script = ExtResource( 6 )
 
-[node name="Hider" type="Node2D" parent="DebugGui"]
+[node name="Hider" type="Node2D" parent="GameWorld/IndoorBSP/DebugGui"]
+visible = false
 script = ExtResource( 9 )
 
-[node name="LeafHighlight" type="ColorRect" parent="DebugGui/Hider"]
+[node name="LeafHighlight" type="ColorRect" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 margin_right = 40.0
 margin_bottom = 40.0
 color = Color( 0.423529, 0.988235, 0.109804, 0.364706 )
@@ -161,7 +245,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RectHighlight" type="ColorRect" parent="DebugGui/Hider"]
+[node name="RectHighlight" type="ColorRect" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 margin_left = -395.107
 margin_top = 437.76
 margin_right = -355.107
@@ -172,7 +256,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RectrRoomHighlighter" type="ColorRect" parent="DebugGui/Hider"]
+[node name="RectrRoomHighlighter" type="ColorRect" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 margin_right = 40.0
 margin_bottom = 40.0
 color = Color( 0.0823529, 0.00392157, 1, 0.596078 )
@@ -181,9 +265,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NodeLayer" type="CanvasLayer" parent="DebugGui/Hider"]
+[node name="NodeLayer" type="CanvasLayer" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 
-[node name="NodeTree" type="Tree" parent="DebugGui/Hider/NodeLayer"]
+[node name="NodeTree" type="Tree" parent="GameWorld/IndoorBSP/DebugGui/Hider/NodeLayer"]
+visible = false
 modulate = Color( 1, 1, 1, 0.666667 )
 margin_top = 24.6942
 margin_right = 292.0
@@ -193,7 +278,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HideTree" type="Button" parent="DebugGui/Hider/NodeLayer"]
+[node name="HideTree" type="Button" parent="GameWorld/IndoorBSP/DebugGui/Hider/NodeLayer"]
 margin_right = 12.0
 margin_bottom = 20.0
 text = "Toggle Tree"
@@ -201,7 +286,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NextLeaf" type="Button" parent="DebugGui/Hider"]
+[node name="NextLeaf" type="Button" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 margin_left = 1241.69
 margin_top = 675.59
 margin_right = 1261.69
@@ -211,7 +296,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HighlightLeaf" type="Button" parent="DebugGui/Hider"]
+[node name="HighlightLeaf" type="Button" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 margin_left = 1132.13
 margin_top = 675.47
 margin_right = 1231.13
@@ -221,7 +306,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PreviousLeaf" type="Button" parent="DebugGui/Hider"]
+[node name="PreviousLeaf" type="Button" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 margin_left = 1103.0
 margin_top = 675.0
 margin_right = 1120.0
@@ -231,20 +316,138 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CenterMark" type="Sprite" parent="DebugGui/Hider"]
+[node name="CenterMark" type="Sprite" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
 scale = Vector2( 4, 4 )
 texture = ExtResource( 4 )
 region_enabled = true
 region_rect = Rect2( 128, 208, 16, 16 )
 
+[node name="Seed" type="Label" parent="GameWorld/IndoorBSP/DebugGui/Hider"]
+margin_left = 93.3395
+margin_top = 4.20448
+margin_right = 133.34
+margin_bottom = 18.2045
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LevelObjects" type="Node" parent="GameWorld"]
+
+[node name="PushableThing" parent="GameWorld/LevelObjects" instance=ExtResource( 12 )]
+position = Vector2( 144, 112 )
+centered = false
+
+[node name="LevelActors" type="Node" parent="GameWorld"]
+
+[node name="Player" type="Sprite" parent="GameWorld/LevelActors"]
+texture = ExtResource( 4 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 96, 144, 16, 16 )
+script = ExtResource( 11 )
+default_action = 0
+display_name = "You"
+is_player = true
+actions_available = [ 1, 2, 3, 4 ]
+
+[node name="Camera2D" type="Camera2D" parent="GameWorld/LevelActors/Player"]
+current = true
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
+drag_margin_left = 0.0
+drag_margin_top = 0.0
+drag_margin_right = 0.0
+drag_margin_bottom = 0.0
+editor_draw_limits = true
+
+[node name="ColorRect" type="ColorRect" parent="GameWorld"]
+margin_left = -1120.0
+margin_top = -544.0
+margin_right = 1312.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect2" type="ColorRect" parent="GameWorld"]
+margin_left = -864.0
+margin_bottom = 720.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+visible = false
+margin_right = 256.0
+margin_bottom = 512.0
+color = Color( 0.121569, 0.0941176, 0.0941176, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect2" type="ColorRect" parent="CanvasLayer"]
+margin_left = 528.0
+margin_top = 512.0
+margin_right = 1280.0
+margin_bottom = 720.0
+color = Color( 0.0823529, 0.0823529, 0.0980392, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+margin_left = 544.0
+margin_top = 528.0
+margin_right = 1270.0
+margin_bottom = 704.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/VBoxContainer"]
+margin_right = 726.0
+margin_bottom = 158.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LogBox" type="RichTextLabel" parent="CanvasLayer/VBoxContainer/ScrollContainer"]
+margin_right = 726.0
+margin_bottom = 158.0
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+fit_content_height = true
+scroll_active = false
+scroll_following = true
+
+[node name="MessageBox" type="Label" parent="CanvasLayer/VBoxContainer"]
+margin_top = 162.0
+margin_right = 726.0
+margin_bottom = 176.0
+
+[connection signal="action_complete" from="GameWorld" to="." method="_on_action_complete"]
+[connection signal="action_failed" from="GameWorld" to="." method="_on_action_failed"]
+[connection signal="action_impossible" from="GameWorld" to="." method="_on_action_impossible"]
 [connection signal="build_finished" from="GameWorld/IndoorBSP" to="." method="_on_IndoorBSP_build_finished"]
-[connection signal="mst_build" from="GameWorld/IndoorBSP" to="DebugGui/Hider" method="_on_IndoorBSP_mst_build"]
-[connection signal="build_tree" from="DebugGui" to="GameWorld/IndoorBSP" method="_on_DebugGui_build_tree"]
-[connection signal="get_leaf_index" from="DebugGui" to="." method="_on_DebugGui_get_leaf_index"]
-[connection signal="shift_leaf" from="DebugGui" to="." method="_on_DebugGui_shift_leaf"]
-[connection signal="item_selected" from="DebugGui/Hider/NodeLayer/NodeTree" to="DebugGui/Hider/RectHighlight" method="_on_NodeTree_item_selected"]
-[connection signal="item_selected" from="DebugGui/Hider/NodeLayer/NodeTree" to="DebugGui/Hider/RectrRoomHighlighter" method="_on_NodeTree_item_selected"]
-[connection signal="pressed" from="DebugGui/Hider/NodeLayer/HideTree" to="DebugGui/Hider/NodeLayer/NodeTree" method="_on_HideTree_pressed"]
-[connection signal="pressed" from="DebugGui/Hider/NextLeaf" to="DebugGui" method="_on_NextLeaf_pressed"]
-[connection signal="pressed" from="DebugGui/Hider/HighlightLeaf" to="DebugGui" method="_on_HighlightLeaf_pressed"]
-[connection signal="pressed" from="DebugGui/Hider/PreviousLeaf" to="DebugGui" method="_on_PreviousLeaf_pressed"]
+[connection signal="mst_build" from="GameWorld/IndoorBSP" to="GameWorld/IndoorBSP/DebugGui/Hider" method="_on_IndoorBSP_mst_build"]
+[connection signal="place_door" from="GameWorld/IndoorBSP" to="GameWorld" method="_on_IndoorBSP_place_door"]
+[connection signal="player_start_position" from="GameWorld/IndoorBSP" to="." method="_on_IndoorBSP_player_start_position"]
+[connection signal="build_tree" from="GameWorld/IndoorBSP/DebugGui" to="GameWorld/IndoorBSP" method="_on_DebugGui_build_tree"]
+[connection signal="get_leaf_index" from="GameWorld/IndoorBSP/DebugGui" to="." method="_on_DebugGui_get_leaf_index"]
+[connection signal="shift_leaf" from="GameWorld/IndoorBSP/DebugGui" to="." method="_on_DebugGui_shift_leaf"]
+[connection signal="item_selected" from="GameWorld/IndoorBSP/DebugGui/Hider/NodeLayer/NodeTree" to="GameWorld/IndoorBSP/DebugGui/Hider/RectHighlight" method="_on_NodeTree_item_selected"]
+[connection signal="item_selected" from="GameWorld/IndoorBSP/DebugGui/Hider/NodeLayer/NodeTree" to="GameWorld/IndoorBSP/DebugGui/Hider/RectrRoomHighlighter" method="_on_NodeTree_item_selected"]
+[connection signal="pressed" from="GameWorld/IndoorBSP/DebugGui/Hider/NodeLayer/HideTree" to="GameWorld/IndoorBSP/DebugGui/Hider/NodeLayer/NodeTree" method="_on_HideTree_pressed"]
+[connection signal="pressed" from="GameWorld/IndoorBSP/DebugGui/Hider/NextLeaf" to="GameWorld/IndoorBSP/DebugGui" method="_on_NextLeaf_pressed"]
+[connection signal="pressed" from="GameWorld/IndoorBSP/DebugGui/Hider/HighlightLeaf" to="GameWorld/IndoorBSP/DebugGui" method="_on_HighlightLeaf_pressed"]
+[connection signal="pressed" from="GameWorld/IndoorBSP/DebugGui/Hider/PreviousLeaf" to="GameWorld/IndoorBSP/DebugGui" method="_on_PreviousLeaf_pressed"]
+[connection signal="try_action_at" from="GameWorld/LevelActors/Player" to="GameWorld" method="_on_actor_try_action_at"]

@@ -8,16 +8,46 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Resource",
+"class": "BSP_Builder_One",
+"language": "GDScript",
+"path": "res://map/Generators/BSPBuilderOne.gd"
+}, {
+"base": "GameObject",
+"class": "GameActor",
+"language": "GDScript",
+"path": "res://actors/GameActor.gd"
+}, {
+"base": "Sprite",
+"class": "GameObject",
+"language": "GDScript",
+"path": "res://GameObject.gd"
+} ]
+_global_script_class_icons={
+"BSP_Builder_One": "",
+"GameActor": "",
+"GameObject": ""
+}
+
 [application]
 
 config/name="LoveableRogue"
 run/main_scene="res://Game.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+ACT="*res://constants/Actions.gd"
+MSG="*res://constants/Messages.gd"
+TIL="*res://constants/Tile.gd"
+WRLD="*res://constants/World.gd"
+
 [display]
 
 window/size/width=1280
 window/size/height=720
+window/stretch/mode="viewport"
 
 [input]
 
@@ -44,6 +74,16 @@ move_left={
 move_right={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777233,"unicode":0,"echo":false,"script":null)
+ ]
+}
+open={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":79,"unicode":0,"echo":false,"script":null)
+ ]
+}
+close={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":67,"unicode":0,"echo":false,"script":null)
  ]
 }
 

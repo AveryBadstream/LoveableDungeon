@@ -1,0 +1,24 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://map/Generators/BSPBuilderOne.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+minimum_room_size = Vector2( 7, 7 )
+maximum_room_size = Vector2( 10, 10 )
+map_size = Vector2( 80, 45 )
+minimum_zone_size = Vector2( 14, 14 )
+maximum_zone_size = Vector2( 25, 25 )
+minimum_split_range = 0.32
+maximum_split_range = 0.79
+minimum_width_percent = 0.23
+maximum_width_percent = 1.0
+minimum_height_percent = 0.2
+maximum_height_percent = 1.0
+split_stop_chance = 0.54
+termina_loop_chance = 0.8
+max_failures = 6
+minimum_fail_depth = 3
+max_rectification_passes = 20
+merge_rooms = true
+prefer_connecting_loop = true

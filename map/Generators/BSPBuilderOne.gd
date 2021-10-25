@@ -1,20 +1,22 @@
-extends TileMap
+extends Resource
 
+class_name BSP_Builder_One
+# Declare member variables here. Examples:
+# var a = 2
+# var b = "text"
 signal update_room_count(room_count)
 signal update_current_room(current_room)
-signal build_finished()
+signal build_finished(tiles)
 signal mst_build(path_zones)
 signal player_start_position(start_pos)
 signal place_door(position)
 
 onready var MapZone = preload("res://map/MapZone.gd")
-
-
-
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 
+var tiles = []
 var rooms = []
 var toggle = false
 var inspect_room = 0
@@ -40,20 +42,12 @@ export(int, 1, 1000) var minimum_fail_depth
 export(int, 0, 1000) var max_rectification_passes
 export(bool) var merge_rooms
 export(bool) var prefer_connecting_loop
-enum TileType {Wall, Floor, CaveFloor, OpenDoor, Rock, ClosedDoor, Stair}
 
-func is_tile_walkable(tile_pos: Vector2):
-	var cell = get_cell(tile_pos.x, tile_pos.y)
-	if cell == TileType.Floor or cell == TileType.CaveFloor or cell == TileType.OpenDoor:
-		return true
-	else:
-		return false
-
-func is_tile_door(tile_pos: Vector2):
-	return get_cell(tile_pos.x, tile_pos.y) == TileType.ClosedDoor
-	
-func is_tile_open_door(tile_pos: Vector2):
-	return get_cell(tile_pos.x, tile_pos.y) == TileType.OpenDoor
+func _init():
+	for x in range(map_size.x):
+		tiles.append([])
+		for y in range(map_size.y):
+			tiles[x].append(-1)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -64,7 +58,7 @@ func build_map(rng = null):
 	var start_zone = MapZone.new(start_rect)
 	rooms = []
 	zones = [start_zone]
-	fill_room(start_rect, TileType.Rock)
+	fill_room(start_rect, TIL.Type.Rock)
 	var i = 0
 	var fail_count = 0
 	if rng == null:
@@ -109,8 +103,8 @@ func build_map(rng = null):
 			zone.build_rng = build_rng
 			if zone.place_feature(room) and !zone.leaf:
 				zones.append_array(zone.children)
-			fill_room(room, TileType.Floor)
-			wall_room(room, TileType.Wall)
+			fill_room(room, TIL.Type.Floor)
+			wall_room(room, TIL.Type.Wall)
 	leafs = []
 	for zone in zones:
 		if zone.leaf:
@@ -198,10 +192,8 @@ func build_map(rng = null):
 			if dist > max_dist:
 				max_dist = dist
 				exit_room = zone
-	set_cell(build_rng.randi_range(exit_room.rect.position.x + 1, exit_room.rect.end.x - 2), build_rng.randi_range(exit_room.rect.position.y + 1, exit_room.rect.end.y - 2), TileType.Stair)
-	emit_signal("player_start_position", player_start_pos)
-	update_bitmask_region(Vector2(0,0), map_size )
-	emit_signal("build_finished")
+	tiles[build_rng.randi_range(exit_room.rect.position.x + 1, exit_room.rect.end.x - 2)][build_rng.randi_range(exit_room.rect.position.y + 1, exit_room.rect.end.y - 2)] = TIL.Type.Rock
+	emit_signal("build_finished", tiles)
 
 func fix_rooms(zone):
 	if zone.features.size() == 0:
@@ -240,11 +232,11 @@ func fix_rooms(zone):
 					fix_room_cell(n_pos, y, dir)
 
 func fix_room_cell(x, y, other_side):
-	var cell = get_cell(x + other_side.x, y + other_side.y)
-	if (cell == TileType.Wall or cell == TileType.ClosedDoor) and get_cell(x+(other_side.x*2),y+(other_side.y*2) ) != TileType.Wall:
-		set_cell(x, y, TileType.Floor)
+	var cell = tiles[x + other_side.x][y + other_side.y]
+	if (cell == TIL.Type.Wall) and tiles[x+(other_side.x*2)][y+(other_side.y*2)] != TIL.Type.Wall:
+		tiles[x][y] = TIL.Type.Floor
 		if merge_rooms:
-			set_cell(x + other_side.x, y + other_side.y, TileType.Floor)
+			tiles[x + other_side.x][y + other_side.y] = TIL.Type.Floor
 
 #func set_cell(x:int, y:int, cell_type:int,flip_x:=false, flip_y:=false, transpose:=false, autotile_coord:=Vector2( 0, 0 )):
 #	yield(get_tree().create_timer(1.0), "timeout")
@@ -389,12 +381,12 @@ func split_rect_y(rect):
 	var rcr = Rect2(Vector2(rect.position.x, rect.position.y + split_y), Vector2(rect.size.x, rect.size.y - split_y))
 	return [lcr, rcr]
 		
-func fill_room(room, tile=TileType.Floor):
+func fill_room(room, tile=TIL.Type.Floor):
 	for x in range(room.position.x, room.end.x):
 		for y in range(room.position.y, room.end.y):
 			set_cell(x,y,tile)
 			
-func wall_room(room, tile=TileType.Wall):
+func wall_room(room, tile=TIL.Type.Wall):
 	for x in range(room.position.x, room.end.x):
 		set_cell(x, room.position.y, tile)
 		set_cell(x, room.end.y - 1, tile)
@@ -423,4 +415,12 @@ func shift_inspect_room(by):
 		inspect_room = inspect_room - rooms.size()
 	elif inspect_room < 0:
 		inspect_room = inspect_room.size() + inspect_room
-	
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+func set_cell(x, y, tile_type):
+	tiles[x][y] = tile_type
+
+func get_cell(x, y):
+	return tiles[x][y]
