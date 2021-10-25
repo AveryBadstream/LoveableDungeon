@@ -8,10 +8,11 @@ signal update_room_count(room_count)
 signal update_current_room(current_room)
 signal build_finished(tiles)
 signal mst_build(path_zones)
+signal export_generator_config(conf_type, conf_value)
 signal player_start_position(start_pos)
 signal place_door(position)
 
-onready var MapZone = preload("res://map/MapZone.gd")
+const MapZone = preload("res://map/MapZone.gd")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -43,17 +44,19 @@ export(int, 0, 1000) var max_rectification_passes
 export(bool) var merge_rooms
 export(bool) var prefer_connecting_loop
 
-func _init():
+func initialize():
 	for x in range(map_size.x):
 		tiles.append([])
 		for y in range(map_size.y):
-			tiles[x].append(-1)
+			tiles[x].append(TIL.Type.Rock)
+	emit_signal("export_generator_config", WRLD.GeneratorSignal.MapDimension, map_size)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
 
 func build_map(rng = null):
+	initialize()
 	var start_rect = Rect2(Vector2(0,0), map_size)
 	var start_zone = MapZone.new(start_rect)
 	rooms = []
@@ -184,6 +187,7 @@ func build_map(rng = null):
 	else:
 		start_room = rooms[build_rng.randi() % rooms.size()]
 	var player_start_pos = Vector2(build_rng.randi_range(start_room.rect.position.x + 1, start_room.rect.end.x - 2), build_rng.randi_range(start_room.rect.position.y + 1, start_room.rect.end.y - 2))
+	emit_signal("player_start_position", player_start_pos)
 	var exit_room = null
 	var max_dist = 0
 	for zone in leafs:

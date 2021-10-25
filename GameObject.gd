@@ -32,10 +32,10 @@ func _ready():
 	pass # Replace with function body.
 
 func set_game_position(new_position: Vector2):
-	position = new_position * 16
+	self.position = new_position * 16
 	
 func get_game_position() -> Vector2:
-	return position / 16
+	return self.position / 16
 	
 func check_adjacent(object):
 	return (self.game_position - object.game_position).length() == 1

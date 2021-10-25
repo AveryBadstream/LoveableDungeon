@@ -3,8 +3,7 @@ extends Node2D
 signal msg_0(type)
 signal log_action(subject, object, action)
 
-onready var IndoorBSP = $GameWorld/IndoorBSP
-onready var DebugGui = $GameWorld/IndoorBSP/DebugGui
+onready var DebugSeed = $DebugGui/Hider/Seed
 onready var Player = $GameWorld/LevelActors/Player
 onready var GameWorld = $GameWorld
 export var random_seed: int
@@ -17,8 +16,8 @@ func _ready():
 		rng.seed=random_seed
 	else:
 		rng.randomize()
-	$GameWorld/IndoorBSP/DebugGui/Hider/Seed.text = "Seed: " + str(rng.seed)
-	IndoorBSP.build_map(rng)
+	DebugSeed.text = "Seed: " + str(rng.seed)
+	GameWorld.build(rng)
 	connect("msg_0", MSG, "_on_message_0")
 	connect("log_action", MSG, "_on_log_action")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -26,26 +25,12 @@ func _ready():
 #	pass
 
 
-func _on_DebugGui_get_leaf_index(i):
-	DebugGui.set_index(IndoorBSP.inspect_room)
-	DebugGui.highlight_room(IndoorBSP.rooms[IndoorBSP.inspect_room]) # Replace with function body.
-
-
 func _on_world_ready():
 	MSG.MessageBox = $CanvasLayer/VBoxContainer/MessageBox
 	MSG.LogBox = $CanvasLayer/VBoxContainer/ScrollContainer/LogBox
 	WRLD.GameWorld = $GameWorld
-	WRLD.TMap = $GameWorld/IndoorBSP
+	WRLD.TMap = $GameWorld/LoveableBasic
 	Player.active()
-
-
-func _on_DebugGui_shift_leaf(by):
-	IndoorBSP.shift_inspect_room(by)
-	DebugGui.highlight_room(IndoorBSP.rooms[IndoorBSP.inspect_room])
-
-
-func _on_IndoorBSP_player_start_position(start_pos):
-	Player.position = start_pos * 16 # Replace with function body.
 
 
 func _on_GameWorld_action_failed(actor):
@@ -63,3 +48,7 @@ func _on_action_failed(actor, target, action_type):
 
 func _on_action_impossible(actor, target, action_type):
 	actor.active() # Replace with function body.
+
+
+func _on_GameWorld_world_ready():
+	pass # Replace with function body.

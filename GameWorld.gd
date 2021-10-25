@@ -3,17 +3,23 @@ extends Node2D
 signal action_complete(actor, target, action_type)
 signal action_failed(actor, target, action_type)
 signal action_impossible(actor, target, action_type)
+signal world_ready()
 signal message_0(msg)
 signal log_2(msg, subject, object)
 
 onready var TMap = $LoveableBasic
 onready var LevelObjects = $LevelObjects
+onready var LevelActors = $LevelActors
+onready var Player = $LevelActors/Player
 var LevelGenerator = preload("res://map/Generators/basic_levelgen.tres")
 
 const Door = preload("res://objects/Door.tscn")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
+
+func build(build_rng):
+	LevelGenerator.build_map(build_rng)
 
 func try_move(actor, direction):
 	if TMap.is_tile_walkable(actor.game_position.x, actor.game_position.y):
@@ -23,9 +29,11 @@ func try_move(actor, direction):
 func _ready():
 	.connect("message_0", MSG, "_on_message_0")
 	.connect("log_2", MSG, "_on_log_2")
-	var generator = LevelGenerator.new()
-	generator.connect("build_finished", TMap, "_on_build_finished")
-	generator.connect("place_door", self, "_on_place_door")
+	LevelGenerator.connect("build_finished", TMap, "_on_build_finished")
+	LevelGenerator.connect("place_door", self, "_on_place_door")
+	LevelGenerator.connect("player_start_position", self, "_on_player_start_position")
+	LevelGenerator.connect("export_generator_config", TMap, "_on_export_generator_config")
+	TMap.connect("tiles_ready", self, "_on_tiles_ready")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -70,7 +78,7 @@ func object_at_position(position):
 	return null
 
 func actor_at_position(position):
-	for actor in LevelObjects.get_children():
+	for actor in LevelActors.get_children():
 		if actor.game_position == position:
 			return actor
 	return null
@@ -82,3 +90,8 @@ func thing_at_position(position, prefer_actor=true):
 	var found_object = object_at_position(position)
 	return found_object if found_object else found_actor
 	
+func _on_player_start_position(start_pos):
+	Player.game_position = start_pos # Replace with function body.
+	
+func _on_tiles_ready():
+	emit_signal("world_ready")

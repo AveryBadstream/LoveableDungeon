@@ -2,6 +2,8 @@ extends Node
 
 var GameWorld = null
 var TMap = null
+
+enum GeneratorSignal {MapDimension}
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"

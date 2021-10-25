@@ -111,7 +111,7 @@ func place_connecting_feature(t_map):
 
 func corridor_points(t_map, from_p, to_p):
 	var walk_point = from_p
-	t_map.set_cell(from_p.x, from_p.y, TIL.Type.CaveFloor)
+	t_map.set_cell(from_p.x, from_p.y, TIL.Type.Ground)
 	walk_point = from_p
 	while walk_point != to_p:
 		if walk_point.x == to_p.x:
@@ -122,7 +122,7 @@ func corridor_points(t_map, from_p, to_p):
 			walk_point.y += int(clamp(to_p.y - walk_point.y, -1, 1))
 		else:
 			walk_point.x += int(clamp(to_p.x - walk_point.x, -1, 1))
-		t_map.set_cell(walk_point.x, walk_point.y, TIL.Type.CaveFloor)
+		t_map.set_cell(walk_point.x, walk_point.y, TIL.Type.Ground)
 
 func connect_to_neighbor(neighbor):
 	if !neighbors.has(neighbor):

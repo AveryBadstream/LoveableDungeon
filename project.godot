@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "Resource",
 "class": "BSP_Builder_One",
 "language": "GDScript",
-"path": "res://map/Generators/BSPBuilderOne.gd"
+"path": "res://map/BSPBuilderOne.gd"
 }, {
 "base": "GameObject",
 "class": "GameActor",
