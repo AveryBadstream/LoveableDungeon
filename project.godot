@@ -42,6 +42,7 @@ ACT="*res://constants/Actions.gd"
 MSG="*res://constants/Messages.gd"
 TIL="*res://constants/Tile.gd"
 WRLD="*res://constants/World.gd"
+EVNT="*res://constants/Events.gd"
 
 [display]
 

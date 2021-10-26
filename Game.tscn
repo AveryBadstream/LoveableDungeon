@@ -198,14 +198,14 @@ tile_data = PoolIntArray( 327688, 3, 0, 327689, 3, 0, 327690, 3, 0, 393224, 3, 0
 script = ExtResource( 13 )
 tile_type_map = [ 1, 2, 0, 3 ]
 
-[node name="LevelObjects" type="Node" parent="GameWorld"]
+[node name="LevelObjects" type="Node2D" parent="GameWorld"]
 
 [node name="PushableThing" parent="GameWorld/LevelObjects" instance=ExtResource( 12 )]
-position = Vector2( 144, 112 )
+position = Vector2( 176, 112 )
 z_as_relative = false
 centered = false
 
-[node name="LevelActors" type="Node" parent="GameWorld"]
+[node name="LevelActors" type="Node2D" parent="GameWorld"]
 
 [node name="Player" type="Sprite" parent="GameWorld/LevelActors"]
 texture = ExtResource( 4 )
@@ -254,6 +254,14 @@ __meta__ = {
 margin_left = -864.0
 margin_bottom = 720.0
 color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileHighlight" type="ColorRect" parent="GameWorld"]
+margin_right = 16.0
+margin_bottom = 16.0
+color = Color( 0.427451, 1, 0.290196, 0.490196 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -314,6 +322,10 @@ scroll_following = true
 margin_top = 162.0
 margin_right = 726.0
 margin_bottom = 176.0
+
+[node name="GameUI" type="Node2D" parent="."]
+
+[node name="LineHighlight" type="Node2D" parent="GameUI"]
 
 [connection signal="action_complete" from="GameWorld" to="." method="_on_action_complete"]
 [connection signal="action_failed" from="GameWorld" to="." method="_on_action_failed"]

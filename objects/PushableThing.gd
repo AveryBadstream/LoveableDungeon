@@ -16,7 +16,7 @@ func _can_actor_do_Push(actor):
 	return false
 		
 func _actor_do_Push(actor):
-	self.game_position = self.game_position  - (actor.game_position - self.game_position)
+	.set_game_position(self.get_game_position() - (actor.game_position - self.get_game_position()))
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

@@ -13,4 +13,6 @@ script = ExtResource( 2 )
 default_action = 2
 display_name = "Door"
 is_phaseable = true
+blocks_vision = true
+mimics_tile = true
 supported_actions = [ 2, 3 ]

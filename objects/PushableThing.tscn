@@ -10,3 +10,5 @@ region_rect = Rect2( 128, 160, 16, 16 )
 script = ExtResource( 1 )
 default_action = 4
 display_name = "Thing"
+blocks_vision = true
+supported_actions = [ 4 ]

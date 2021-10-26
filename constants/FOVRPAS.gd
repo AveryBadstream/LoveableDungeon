@@ -177,3 +177,36 @@ static func _combine_obstructions(old, new) -> bool:
 		return true
 
 	return false
+
+#LOS code lifted from https://github.com/luctius/heresyrl/blob/master/src/fov/rpsc_fov.c
+static func calc_los_tiles(tiles, from, to):
+	var max_x = tiles.size()
+	var max_y = tiles[0].tiles.size()
+	var mod_x = 1
+	var mod_y = 1
+	var los_tiles = []
+	if to.x < 0 or to.y < 0 or to.x > max_x or to.y > max_y:
+		return los_tiles
+	var delta = (from - to)
+	var delta_abs = delta.abs()
+	var flip = delta_abs.x >= delta_abs.y
+	if from.x + (delta.x * -1) == to.x:
+		mod_x = -1
+	if from.y + (delta.y * -1) == to.y:
+		mod_y = -1
+	var obstacles = 0
+	var max_obstacles = max(abs(from.x - to.x), abs(from.y - to.y)) * 3
+	var blocked_list = []
+	var cell_dst
+	var row_dst
+	if flip:
+		cell_dst = delta_abs.y
+		row_dst = delta_abs.x
+	else:
+		cell_dst = delta_abs.x
+		row_dst = delta_abs.y
+	var angle_allocation = 1.0 / float(row_dst + 1)
+	var target_angle = CellAngles.new((float(cell_dst) * angle_allocation),
+			(float(cell_dst + .5) * angle_allocation),
+			(float(cell_dst + 1) * angle_allocation))
+	
