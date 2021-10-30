@@ -53,6 +53,16 @@ _global_script_classes=[ {
 "class": "GameTile",
 "language": "GDScript",
 "path": "res://map/GameTile.gd"
+}, {
+"base": "Reference",
+"class": "ITile",
+"language": "GDScript",
+"path": "res://map/ITile.gd"
+}, {
+"base": "Reference",
+"class": "UTile",
+"language": "GDScript",
+"path": "res://map/UTile.gd"
 } ]
 _global_script_class_icons={
 "BSP_Builder_One": "",
@@ -63,7 +73,9 @@ _global_script_class_icons={
 "GameAstar": "",
 "GameEffect": "",
 "GameObject": "",
-"GameTile": ""
+"GameTile": "",
+"ITile": "",
+"UTile": ""
 }
 
 [application]

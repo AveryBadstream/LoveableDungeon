@@ -40,7 +40,12 @@ func _input(event):
 
 func act_in_direction(dir: Vector2):
 	if not pending_action:
-		local_default_actions[ACT.Type.Move].do_action_at(self.get_game_position() + dir)
+		var action_hint = WRLD.get_action_hint(self.get_game_position() + dir)
+		print("Got default action: " + ACT.Type.keys()[action_hint])
+		if local_default_actions.has(action_hint):
+			local_default_actions[action_hint].do_action_at(self.get_game_position() + dir)
+		else:
+			return
 	else:
 		var next_action = pending_action
 		pending_action = ACT.Type.None

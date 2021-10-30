@@ -12,6 +12,10 @@ signal export_generator_config(conf_type, conf_value)
 signal player_start_position(start_pos)
 signal place_door(position)
 
+const Door = preload("res://objects/Door.tscn")
+const Pushable = preload("res://objects/PushableThing.tscn")
+const Lever = preload("res://objects/Lever.tscn")
+
 const MapZone = preload("res://map/MapZone.gd")
 # Declare member variables here. Examples:
 # var a = 2
@@ -50,13 +54,14 @@ func initialize():
 		tiles.append([])
 		for y in range(map_size.y):
 			tiles[x].append(TIL.Type.Rock)
-	emit_signal("export_generator_config", WRLD.GeneratorSignal.MapDimension, map_size)
+	EVNT.emit_signal("export_generator_config", WRLD.GeneratorSignal.MapDimension, map_size)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
 
 func build_map(rng = null):
+	EVNT.emit_signal("export_generator_config", WRLD.GeneratorSignal.ObjectList, [Door, Pushable, Lever])
 	initialize()
 	var start_rect = Rect2(Vector2(0,0), map_size)
 	var start_zone = MapZone.new(start_rect)
@@ -179,7 +184,7 @@ func build_map(rng = null):
 		if zone.features.size() == 1:
 			rooms.append(zone)
 			for connection in zone.connecting_points:
-				emit_signal("place_door", connection)
+				EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 0, connection)
 			if path_zones.get_point_connections(zone.path_id).size() == 1:
 				terminal_rooms.append(zone)
 	var start_room = null
@@ -198,6 +203,12 @@ func build_map(rng = null):
 				max_dist = dist
 				exit_room = zone
 	tiles[build_rng.randi_range(exit_room.rect.position.x + 1, exit_room.rect.end.x - 2)][build_rng.randi_range(exit_room.rect.position.y + 1, exit_room.rect.end.y - 2)] = TIL.Type.Rock
+	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 1, Vector2(74, 38))
+	tiles[73][38]= TIL.Type.Ice
+	tiles[72][38]= TIL.Type.Ice
+	tiles[71][38]= TIL.Type.Ice
+	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 2, Vector2(76, 39))
+	EVNT.emit_signal("remove_thing", ACT.TargetType.TargetObject, 0, Vector2(77, 40))
 	emit_signal("build_finished", tiles)
 
 func fix_rooms(zone):

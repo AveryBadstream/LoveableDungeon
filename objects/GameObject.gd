@@ -3,6 +3,7 @@ extends Sprite
 class_name GameObject
 
 signal actor_did_action(actor, object, action_type, success)
+signal toggle(myself)
 
 export(ACT.Type) var default_action := ACT.Type.Move
 export var display_name := "ERROR"
@@ -125,6 +126,12 @@ func set_blocks_vision(should_block):
 
 func get_blocks_vision():
 	return _blocks_vision
+
+func connect_to(target_object):
+	self.connect("toggle", target_object, "_on_toggle")
+
+func _on_toggle(toggled_by):
+	pass
 
 func check_adjacent(object):
 	return (self.game_position - object.game_position).length() == 1

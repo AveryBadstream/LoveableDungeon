@@ -13,5 +13,4 @@ script = ExtResource( 2 )
 default_action = 0
 display_name = "Kestrel"
 supported_actions = [ 0 ]
-actions_available = [ 1 ]
 mob_ai = [ 0 ]

@@ -1,14 +1,17 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://objects/PushableThing.gd" type="Script" id=1]
-[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=2]
+[ext_resource path="res://art/loveable-extended.png" type="Texture" id=2]
 
 [node name="PushableThing" type="Sprite"]
+modulate = Color( 0.635294, 0.501961, 0.439216, 1 )
 texture = ExtResource( 2 )
+centered = false
 region_enabled = true
-region_rect = Rect2( 128, 160, 16, 16 )
+region_rect = Rect2( 0, 128, 16, 16 )
 script = ExtResource( 1 )
-default_action = 4
+default_action = 6
 display_name = "Thing"
 blocks_vision = true
-supported_actions = [ 4 ]
+player_remembers = true
+supported_actions = [ 6 ]

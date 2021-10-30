@@ -5,15 +5,25 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {Floor, Wall, Ground, Rock, None}
+enum Type {Floor, Wall, Ground, Rock, None, Ice}
 
-const TILE_WALKABLE = [1,0,1,0]
-const TILE_FLYABLE = [1,0,1,0]
-const TILE_PHASEABLE = [1,1,1,0]
-const TILE_BLOCK_FOV = [0,1,0,1]
+const TILE_WALKABLE = [1,0,1,0,0,1]
+const TILE_FLYABLE = [1,0,1,0,0,1]
+const TILE_PHASEABLE = [1,1,1,0,0,1]
+const TILE_BLOCK_FOV = [0,1,0,1,1,0]
+
+var utiles = {}
+
+const IceTile = preload("res://map/Ice.gd")
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	utiles[Type.Floor] = UTile.new(true, true, true, false)
+	utiles[Type.Wall] = UTile.new(false, false, true, true)
+	utiles[Type.Ground] = UTile.new(true, true, true, false)
+	utiles[Type.Rock] = UTile.new(false, false, false, true)
+	utiles[Type.None] = UTile.new(false, false, false, true)
+	utiles[Type.Ice] = IceTile.new(true, true, true, false)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

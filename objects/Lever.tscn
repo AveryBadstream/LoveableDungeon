@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://objects/Lever.gd" type="Script" id=1]
+[ext_resource path="res://art/Openables.png" type="Texture" id=2]
+
+[node name="Lever" type="Sprite"]
+texture = ExtResource( 2 )
+centered = false
+hframes = 2
+region_enabled = true
+region_rect = Rect2( 0, 16, 32, 16 )
+script = ExtResource( 1 )
+supported_actions = [ 8 ]

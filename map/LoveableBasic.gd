@@ -30,6 +30,7 @@ func _on_build_finished(tiles):
 			var tile_type = tiles[x][y]
 			set_tile(x, y, tile_type)
 			fov_block_tiles[x].append(TIL.TILE_BLOCK_FOV[tile_type])
+	EVNT.subscribe("object_moved", self, "_on_object_moved")
 	update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
 	emit_signal("tiles_ready", fov_block_tiles)
 
@@ -70,7 +71,7 @@ func make_tile_obj(at_cell: Vector2, tile_i:int):
 	if self.tile_object_map.has(tile_i):
 		pass
 	else:
-		return GameTile.new(at_cell,tile_type)
+		return ITile.new(TIL.utiles[tile_type],at_cell)
 
 func get_tile(x: int, y: int):
 	var tile_i = get_cell(x, y)
@@ -86,6 +87,9 @@ func is_tile_flyable(target_position: Vector2):
 	
 func is_tile_phaseable(target_position: Vector2):
 	return TIL.TILE_PHASEABLE[get_tilev(target_position)]
+
+func _on_object_moved(object, from_pos):
+	TIL.utiles[self.get_tilev(object.game_position)].object_entered(object, from_pos)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

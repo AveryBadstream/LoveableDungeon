@@ -6,6 +6,8 @@ var world_dimensions = Vector2(0,0)
 var is_ready = false
 var rng
 
+var object_types
+
 enum GeneratorSignal {MapDimension, ActorList, ObjectList, TileList}
 # Declare member variables here. Examples:
 # var a = 2
@@ -28,6 +30,8 @@ func can_see_player(actor):
 func _on_export_generator_config(config_type, config_value):
 	if config_type == GeneratorSignal.MapDimension:
 		world_dimensions = config_value
+	elif config_type == GeneratorSignal.ObjectList:
+		object_types = config_value
 
 func get_action_targets_cell(action, at_cell:Vector2) -> Array:
 	var targets = []
@@ -62,6 +66,12 @@ func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Di
 				targets.append_array(get_action_targets_cell(action, Vector2(x,y)))
 	return targets
 
+func get_action_hint(at_cell):
+	var highest_action_hint = 0
+	for thing in GameWorld.everything_at_cell(at_cell):
+		if thing.default_action > highest_action_hint:
+			highest_action_hint = thing.default_action
+	return highest_action_hint
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

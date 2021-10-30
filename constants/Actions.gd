@@ -5,7 +5,7 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {None, Move, Fly, Phase, Open, Close, Push}
+enum Type {None, Move, Fly, Phase, Open, Close, Push, Pull, Use}
 # Called when the node enters the scene tree for the first time.
 
 enum ActionClass {PositionBased, Atomic, TargetBased}
@@ -25,6 +25,7 @@ enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor =
 enum TargetArea {TargetSingle, TargetCell}
 
 enum Actions {BasicMove, BasicOpen, BasicClose, Push}
+
 
 var PreActionMapping = [
 	[Actions.BasicMove, "res://actions/BasicMove.gd"],

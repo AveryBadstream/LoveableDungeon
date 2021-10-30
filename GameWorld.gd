@@ -47,16 +47,17 @@ func try_move(actor, direction):
 func _ready():
 	.connect("message_0", MSG, "_on_message_0")
 	.connect("log_2", MSG, "_on_log_2")
+	EVNT.subscribe("update_visible_map", self, "_on_update_visible_map")
 	EVNT.subscribe("build_finished", TMap, "_on_build_finished")
 	EVNT.subscribe("export_generator_config", WRLD, "_on_export_generator_config")
 	EVNT.subscribe("player_start_position", self, "_on_player_start_position")
 	EVNT.subscribe("place_thing", self, "_on_place_thing")
+	EVNT.subscribe("remove_thing", self, "_on_remove_thing")
 	LevelGenerator.connect("build_finished", TMap, "_on_build_finished")
 	LevelGenerator.connect("place_door", self, "_on_place_door")
 	LevelGenerator.connect("player_start_position", self, "_on_player_start_position")
 	LevelGenerator.connect("export_generator_config", WRLD, "_on_export_generator_config")
 	TMap.connect("tiles_ready", self, "_on_tiles_ready")
-	EVNT.subscribe("update_visible_map", self, "_on_update_visible_map")
 	EVNT.subscribe("create_ghost", self, "_on_create_ghost")
 	EVNT.subscribe("end_ghost", self, "_on_end_ghost")
 	EVNT.subscribe("update_fov", self, "_on_update_fov")
@@ -119,6 +120,8 @@ func _on_update_visible_map(where, should_block):
 		pending_block_map_updates.append([where, should_block])
 	elif where.x > 0 and where.y > 0 and where.x < WRLD.world_dimensions.x and where.y < WRLD.world_dimensions.y:
 		fov_block_map[where.x][where.y] = 1 if should_block else 0
+		if last_visiblilty_rect.has_point(where):
+			EVNT.emit_signal("update_fov")
 
 func can_do_action_at_location(at_location, action):
 	var found_object = object_at_cell(at_location)
@@ -156,7 +159,28 @@ func _on_place_door(at_cell: Vector2):
 	new_door.game_position = at_cell
 	LevelObjects.add_child(new_door)
 	pending_block_map_updates.append([new_door.game_position, true])
+	
+func _on_place_thing(thing_type, thing_index, at_cell):
+	var new_thing
+	if thing_type == ACT.TargetType.TargetObject:
+		new_thing = WRLD.object_types[thing_index].instance()
+		new_thing.game_position = at_cell
+		LevelObjects.add_child(new_thing)
 
+func _on_remove_thing(thing_type, thing_index, at_cell):
+	var should_rebuild_fov = false
+	for thing in everything_at_cell(at_cell, thing_type):
+		if thing.get_filename() == WRLD.object_types[thing_index].get_path():
+			if thing.blocks_vision:
+				should_rebuild_fov = true
+			thing.queue_free()
+	if should_rebuild_fov:
+		var fov_blocked = false
+		for thing in everything_at_cell(at_cell):
+			if thing.blocks_vision:
+				fov_blocked = true
+		EVNT.emit_signal("update_visible_map", at_cell, fov_blocked)
+		
 func object_at_cell(at_cell: Vector2):
 	for object in LevelObjects.get_children():
 		if object.game_position == at_cell:
