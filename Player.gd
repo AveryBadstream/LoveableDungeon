@@ -8,6 +8,7 @@ export(ACT.Actions) var default_move = ACT.Actions.BasicMove
 export(ACT.Actions) var default_open = ACT.Actions.BasicOpen
 export(ACT.Actions) var default_close = ACT.Actions.BasicClose
 export(ACT.Actions) var default_push = ACT.Actions.Push
+export(ACT.Actions) var default_use = ACT.Actions.BasicUse
 
 var local_default_actions = {}
 
@@ -57,6 +58,7 @@ func _ready():
 	local_default_actions[ACT.Type.Open] = ACT.ActionMapping[default_open].new(self)
 	local_default_actions[ACT.Type.Close] = ACT.ActionMapping[default_close].new(self)
 	local_default_actions[ACT.Type.Push] = ACT.ActionMapping[default_push].new(self)
+	local_default_actions[ACT.Type.Use] = ACT.ActionMapping[default_use].new(self)
 	
 
 
