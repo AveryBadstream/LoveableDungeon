@@ -178,6 +178,27 @@ static func _combine_obstructions(old, new) -> bool:
 
 	return false
 
+static func can_see_point(from, to, tiles, site_range):
+	var oct_def = get_octant(from, to)
+	for tile in _visible_cells_in_octant_from(from.x, from.y, oct_def[0], oct_def[1], site_range, tiles, oct_def[2]):
+		if tile == to:
+			return true
+	return false
+	
+static func get_octant(from, to):
+	var mod_x
+	var mod_y
+	var delta = (from - to).normalized()
+	var delta_abs = delta.abs()
+	if delta_abs.y > delta_abs.x:
+		mod_x = delta.y
+		mod_y = delta.x
+	else:
+		mod_x = delta.x
+		mod_y = delta.y
+	var flip = delta_abs.x <= delta_abs.y
+	return [mod_x, mod_y, flip]
+
 #LOS code lifted from https://github.com/luctius/heresyrl/blob/master/src/fov/rpsc_fov.c
 static func calc_los_tiles(tiles, from, to):
 	var max_x = tiles.size()

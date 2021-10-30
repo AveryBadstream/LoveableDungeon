@@ -11,6 +11,10 @@ onready var LineHighlight = $GameUI/LineHighlight
 export var random_seed: int
 export var use_seed: bool = false
 
+var current_actor = Player
+
+var turn_order = []
+
 var highlight_lines = []
 
 var rng := RandomNumberGenerator.new()
@@ -22,8 +26,13 @@ func _ready():
 		rng.randomize()
 	DebugSeed.text = "Seed: " + str(rng.seed)
 	GameWorld.build(rng)
+	WRLD.rng = rng
 	connect("msg_0", MSG, "_on_message_0")
 	connect("log_action", MSG, "_on_log_action")
+	EVNT.subscribe("do_action", self, "_on_do_action")
+	EVNT.subscribe("action_complete", self, "_on_action_complete")
+	EVNT.subscribe("action_failed", self, "_on_action_failed")
+	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
@@ -53,24 +62,72 @@ func _on_world_ready():
 	MSG.LogBox = $CanvasLayer/VBoxContainer/ScrollContainer/LogBox
 	WRLD.GameWorld = $GameWorld
 	WRLD.TMap = $GameWorld/LoveableBasic
-	GameWorld.update_fov(Player.game_position)
-	Player.active()
+	WRLD.is_ready = true
+	EVNT.emit_signal("update_fov")
+	turn_order = $GameWorld/LevelActors.get_children()
+	current_actor = Player
+	Player.activate()
 
+func _on_do_action(action):
+	for target in action.action_targets:
+		var target_response = target.can_do_action(action)
+		var action_response = action.process_action_response(ACT.ActionPhase.Can, target_response, target)
+		if action_response == ACT.ActionResponse.Impossible:
+			EVNT.emit_signal("action_impossible", action)
+			return
+		elif action_response == ACT.ActionResponse.Failed:
+			EVNT.emit_signal("action_failed", action)
+			return
+	for target in action.action_targets:
+		var target_response = target.do_action_pre(action)
+		var action_response = action.process_action_response(ACT.ActionPhase.Pre, target_response, target)
+		if action_response == ACT.ActionResponse.Impossible:
+			EVNT.emit_signal("action_impossible", action)
+			return
+		elif action_response == ACT.ActionResponse.Failed:
+			EVNT.emit_signal("action_failed", action)
+			return
+	for target in action.action_targets:
+		var target_response = target.do_action(action)
+		var action_response = action.process_action_response(ACT.ActionPhase.Do, target_response, target)
+		if action_response == ACT.ActionResponse.Impossible:
+			EVNT.emit_signal("action_impossible", action)
+			return
+		elif action_response == ACT.ActionResponse.Failed:
+			EVNT.emit_signal("action_failed", action)
+			return
+	for target in action.action_targets:
+		var target_response = target.do_action_post(action)
+		var action_response = action.process_action_response(ACT.ActionPhase.Post, target_response, target)
+		if action_response == ACT.ActionResponse.Impossible:
+			EVNT.emit_signal("action_impossible", action)
+			return
+		elif action_response == ACT.ActionResponse.Failed:
+			EVNT.emit_signal("action_failed", action)
+			return
+	action.finish()
 
 func _on_GameWorld_action_failed(actor):
 	actor.active() # Replace with function body.
 
 
-func _on_action_complete(actor, target, action_type):
-	emit_signal("log_action", actor, target, action_type)
-	if actor.is_player and action_type == ACT.Type.Move:
-		GameWorld.update_fov(actor.game_position)
-	actor.active()
+func _on_action_complete(action):
+	var current_i = turn_order.find(action.action_actor)
+	if current_i + 1 >= turn_order.size():
+		current_actor = turn_order[0]
+	else:
+		current_actor = turn_order[current_i+1]
+	current_actor.activate()
 
 
-func _on_action_failed(actor, target, action_type):
-	actor.active()
+func _on_action_failed(action):
+	var current_i = turn_order.find(action.action_actor)
+	if current_i >= turn_order.size():
+		current_actor = turn_order[0]
+	else:
+		current_actor = turn_order[current_i+1]
+	current_actor.activate()
 
 
-func _on_action_impossible(actor, target, action_type):
-	actor.active() # Replace with function body.
+func _on_action_impossible(action):
+	current_actor.activate() # Replace with function body.

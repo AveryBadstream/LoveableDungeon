@@ -5,7 +5,7 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {Floor, Wall, Ground, Rock}
+enum Type {Floor, Wall, Ground, Rock, None}
 
 const TILE_WALKABLE = [1,0,1,0]
 const TILE_FLYABLE = [1,0,1,0]

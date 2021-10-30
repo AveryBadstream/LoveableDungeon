@@ -59,6 +59,11 @@ func _on_log_action(subject, object, action):
 		}
 		add_log(LogActionStr[action].format(format_dict))
 
+func action_message(msg, action, format_info=[]):
+	for format_part in format_info:
+		pass
+	MessageBox.text = msg
+
 func add_log(msg):
 	full_log.append(msg)
 	LogBox.clear()

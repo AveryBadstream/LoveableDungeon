@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=1]
+[ext_resource path="res://actors/GameActor.gd" type="Script" id=2]
+
+[node name="Kestrel" type="Sprite"]
+position = Vector2( 1184, 576 )
+texture = ExtResource( 1 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 160, 208, 16, 16 )
+script = ExtResource( 2 )
+default_action = 0
+display_name = "Kestrel"
+supported_actions = [ 0 ]
+actions_available = [ 1 ]
+mob_ai = [ 0 ]

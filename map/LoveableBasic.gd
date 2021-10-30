@@ -9,6 +9,7 @@ signal tiles_ready(fov_block_tiles)
 
 #Mapping between TIL.Type and actual tile indexes
 export(Array, TIL.Type) var tile_type_map
+var tile_object_map = {}
 
 var dimensions
 var visibility_blocking_tiles
@@ -33,21 +34,48 @@ func _on_build_finished(tiles):
 	emit_signal("tiles_ready", fov_block_tiles)
 
 func set_tilev(pos: Vector2, tile_type: int):
-	var tile_i = tile_type_map.find(tile_type)
-	if tile_i == - 1:
-		return
+	var tile_i = - 1
+	if tile_type == - 1:
+		tile_i = tile_type
+	else:
+		tile_i = tile_type_map.find(tile_type)
 	set_cellv(pos, tile_i)
 
 func set_tile(x: int, y: int, tile_type: int):
-	var tile_i = tile_type_map.find(tile_type)
-	if tile_i == - 1:
-		return
+	var tile_i = -1
+	if tile_type == - 1:
+		tile_i = tile_type
+	else:
+		tile_i = tile_type_map.find(tile_type)
 	set_cell(x, y, tile_i)
 
 func get_tilev(pos: Vector2):
+	var tile_i = get_cellv(pos)
+	if tile_i == -1:
+		return tile_i
 	return tile_type_map[get_cellv(pos)]
 	
+func can_tile_support_action(target_position: Vector2, action):
+	if action.action_type == ACT.Type.Move and is_tile_walkable(target_position):
+		return true
+	else:
+		return false
+
+func get_tile_objv(at_cell: Vector2):
+	var tile_i = get_cellv(at_cell)
+	return make_tile_obj(at_cell, tile_i)
+
+func make_tile_obj(at_cell: Vector2, tile_i:int):
+	var tile_type = tile_type_map[tile_i]
+	if self.tile_object_map.has(tile_i):
+		pass
+	else:
+		return GameTile.new(at_cell,tile_type)
+
 func get_tile(x: int, y: int):
+	var tile_i = get_cell(x, y)
+	if tile_i == -1:
+		return tile_i
 	return tile_type_map[get_cell(x, y)]
 	
 func is_tile_walkable(target_position: Vector2):

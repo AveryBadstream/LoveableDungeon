@@ -5,11 +5,45 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {None, Move, Open, Close, Push}
+enum Type {None, Move, Fly, Phase, Open, Close, Push}
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
 
+enum ActionClass {PositionBased, Atomic, TargetBased}
+
+enum ActingState {Wait, Act}
+
+enum ActionState {Failed, Ready, Acting, Complete, Impossible}
+
+enum ActionResponse {Stop, Impossible, Proceed, Hijacked, Failed, Done}
+
+enum ActionPhase {Supports, Can, Pre, Do, Post}
+
+enum TargetHint {None = 0, WholeCellMustSupport = 1}
+
+enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor = 4, TargetItem = 8, TargetAll = 15}
+
+enum TargetArea {TargetSingle, TargetCell}
+
+enum Actions {BasicMove, BasicOpen, BasicClose, Push}
+
+var PreActionMapping = [
+	[Actions.BasicMove, "res://actions/BasicMove.gd"],
+	[Actions.BasicOpen, "res://actions/BasicOpen.gd"],
+	[Actions.BasicClose, "res://actions/BasicClose.gd"],
+	[Actions.Push, "res://actions/Push.gd"]
+]
+
+var ActionMapping = {
+	
+}
+var DummyMove
+var DummyFly
+var DummyPhase
+
+func _ready():
+	for mapping in PreActionMapping:
+		ActionMapping[mapping[0]] = load(mapping[1])
+	DummyMove = ActionMapping[Actions.BasicMove].new(null)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

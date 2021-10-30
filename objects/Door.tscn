@@ -4,6 +4,7 @@
 [ext_resource path="res://objects/Door.gd" type="Script" id=2]
 
 [node name="Door" type="Sprite"]
+visible = false
 texture = ExtResource( 1 )
 centered = false
 vframes = 2
@@ -14,5 +15,5 @@ default_action = 2
 display_name = "Door"
 is_phaseable = true
 blocks_vision = true
-mimics_tile = true
-supported_actions = [ 2, 3 ]
+player_remembers = true
+supported_actions = [ 2, 3, 4 ]

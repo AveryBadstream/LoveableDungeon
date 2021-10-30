@@ -4,15 +4,20 @@ extends GameActor
 signal message_0(msg)
 signal try_action_at(actor, action, action_position)
 
-enum ActionState {Act, Wait}
+export(ACT.Actions) var default_move = ACT.Actions.BasicMove
+export(ACT.Actions) var default_open = ACT.Actions.BasicOpen
+export(ACT.Actions) var default_close = ACT.Actions.BasicClose
+export(ACT.Actions) var default_push = ACT.Actions.Push
+
+var local_default_actions = {}
+
 var opens_doors = true
-var action_state = ActionState.Wait
 var pending_action = ACT.Type.None
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 func _input(event):
-	if !event.is_pressed() or !(action_state == ActionState.Act):
+	if !event.is_pressed() or self.acting_state == ACT.ActingState.Wait:
 		return
 	if event.is_action("move_left"):
 		act_in_direction(Vector2.LEFT)
@@ -23,21 +28,32 @@ func _input(event):
 	elif event.is_action("move_down"):
 		act_in_direction(Vector2.DOWN)
 	elif event.is_action("open"):
-		emit_signal("message_0", MSG.MsgType.Open)
-		pending_action = ACT.Type.Open
+		pending_action = local_default_actions[ACT.Type.Open]
+		pending_action.mark_pending()
 	elif event.is_action("close"):
-		emit_signal("message_0", MSG.MsgType.Close)
-		pending_action = ACT.Type.Close
+		pending_action = local_default_actions[ACT.Type.Close]
+		pending_action.mark_pending()
+	elif event.is_action("push"):
+		pending_action = local_default_actions[ACT.Type.Push]
+		pending_action.mark_pending()
+		
 
 func act_in_direction(dir: Vector2):
-	emit_signal("try_action_at", self, self.game_position + dir, pending_action)
+	if not pending_action:
+		local_default_actions[ACT.Type.Move].do_action_at(self.get_game_position() + dir)
+	else:
+		var next_action = pending_action
+		pending_action = ACT.Type.None
+		next_action.do_action_at(self.get_game_position() + dir)
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	connect("message_0", MSG, "_on_message_0") # Replace with function body.
+	is_player = true
+	local_default_actions[ACT.Type.Move] = ACT.ActionMapping[default_move].new(self)
+	local_default_actions[ACT.Type.Open] = ACT.ActionMapping[default_open].new(self)
+	local_default_actions[ACT.Type.Close] = ACT.ActionMapping[default_close].new(self)
+	local_default_actions[ACT.Type.Push] = ACT.ActionMapping[default_push].new(self)
+	
 
-func active():
-	action_state = ActionState.Act
-	pending_action = ACT.Type.None
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

@@ -14,20 +14,56 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://map/BSPBuilderOne.gd"
 }, {
+"base": "Sprite",
+"class": "FOWGhost",
+"language": "GDScript",
+"path": "res://objects/FOWGhost.gd"
+}, {
+"base": "Reference",
+"class": "GameAI",
+"language": "GDScript",
+"path": "res://actors/AI/GameAI.gd"
+}, {
+"base": "Reference",
+"class": "GameAction",
+"language": "GDScript",
+"path": "res://actions/GameAction.gd"
+}, {
 "base": "GameObject",
 "class": "GameActor",
 "language": "GDScript",
 "path": "res://actors/GameActor.gd"
 }, {
+"base": "AStar",
+"class": "GameAstar",
+"language": "GDScript",
+"path": "res://GameAstar.gd"
+}, {
+"base": "Reference",
+"class": "GameEffect",
+"language": "GDScript",
+"path": "res://effects/GameEffect.gd"
+}, {
 "base": "Sprite",
 "class": "GameObject",
 "language": "GDScript",
-"path": "res://GameObject.gd"
+"path": "res://objects/GameObject.gd"
+}, {
+"base": "Reference",
+"class": "GameTile",
+"language": "GDScript",
+"path": "res://map/GameTile.gd"
 } ]
 _global_script_class_icons={
 "BSP_Builder_One": "",
+"FOWGhost": "",
+"GameAI": "",
+"GameAction": "",
 "GameActor": "",
-"GameObject": ""
+"GameAstar": "",
+"GameEffect": "",
+"GameObject": "",
+"GameTile": ""
 }
 
 [application]
@@ -39,10 +75,13 @@ config/icon="res://icon.png"
 [autoload]
 
 ACT="*res://constants/Actions.gd"
-MSG="*res://constants/Messages.gd"
 TIL="*res://constants/Tile.gd"
 WRLD="*res://constants/World.gd"
 EVNT="*res://constants/Events.gd"
+MSG="*res://constants/Messages.gd"
+AI="*res://constants/AI.gd"
+EFCT="*res://constants/Effect.gd"
+FOV="*res://constants/FOVRPAS.gd"
 
 [display]
 
@@ -85,6 +124,11 @@ open={
 close={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":67,"unicode":0,"echo":false,"script":null)
+ ]
+}
+push={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":80,"unicode":0,"echo":false,"script":null)
  ]
 }
 
