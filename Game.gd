@@ -55,12 +55,12 @@ func _input(event):
 				highlight.queue_free()
 				highlight = highlight_lines.pop_back()
 			var angle = tilepos.angle_to_point(Player.game_position)
-			for cell in FOV.cast_cone_at(Player.game_position, tilepos, deg2rad(45), 5, GameWorld.fov_block_map):
-				DBG.highlight_cell(cell)
+#			for cell in FOV.cast_cone_at(Player.game_position, tilepos, deg2rad(45), 10, GameWorld.fov_block_map):
+#				DBG.highlight_cell(cell)
 			
 #			var oct = FOV.get_octant(Player.game_position, tilepos)
-#			for cell in FOV.lerp_line(Player.game_position.x, Player.game_position.y, tilepos.x, tilepos.y, oct, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
-#				DBG.highlight_cell(cell)
+			for cell in FOV.cast_lerp_line(Player.game_position, tilepos, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
+				DBG.highlight_cell(cell)
 #			for cell in FOV.calc_visible_cells_from(tilepos.x, tilepos.y, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
 #				DBG.highlight_cell(cell)
 #			for pos in TIL.interpolated_line(Player.game_position, tilepos):
