@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://actors/GameActor.gd" type="Script" id=1]
+[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=2]
+
+[node name="Watcher" type="Sprite"]
+texture = ExtResource( 2 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 144, 224, 16, 16 )
+script = ExtResource( 1 )
+mob_ai = [ 2 ]
+actions = [ 5 ]

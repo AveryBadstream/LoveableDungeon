@@ -327,6 +327,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="TileHighlight2" type="ColorRect" parent="GameWorld"]
+margin_left = -32.0
+margin_top = -16.0
+margin_right = -16.0
+color = Color( 0.290196, 0.615686, 1, 0.490196 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
