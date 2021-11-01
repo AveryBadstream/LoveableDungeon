@@ -37,14 +37,14 @@ const VISIBLE_ON_EQUAL = false
 enum FOVOctantType {NNW=0, NWW, SWW, SSW, SSE, SEE, NEE, NNE, MAX}
 
 const FOVOctants = {
-	FOVOctantType.NNW: {x = -1, y = -1, flip = false, shift=false },
-	FOVOctantType.NWW: {x = -1, y = -1, flip = true, shift=true },
-	FOVOctantType.SWW: {x = -1, y = 1, flip = true, shift=false },
-	FOVOctantType.SSW: {x = -1, y = 1, flip = false, shift=true },
-	FOVOctantType.SSE: {x = 1, y = 1, flip = false, shift=false },
-	FOVOctantType.SEE: {x = 1, y = 1, flip = true, shift=true },
-	FOVOctantType.NEE: {x = 1, y = -1, flip = true, shift=false },
-	FOVOctantType.NNE: {x = 1, y = -1, flip = false, shift=true },
+	FOVOctantType.NNW: {x = -1, y = -1, flip = false, shift=false, min_a = deg2rad(270), max_a = deg2rad(315) },
+	FOVOctantType.NWW: {x = -1, y = -1, flip = true, shift=true, min_a = deg2rad(315), max_a = TAU },
+	FOVOctantType.SWW: {x = -1, y = 1, flip = true, shift=false, min_a = 0, max_a = deg2rad(45) },
+	FOVOctantType.SSW: {x = -1, y = 1, flip = false, shift=true, min_a = deg2rad(45), max_a = deg2rad(90) },
+	FOVOctantType.SSE: {x = 1, y = 1, flip = false, shift=false, min_a = deg2rad(90), max_a = deg2rad(135) },
+	FOVOctantType.SEE: {x = 1, y = 1, flip = true, shift=true, min_a = deg2rad(135), max_a = deg2rad(180) },
+	FOVOctantType.NEE: {x = 1, y = -1, flip = true, shift=false, min_a = deg2rad(180), max_a = deg2rad(225) },
+	FOVOctantType.NNE: {x = 1, y = -1, flip = false, shift=true, min_a = deg2rad(225), max_a = deg2rad(270) },
 }
 
 class CellAngles extends Reference:
@@ -281,7 +281,73 @@ static func _cone_cast_octant(x_center, y_center, oct, radius, tiles, step_cut, 
 		
 	return visible_cells
 
+static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_a, max_a, mod_a) -> PoolVector2Array:
+	var iteration = 1
+	var visible_cells = PoolVector2Array()
+	var obstructions = []
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	# End conditions:
+	#   iteration > radius
+	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
+	#      to 1)
+	while iteration <= radius and not (obstructions.size() == 1 and
+										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+
+		# Start at the center (vertical or horizontal line) and step outwards
+		for step in range(iteration + 1):
+			var cell = _cell_at(x_center, y_center, oct, step, iteration)
+			if _cell_in_radius(x_center, y_center, cell, radius):
+				var cell_angles = CellAngles.new((float(step) * angle_allocation),
+											(float(step + .5) * angle_allocation),
+											(float(step + 1) * angle_allocation))
+				if _cell_is_visible(cell_angles, obstructions):
+					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
+						pass
+					elif _cell_in_angle_range(x_center, y_center, cell, min_a, max_a, mod_a):
+						visible_cells.append(cell)
+					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
+							obstructions = _add_obstruction(obstructions, cell_angles)
+				elif NOT_VISIBLE_BLOCKS_VISION:
+					obstructions = _add_obstruction(obstructions, cell_angles)
+
+		iteration += 1
+
+	return visible_cells
+
+static func _cell_in_angle_range(x_center, y_center, cell, min_a, max_a, mod_a):
+	var cell_angle = fmod(cell.angle_to_point(Vector2(x_center, y_center))+TAU, TAU) + mod_a
+	if cell_angle >= min_a and cell_angle <= max_a:
+		return true
+	else:
+		return false
+
+static func intersect(point, min_a, max_a):
+	if min_a > max_a:
+		if point >= min_a or point <= max_a:
+			return true
+	else:
+		if point>=min_a and point<=max_a:
+			return true
+	return false
+
 static func cast_cone(x_center, y_center, radius, angle, tiles, width):
+	angle = fmod(angle + TAU, TAU)
+	var mod_a = 0
+	var min_a = fmod( (angle + TAU) - (width/2), TAU )
+	var max_a = fmod( (angle) + (width/2), TAU )
+	if min_a >= max_a:
+		mod_a = TAU
+		max_a += mod_a
+	var octs = _get_angle_range_octants(min_a, max_a, mod_a)
+	var cells = PoolVector2Array()
+	for oct in FOVOctants.values():
+		cells.append_array(_visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_a, max_a, mod_a))
+	return cells
+
+static func cast_cone_poorly(x_center, y_center, radius, angle, tiles, width):
 	var max_point = Vector2(radius*-1, 0).rotated(angle)
 	var right_max = Vector2(max_point.x, max_point.y).rotated(width/2).round()
 	var left_max = Vector2(right_max.x, right_max.y).reflect(max_point).round()
@@ -389,9 +455,21 @@ static func _combine_obstructions(old, new) -> bool:
 		return true
 
 	return false
+	
+static func _get_angle_range(angle, width) -> Array:
+	var min_angle = fmod( (angle + TAU) - (width/2), TAU )
+	var max_angle = fmod( (angle) + (width/2), TAU )
+	return [min_angle, max_angle]
 
-static func octant_line_to_point(center_x, center_y, quad_x, quad_y, radius, tiles, is_vertical):
-	pass
+static func _get_angle_range_octants(min_angle, max_angle, a_mod) -> Array:
+	var octs = []
+	for oct in FOVOctants.values():
+		if intersect(max_angle - a_mod, oct.min_a, oct.max_a) or \
+			intersect(min_angle, oct.min_a, oct.max_a) or \
+			intersect(oct.min_a, min_angle, max_angle - a_mod) or \
+			intersect(oct.max_a, min_angle, max_angle - a_mod):
+			octs.append(oct)
+	return octs
 
 static func can_see_point(from, to, tiles, site_range):
 	var oct = get_octant(from, to)
