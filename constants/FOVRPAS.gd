@@ -37,14 +37,14 @@ const VISIBLE_ON_EQUAL = false
 enum FOVOctantType {NNW=0, NWW, SWW, SSW, SSE, SEE, NEE, NNE, MAX}
 
 const FOVOctants = {
-	FOVOctantType.NNW: {x = -1, y = -1, flip = false, shift=false, min_a = deg2rad(270), max_a = deg2rad(315) },
-	FOVOctantType.NWW: {x = -1, y = -1, flip = true, shift=true, min_a = deg2rad(315), max_a = TAU },
-	FOVOctantType.SWW: {x = -1, y = 1, flip = true, shift=false, min_a = 0, max_a = deg2rad(45) },
-	FOVOctantType.SSW: {x = -1, y = 1, flip = false, shift=true, min_a = deg2rad(45), max_a = deg2rad(90) },
-	FOVOctantType.SSE: {x = 1, y = 1, flip = false, shift=false, min_a = deg2rad(90), max_a = deg2rad(135) },
-	FOVOctantType.SEE: {x = 1, y = 1, flip = true, shift=true, min_a = deg2rad(135), max_a = deg2rad(180) },
-	FOVOctantType.NEE: {x = 1, y = -1, flip = true, shift=false, min_a = deg2rad(180), max_a = deg2rad(225) },
-	FOVOctantType.NNE: {x = 1, y = -1, flip = false, shift=true, min_a = deg2rad(225), max_a = deg2rad(270) },
+	FOVOctantType.NNW: {x = -1, y = -1, flip = false, shift=false, min_a = deg2rad(270), max_a = deg2rad(315), name="NorthNorthWest" },
+	FOVOctantType.NWW: {x = -1, y = -1, flip = true, shift=true, min_a = deg2rad(315), max_a = TAU, name="NorthWestWest" },
+	FOVOctantType.SWW: {x = -1, y = 1, flip = true, shift=false, min_a = 0, max_a = deg2rad(45), name="SouthWestWest" },
+	FOVOctantType.SSW: {x = -1, y = 1, flip = false, shift=true, min_a = deg2rad(45), max_a = deg2rad(90), name="SouthSouthWest" },
+	FOVOctantType.SSE: {x = 1, y = 1, flip = false, shift=false, min_a = deg2rad(90), max_a = deg2rad(135), name="SouthSouthEast" },
+	FOVOctantType.SEE: {x = 1, y = 1, flip = true, shift=true, min_a = deg2rad(135), max_a = deg2rad(180), name="SouthEastEast" },
+	FOVOctantType.NEE: {x = 1, y = -1, flip = true, shift=false, min_a = deg2rad(180), max_a = deg2rad(225), name="NorthEastEast" },
+	FOVOctantType.NNE: {x = 1, y = -1, flip = false, shift=true, min_a = deg2rad(225), max_a = deg2rad(270), name="NorthNorthEast" },
 }
 
 class CellAngles extends Reference:
@@ -281,12 +281,13 @@ static func _cone_cast_octant(x_center, y_center, oct, radius, tiles, step_cut, 
 		
 	return visible_cells
 
-static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_a, max_a, mod_a) -> PoolVector2Array:
+static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_v, max_v) -> PoolVector2Array:
 	var iteration = 1
 	var visible_cells = PoolVector2Array()
 	var obstructions = []
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
+	var origin = Vector2(x_center, y_center)
 	# End conditions:
 	#   iteration > radius
 	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
@@ -306,7 +307,7 @@ static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, rad
 				if _cell_is_visible(cell_angles, obstructions):
 					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
 						pass
-					elif _cell_in_angle_range(x_center, y_center, cell, min_a, max_a, mod_a):
+					elif _vector_in_vector_angle_range(min_v, max_v, cell):
 						visible_cells.append(cell)
 					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
 							obstructions = _add_obstruction(obstructions, cell_angles)
@@ -317,9 +318,8 @@ static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, rad
 
 	return visible_cells
 
-static func _cell_in_angle_range(x_center, y_center, cell, min_a, max_a, mod_a):
-	var cell_angle = fmod(cell.angle_to_point(Vector2(x_center, y_center))+TAU, TAU) + mod_a
-	if cell_angle >= min_a and cell_angle <= max_a:
+static func _cell_in_angle_range(x_center, y_center, cell, min_v, max_v):
+	if _angle_in_range(min_v, max_v, cell.angle_to_point(Vector2(x_center, y_center))):
 		return true
 	else:
 		return false
@@ -334,17 +334,24 @@ static func intersect(point, min_a, max_a):
 	return false
 
 static func cast_cone(x_center, y_center, radius, angle, tiles, width):
-	angle = fmod(angle + TAU, TAU)
-	var mod_a = 0
-	var min_a = fmod( (angle + TAU) - (width/2), TAU )
-	var max_a = fmod( (angle) + (width/2), TAU )
-	if min_a >= max_a:
-		mod_a = TAU
-		max_a += mod_a
-	var octs = _get_angle_range_octants(min_a, max_a, mod_a)
+	var min_v = Vector2.RIGHT.rotated(angle - width/2)
+	var max_v = Vector2.RIGHT.rotated(angle + width/2)
+	var octs = _get_angle_range_octants(min_v, max_v)
 	var cells = PoolVector2Array()
 	for oct in FOVOctants.values():
-		cells.append_array(_visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_a, max_a, mod_a))
+		cells.append_array(_visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_v, max_v))
+	return cells
+
+static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> PoolVector2Array:
+	var angle_v = from.direction_to(to)
+	var min_v = Vector2.RIGHT.rotated(-(width/2))
+	var max_v = Vector2.RIGHT.rotated(width/2)
+	var octs = _get_angle_range_octants(min_v, max_v)
+	var cells = PoolVector2Array()
+	min_v = angle_v.rotated((width/2)*-1)
+	max_v += angle_v.rotated(width/2)
+	for oct in FOV.FOVOctants.values():
+		cells.append_array(_visible_cells_in_octant_from_in_range(from.x, from.y, oct, radius, tiles, min_v, max_v))
 	return cells
 
 static func cast_cone_poorly(x_center, y_center, radius, angle, tiles, width):
@@ -461,13 +468,23 @@ static func _get_angle_range(angle, width) -> Array:
 	var max_angle = fmod( (angle) + (width/2), TAU )
 	return [min_angle, max_angle]
 
-static func _get_angle_range_octants(min_angle, max_angle, a_mod) -> Array:
+static func _angle_in_range(ccw_v, cw_v, test_a):
+	var test_v = Vector2.RIGHT.rotated(test_a)
+	return _is_clockwise(ccw_v, test_v) and _is_clockwise(test_v, cw_v)
+
+static func _vector_in_vector_angle_range(min_v, max_v, test_v):
+	return !_is_clockwise(min_v, test_v) and _is_clockwise(max_v, test_v)
+
+static func _is_clockwise(v1: Vector2, v2: Vector2):
+	return v1.tangent().dot(v2) < 0
+
+static func _is_clockwise_bad(v1, v2):
+	 return -v1.x*v2.y + v1.y*v2.x > 0
+
+static func _get_angle_range_octants(min_v, max_v) -> Array:
 	var octs = []
 	for oct in FOVOctants.values():
-		if intersect(max_angle - a_mod, oct.min_a, oct.max_a) or \
-			intersect(min_angle, oct.min_a, oct.max_a) or \
-			intersect(oct.min_a, min_angle, max_angle - a_mod) or \
-			intersect(oct.max_a, min_angle, max_angle - a_mod):
+		if _angle_in_range(min_v, max_v, oct.min_a) or _angle_in_range(min_v, max_v, oct.max_a):
 			octs.append(oct)
 	return octs
 
