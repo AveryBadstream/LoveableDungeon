@@ -93,8 +93,8 @@ EVNT="*res://constants/Events.gd"
 MSG="*res://constants/Messages.gd"
 AI="*res://constants/AI.gd"
 EFCT="*res://constants/Effect.gd"
-FOV="*res://constants/FOVRPAS.gd"
 DBG="*res://constants/Debug.gd"
+FOV="*res://constants/FOVMRPAS.gd"
 
 [display]
 

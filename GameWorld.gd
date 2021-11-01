@@ -321,7 +321,7 @@ func update_fov_by_signal(from_position):
 	var max_y = 0
 	for cell in last_visible_set:
 		FogOfWar.set_cellv(cell, 0)
-	var cells = FOV.calc_visible_cells_from(from_position.x, from_position.y, WRLD.SIGHT_RANGE, fov_block_map)
+	var cells = FOV.cast_area(from_position, WRLD.SIGHT_RANGE, fov_block_map)
 	for cell in cells:
 		min_x = min(cell.x, min_x)
 		min_y = min(cell.y, min_y)

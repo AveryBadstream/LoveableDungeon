@@ -288,6 +288,7 @@ static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, rad
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
 	var origin = Vector2(x_center, y_center)
+	var radius_sq = radius * radius
 	# End conditions:
 	#   iteration > radius
 	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
@@ -307,7 +308,7 @@ static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, rad
 				if _cell_is_visible(cell_angles, obstructions):
 					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
 						pass
-					elif _vector_in_vector_angle_range(min_v, max_v, cell - origin):
+					elif _cell_in_segment(origin, cell, min_v, max_v):
 						visible_cells.append(cell)
 					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
 							obstructions = _add_obstruction(obstructions, cell_angles)
@@ -334,22 +335,20 @@ static func intersect(point, min_a, max_a):
 	return false
 
 static func cast_cone(x_center, y_center, radius, angle, tiles, width):
-	var min_v = Vector2.RIGHT.rotated(angle - width/2)
-	var max_v = Vector2.RIGHT.rotated(angle + width/2)
+	var min_v = Vector2.RIGHT.rotated(angle - (width/2))
+	var max_v = Vector2.RIGHT.rotated(angle + (width/2))
 	var octs = _get_angle_range_octants(min_v, max_v)
 	var cells = PoolVector2Array()
-	for oct in FOVOctants.values():
+	for oct in octs:
 		cells.append_array(_visible_cells_in_octant_from_in_range(x_center, y_center, oct, radius, tiles, min_v, max_v))
 	return cells
 
 static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> PoolVector2Array:
-	var angle_v = from.direction_to(to)
+	var angle_v = from.direction_to(to) * radius
 	var angle = to.angle_to_point(from)
-	var min_v = angle_v.rotated(-1 * (width/2))
+	var min_v = angle_v.rotated(-(width/2))
 	var max_v = angle_v.rotated(width/2)
 	var octs = _get_angle_range_octants(min_v, max_v)
-	min_v += from
-	max_v += from
 	var cells = PoolVector2Array()
 	for oct in FOVOctants.values():
 		cells.append_array(_visible_cells_in_octant_from_in_range(from.x, from.y, oct, radius, tiles, min_v, max_v))
@@ -399,6 +398,15 @@ static func _cell_in_radius(x_center, y_center, cell, radius) -> bool:
 	var cell_distance = sqrt((x_center - cell.x) * (x_center - cell.x) +
 								(y_center - cell.y) * (y_center - cell.y))
 	return cell_distance <= float(radius) + RADIUS_FUDGE
+
+static func _cell_in_radius_segment(origin: Vector2, cell: Vector2, radius_sq: int, min_v:Vector2, max_v:Vector2):
+	if origin.distance_squared_to(cell) > radius_sq:
+		return false
+	var rel_cell = origin - cell
+	return _vector_in_vector_angle_range(min_v, max_v, rel_cell)
+
+static func _cell_in_segment(origin:Vector2, cell:Vector2, min_v:Vector2, max_v:Vector2):
+	return _vector_in_vector_angle_range(min_v, max_v, origin - cell)
 
 # Utilizes the VISIBLE_ON_EQUAL and RESTRICTIVENESS variables.
 static func _cell_is_visible(cell_angles, obstructions) -> bool:
@@ -471,13 +479,13 @@ static func _get_angle_range(angle, width) -> Array:
 
 static func _angle_in_range(ccw_v, cw_v, test_a):
 	var test_v = Vector2.RIGHT.rotated(test_a)
-	return !_is_clockwise(ccw_v, test_v) and _is_clockwise(test_v, cw_v)
+	return _is_clockwise(ccw_v, test_v) and _is_clockwise(test_v, cw_v)
 
 static func _vector_in_vector_angle_range(min_v, max_v, test_v):
-	return !_is_clockwise(min_v, test_v) and _is_clockwise(test_v, max_v)
+	return _is_clockwise(min_v, test_v) and _is_clockwise(test_v, max_v)
 
 static func _is_clockwise(v1: Vector2, v2: Vector2):
-	return v1.tangent().dot(v2) < 0
+	return v1.tangent().dot(v2) > 0
 
 static func _is_clockwise_bad(v1, v2):
 	 return -v1.x*v2.y + v1.y*v2.x > 0
