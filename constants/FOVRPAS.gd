@@ -307,7 +307,7 @@ static func  _visible_cells_in_octant_from_in_range(x_center, y_center, oct, rad
 				if _cell_is_visible(cell_angles, obstructions):
 					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
 						pass
-					elif _vector_in_vector_angle_range(min_v, max_v, cell):
+					elif _vector_in_vector_angle_range(min_v, max_v, cell - origin):
 						visible_cells.append(cell)
 					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
 							obstructions = _add_obstruction(obstructions, cell_angles)
@@ -344,13 +344,14 @@ static func cast_cone(x_center, y_center, radius, angle, tiles, width):
 
 static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> PoolVector2Array:
 	var angle_v = from.direction_to(to)
-	var min_v = Vector2.RIGHT.rotated(-(width/2))
-	var max_v = Vector2.RIGHT.rotated(width/2)
+	var angle = to.angle_to_point(from)
+	var min_v = angle_v.rotated(-1 * (width/2))
+	var max_v = angle_v.rotated(width/2)
 	var octs = _get_angle_range_octants(min_v, max_v)
+	min_v += from
+	max_v += from
 	var cells = PoolVector2Array()
-	min_v = angle_v.rotated((width/2)*-1)
-	max_v += angle_v.rotated(width/2)
-	for oct in FOV.FOVOctants.values():
+	for oct in FOVOctants.values():
 		cells.append_array(_visible_cells_in_octant_from_in_range(from.x, from.y, oct, radius, tiles, min_v, max_v))
 	return cells
 
@@ -470,10 +471,10 @@ static func _get_angle_range(angle, width) -> Array:
 
 static func _angle_in_range(ccw_v, cw_v, test_a):
 	var test_v = Vector2.RIGHT.rotated(test_a)
-	return _is_clockwise(ccw_v, test_v) and _is_clockwise(test_v, cw_v)
+	return !_is_clockwise(ccw_v, test_v) and _is_clockwise(test_v, cw_v)
 
 static func _vector_in_vector_angle_range(min_v, max_v, test_v):
-	return !_is_clockwise(min_v, test_v) and _is_clockwise(max_v, test_v)
+	return !_is_clockwise(min_v, test_v) and _is_clockwise(test_v, max_v)
 
 static func _is_clockwise(v1: Vector2, v2: Vector2):
 	return v1.tangent().dot(v2) < 0
