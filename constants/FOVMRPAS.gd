@@ -2,7 +2,8 @@ extends Node
 #godot implementation of rpas from https://github.com/MoyTW/roguebasin_rpas/ including most comments because I never comment D:
 
 # Changing the radius-fudge changes how smooth the edges of the vision bubble are.
-#
+#I might remove this and replace with r^2, but there are a lot of improvements
+#before that
 # RADIUS_FUDGE should always be a value between 0 and 1.
 const RADIUS_FUDGE = 1.0 / 5.0
 
@@ -34,18 +35,20 @@ const RESTRICTIVENESS = 0
 # Setting this to False will make the algorithm more restrictive.
 const VISIBLE_ON_EQUAL = false
 
-#Octant lookup, used for finding octants to test in templates
+#Octant lookup, used for finding octants to test in templates, min_a and max_a 
+#are totally wrong and only work by rotating Vector2.LEFT, but I can't be
+#bothered
 enum FOVOctantType {NNW=0, NWW, SWW, SSW, SSE, SEE, NEE, NNE, MAX}
 
 const FOVOctants = {
-	FOVOctantType.NNW: {x = -1, y = -1, flip = false, shift=false, min_a = deg2rad(270), max_a = deg2rad(315), name="NorthNorthWest" },
-	FOVOctantType.NWW: {x = -1, y = -1, flip = true, shift=true, min_a = deg2rad(315), max_a = TAU, name="NorthWestWest" },
-	FOVOctantType.SWW: {x = -1, y = 1, flip = true, shift=false, min_a = 0, max_a = deg2rad(45), name="SouthWestWest" },
-	FOVOctantType.SSW: {x = -1, y = 1, flip = false, shift=true, min_a = deg2rad(45), max_a = deg2rad(90), name="SouthSouthWest" },
-	FOVOctantType.SSE: {x = 1, y = 1, flip = false, shift=false, min_a = deg2rad(90), max_a = deg2rad(135), name="SouthSouthEast" },
-	FOVOctantType.SEE: {x = 1, y = 1, flip = true, shift=true, min_a = deg2rad(135), max_a = deg2rad(180), name="SouthEastEast" },
-	FOVOctantType.NEE: {x = 1, y = -1, flip = true, shift=false, min_a = deg2rad(180), max_a = deg2rad(225), name="NorthEastEast" },
-	FOVOctantType.NNE: {x = 1, y = -1, flip = false, shift=true, min_a = deg2rad(225), max_a = deg2rad(270), name="NorthNorthEast" },
+	FOVOctantType.NWW: {x = -1, y = -1, flip = false, shift=false, min_a = deg2rad(180), max_a = deg2rad(225), name="NorthWestWest" },
+	FOVOctantType.NNW: {x = -1, y = -1, flip = true, shift=true, min_a = deg2rad(225), max_a = deg2rad(270), name="NorthNorthWest" },
+	FOVOctantType.SSW: {x = -1, y = 1, flip = true, shift=false, min_a = deg2rad(90), max_a = deg2rad(135), name="SouthSouthWest" },
+	FOVOctantType.SWW: {x = -1, y = 1, flip = false, shift=true, min_a = deg2rad(135), max_a = deg2rad(180), name="SouthWestWest" },
+	FOVOctantType.SEE: {x = 1, y = 1, flip = false, shift=false, min_a = deg2rad(0), max_a = deg2rad(45), name="SouthEastEast" },
+	FOVOctantType.SSE: {x = 1, y = 1, flip = true, shift=true, min_a = deg2rad(45), max_a = deg2rad(90), name="SouthSouthEast" },
+	FOVOctantType.NNE: {x = 1, y = -1, flip = true, shift=false, min_a = deg2rad(270), max_a = deg2rad(315), name="NorthNorthEast" },
+	FOVOctantType.NEE: {x = 1, y = -1, flip = false, shift=true, min_a = deg2rad(315), max_a = deg2rad(360), name="NorthEastEast" },
 }
 
 class CellAngles extends Reference:
@@ -91,6 +94,13 @@ static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, 
 		cells.append_array(_visible_cells_in_octant_from_in_range(from, oct, radius, tiles, min_v, max_v))
 	return cells
 
+#tests if point to seen from from within site_range using tiles as a block map
+static func can_see_point(from, to, tiles, site_range):
+	var oct = _get_octant(from, to)
+	for tile in _visible_cells_in_octant_from(from, oct, site_range, tiles):
+		if tile == to:
+			return true
+	return false
 
 #Cast a line to a point in oct maxing at radius, will prefer a lerp line but 
 #can deflect a little to allow targeting any visible cell.  Lerp lines and
@@ -334,7 +344,7 @@ static func _get_octant(from:Vector2, to:Vector2) -> Dictionary:
 static func _get_angle_range_octants(min_v:Vector2, max_v:Vector2) -> Array:
 	var octs := []
 	for oct in FOVOctants.values():
-		if _angle_in_range(min_v, max_v, oct.min_) or _angle_in_range(min_v, max_v, oct.max_a):
+		if _angle_in_range(min_v, max_v, oct.min_a) or _angle_in_range(min_v, max_v, oct.max_a):
 			octs.append(oct)
 	return octs
 
@@ -351,7 +361,7 @@ static func _vector_in_vector_angle_range(min_v:Vector2, max_v:Vector2, test_v:V
 #Check if angle is within the circle segment described by ccw_v and cw_v by
 #testing if it is clockwise of ccw_v and counterclockwise of cw_v
 static func _angle_in_range(min_v:Vector2, max_v:Vector2, test_a:float) -> bool:
-	var test_v = Vector2.RIGHT.rotated(test_a)
+	var test_v = Vector2.LEFT.rotated(test_a)
 	return _is_clockwise(min_v, test_v) and _is_clockwise(test_v, max_v)
 
 #Check if v2 is clockwise of v1... maybe, I'm bad at vector math but it seems
