@@ -55,7 +55,7 @@ func _input(event):
 				highlight.queue_free()
 				highlight = highlight_lines.pop_back()
 			var angle = tilepos.angle_to_point(Player.game_position)
-			for cell in FOV.cast_cone(Player.game_position.x, Player.game_position.y, 15, angle, GameWorld.fov_block_map,deg2rad(35)):
+			for cell in FOV.cast_cone_at(Player.game_position, tilepos, deg2rad(45), 5, GameWorld.fov_block_map):
 				DBG.highlight_cell(cell)
 			
 #			var oct = FOV.get_octant(Player.game_position, tilepos)
