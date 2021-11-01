@@ -51,6 +51,17 @@ func is_line_obstructed(from, to, tiles) -> bool:
 				err += dx
 				walker.x += sy
 	return false
+	
+func interpolated_line(p0, p1):
+	var points = PoolVector2Array()
+	var dx = p1.x - p0.x
+	var dy = p1.y - p0.y
+	var N = max(abs(dx), abs(dy))
+	for i in N + 1:
+		var t = float(i) / float(N)
+		var point = Vector2(round(lerp(p0.x, p1.x, t)), round(lerp(p0.y, p1.y, t)))
+		points.append(point)
+	return points
 
 func get_bres_line(from, to, check_tilemap = null) -> Array:
 	var dx = abs(to.x - from.x)
@@ -77,5 +88,5 @@ func get_bres_line(from, to, check_tilemap = null) -> Array:
 				walker.y += sy
 			if check_tilemap and (walker.x < 0 or walker.y < 0 or walker.x > max_x or walker.y > max_y or check_tilemap[walker.x][walker.y]):
 				break
-			tiles_in_line.append(Vector2(walker.x, walker.y))
+			tiles_in_line.append(Vector2(int(walker.x), int(walker.y)))
 	return tiles_in_line

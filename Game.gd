@@ -8,6 +8,7 @@ onready var Player = $GameWorld/LevelActors/Player
 onready var GameWorld = $GameWorld
 onready var TileHighlight = $GameWorld/TileHighlight
 onready var LineHighlight = $GameUI/LineHighlight
+onready var BlueHighlight = $GameWorld/TileHighlight2
 export var random_seed: int
 export var use_seed: bool = false
 
@@ -24,6 +25,8 @@ func _ready():
 		rng.seed=random_seed
 	else:
 		rng.randomize()
+	DBG.TileHighlight = TileHighlight
+	DBG.HighlightGroup = LineHighlight
 	DebugSeed.text = "Seed: " + str(rng.seed)
 	GameWorld.build(rng)
 	WRLD.rng = rng
@@ -45,16 +48,26 @@ func _input(event):
 					tilepos.x  < 0 or tilepos.x > WRLD.world_dimensions.x
 					or tilepos.y < 0 or tilepos.y > WRLD.world_dimensions.y):
 						return
+			DBG.clear_highlight()
 			var highlight = highlight_lines.pop_back()
 			while highlight:
 				LineHighlight.remove_child(highlight)
 				highlight.queue_free()
 				highlight = highlight_lines.pop_back()
-			for pos in TIL.get_bres_line(Player.game_position, tilepos, GameWorld.fov_block_map):
-				var new_tile = TileHighlight.duplicate()
-				new_tile.rect_position = pos * 16
-				LineHighlight.add_child(new_tile)
-				highlight_lines.append(new_tile)
+			var angle = Player.game_position.angle_to_point(tilepos)
+			for cell in FOV.cast_cone(Player.game_position.x, Player.game_position.y, 15, angle, GameWorld.fov_block_map,deg2rad(35)):
+				DBG.highlight_cell(cell)
+			
+#			var oct = FOV.get_octant(Player.game_position, tilepos)
+#			for cell in FOV.lerp_line(Player.game_position.x, Player.game_position.y, tilepos.x, tilepos.y, oct, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
+#				DBG.highlight_cell(cell)
+#			for cell in FOV.calc_visible_cells_from(tilepos.x, tilepos.y, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
+#				DBG.highlight_cell(cell)
+#			for pos in TIL.interpolated_line(Player.game_position, tilepos):
+#				var new_tile = BlueHighlight.duplicate()
+#				new_tile.rect_position = pos * 16
+#				LineHighlight.add_child(new_tile)
+#				highlight_lines.append(new_tile)
 			
 
 func _on_world_ready():
@@ -69,6 +82,8 @@ func _on_world_ready():
 	Player.activate()
 
 func _on_do_action(action):
+	if action.target_type == ACT.TargetType.TargetNone:
+		action.finish()
 	for target in action.action_targets:
 		var target_response = target.can_do_action(action)
 		var action_response = action.process_action_response(ACT.ActionPhase.Can, target_response, target)

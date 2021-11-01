@@ -82,7 +82,7 @@ func impossible():
 	EVNT.emit_signal("action_impossible", self)
 
 func finish():
-	self.targets = []
+	self.action_targets = []
 	self.action_state = ACT.ActionState.Complete
 
 func do_action(targets):

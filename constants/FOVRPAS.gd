@@ -34,6 +34,19 @@ const RESTRICTIVENESS = 0
 # Setting this to False will make the algorithm more restrictive.
 const VISIBLE_ON_EQUAL = false
 
+enum FOVOctantType {NNW=0, NWW, SWW, SSW, SSE, SEE, NEE, NNE, MAX}
+
+const FOVOctants = {
+	FOVOctantType.NNW: {x = -1, y = -1, flip = false, shift=false },
+	FOVOctantType.NWW: {x = -1, y = -1, flip = true, shift=true },
+	FOVOctantType.SWW: {x = -1, y = 1, flip = true, shift=false },
+	FOVOctantType.SSW: {x = -1, y = 1, flip = false, shift=true },
+	FOVOctantType.SSE: {x = 1, y = 1, flip = false, shift=false },
+	FOVOctantType.SEE: {x = 1, y = 1, flip = true, shift=true },
+	FOVOctantType.NEE: {x = 1, y = -1, flip = true, shift=false },
+	FOVOctantType.NNE: {x = 1, y = -1, flip = false, shift=true },
+}
+
 class CellAngles extends Reference:
 	var near
 	var far
@@ -47,30 +60,33 @@ class CellAngles extends Reference:
 # Parameter tiles should be multidimensional array of each tile's visibility 
 #
 # Returns an array with all Vect2 visible from the centerpoint.
-static func calc_visible_cells_from(x_center, y_center, radius, tiles):
-	var cells = _visible_cells_in_quadrant_from(x_center, y_center, 1, 1, radius, tiles)
-	cells.append_array(_visible_cells_in_quadrant_from(x_center, y_center, 1, -1, radius, tiles))
-	cells.append_array(_visible_cells_in_quadrant_from(x_center, y_center, -1, -1, radius, tiles))
-	cells.append_array(_visible_cells_in_quadrant_from(x_center, y_center, -1, 1, radius, tiles))
+static func calc_visible_cells_from(x_center, y_center, radius, tiles) ->PoolVector2Array:
+#	var cells = _visible_cells_in_quadrant_from(x_center, y_center, 1, 1, radius, tiles)
+#	cells.append_array(_visible_cells_in_quadrant_from(x_center, y_center, 1, -1, radius, tiles))
+#	cells.append_array(_visible_cells_in_quadrant_from(x_center, y_center, -1, -1, radius, tiles))
+#	cells.append_array(_visible_cells_in_quadrant_from(x_center, y_center, -1, 1, radius, tiles))
+	var cells = PoolVector2Array()
+	for oct in FOVOctants.values():
+		cells.append_array(_visible_cells_in_octant_from(x_center, y_center, oct, radius, tiles))
 	cells.append(Vector2(x_center, y_center))
+	print("Total cells: " + str(cells.size()))
 	return cells
 
 # Parameters quad_x, quad_y should only be 1 or -1. The combination of the two determines the quadrant.
 # Returns an array of Vect2.
-static func _visible_cells_in_quadrant_from(x_center, y_center, quad_x, quad_y, radius, tiles):
-	var cells = _visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, radius, tiles, true)
-	cells.append_array(_visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, radius, tiles, false))
-	return cells
+#static func _visible_cells_in_quadrant_from(x_center, y_center, quad_x, quad_y, radius, tiles) -> PoolVector2Array:
+#	var cells = _visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, radius, tiles, true)
+#	cells.append_array(_visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, radius, tiles, false))
+#	return cells
 
 # Returns an array of Vect2
 # Utilizes the NOT_VISIBLE_BLOCKS_VISION constant.
-static func  _visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, radius, tiles, is_vertical) -> Array:
+static func  _visible_cells_in_octant_from(x_center, y_center, oct, radius, tiles) -> PoolVector2Array:
 	var iteration = 1
 	var visible_cells = []
 	var obstructions = []
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
-
 	# End conditions:
 	#   iteration > radius
 	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
@@ -82,15 +98,16 @@ static func  _visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, r
 
 		# Start at the center (vertical or horizontal line) and step outwards
 		for step in range(iteration + 1):
-			var cell = _cell_at(x_center, y_center, quad_x, quad_y, step, iteration, is_vertical)
-
+			var cell = _cell_at(x_center, y_center, oct, step, iteration)
 			if _cell_in_radius(x_center, y_center, cell, radius):
 				var cell_angles = CellAngles.new((float(step) * angle_allocation),
 											(float(step + .5) * angle_allocation),
 											(float(step + 1) * angle_allocation))
-
 				if _cell_is_visible(cell_angles, obstructions):
-					visible_cells.append(cell)
+					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
+						pass
+					else:
+						visible_cells.append(cell)
 					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
 						obstructions = _add_obstruction(obstructions, cell_angles)
 				elif NOT_VISIBLE_BLOCKS_VISION:
@@ -100,14 +117,209 @@ static func  _visible_cells_in_octant_from(x_center, y_center, quad_x, quad_y, r
 
 	return visible_cells
 
+static func  _reverse_cast(x_center, y_center, t_x, t_y, oct, radius, tiles) -> PoolVector2Array:
+	var target_iteration = _iteration_at(x_center, y_center, t_x, t_y, oct)
+	var target_step = _step_at(x_center, y_center, t_x, t_y, oct)
+	var target_allocation = 1.0 / float(target_iteration + 1)
+	var target_angles = CellAngles.new(float(target_step) * target_allocation, float(target_step+0.5) * target_allocation, float(target_step + 1) * target_allocation)
+	var target_cells = PoolVector2Array()
+	var prefer_x = false
+	if !tiles[t_x][t_y]:
+		target_cells.append(Vector2(t_x, t_y))
+	var origin_cell = Vector2(x_center, y_center)
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	# End conditions:
+	#   iteration > radius
+	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
+	#      to 1)
+	for iteration in range(target_iteration - 1, 0, -1):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+		var closest_dist = INF
+		var best_cell = null
+		var best_step = 0
+		# Start at the center (vertical or horizontal line) and step outwards
+		for step in range(floor(target_angles.near * num_cells_in_row), ceil(target_angles.far * num_cells_in_row)):
+			var cell = _cell_at(x_center, y_center, oct, step, iteration)
+			if !tiles[cell.x][cell.y]:
+				var cell_dist = abs(target_angles.center - (float(step) * angle_allocation))
+				if cell_dist < closest_dist:
+					closest_dist = cell_dist
+					best_cell = cell
+					best_step = step
+		if best_cell:
+			target_cells.append(best_cell)
+			target_angles = CellAngles.new(float(best_step) * angle_allocation, float(best_step+0.5)* angle_allocation, float(best_step + 1.0) * angle_allocation)
+		else:
+			target_cells = PoolVector2Array()
+			var new_center_step = int(target_angles.center*num_cells_in_row)
+			target_angles = CellAngles.new(float(new_center_step - 0.5) * angle_allocation, float(new_center_step) * angle_allocation, float(new_center_step + 0.5) * angle_allocation)
+			
+	return target_cells
+	
+static func lerp_line(x_center, y_center, t_x, t_y, oct, radius, tiles) -> PoolVector2Array:
+	var target_iteration = _iteration_at(x_center, y_center, t_x, t_y, oct)
+	var target_step = _step_at(x_center, y_center, t_x, t_y, oct)
+	var target_allocation = 1.0 / float(target_iteration + 1)
+	var target_angles = CellAngles.new(float(target_step) * target_allocation, float(target_step+0.5) * target_allocation, float(target_step + 1) * target_allocation)
+	var target_cells = PoolVector2Array()
+	var prefer_x = false
+	var last_cell = Vector2(t_x, t_y)
+	if !tiles[t_x][t_y]:
+		target_cells.append(last_cell)
+	var origin_cell = Vector2(x_center, y_center)
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	var dx = t_x - x_center
+	var dy = t_y - y_center
+	var N = max(abs(dx), abs(dy))
+	for iteration in range(target_iteration, 0, -1):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+		var closest_dist = INF
+		var best_cell = null
+		var best_step = 0
+		var t = float(iteration)/float(N)
+		var lerp_target_cell = Vector2(round(lerp(t_x, x_center, t)), round(lerp(t_y, y_center, t)))
+		# Start at the center (vertical or horizontal line) and step outwards
+		target_step = _step_at(x_center, y_center, lerp_target_cell.x, lerp_target_cell.y, oct)
+		for step in range(floor(target_angles.near * num_cells_in_row), ceil(target_angles.far * num_cells_in_row)):
+			var cell = _cell_at(x_center, y_center, oct, step, iteration)
+			if !tiles[cell.x][cell.y]:
+				if cell == lerp_target_cell:
+					best_cell = cell
+					best_step = step
+					break
+				var cell_dist = abs(target_angles.center - (float(step) * angle_allocation))
+				if cell_dist < closest_dist:
+					closest_dist = cell_dist
+					best_cell = cell
+					best_step = step
+		if best_cell:
+			target_cells.append(best_cell)
+			last_cell = best_cell
+		else:
+			target_cells = PoolVector2Array()
+			
+	return target_cells
+
+static func _cone_cast_octant_rot(x_center, y_center, oct, radius, tiles, rotation, width) -> PoolVector2Array:
+	var iteration = 1
+	var visible_cells = []
+	var obstructions = []
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	var origin_cell = Vector2(x_center, y_center)
+	# End conditions:
+	#   iteration > radius
+	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
+	#      to 1)
+	while iteration <= radius and not (obstructions.size() == 1 and
+										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+
+		# Start at the center (vertical or horizontal line) and step outwards
+		for step in range(ceil((iteration + 1) * width)):
+			var cell = _cell_at(x_center, y_center, oct, step, iteration)
+			cell = (cell - origin_cell).rotated(rotation) + origin_cell
+			cell = Vector2(int(cell.x), int(cell.y))
+			if _cell_in_radius(x_center, y_center, cell, radius):
+				var cell_angles = CellAngles.new((float(step) * angle_allocation),
+											(float(step + .5) * angle_allocation),
+											(float(step + 1) * angle_allocation))
+				if _cell_is_visible(cell_angles, obstructions):
+					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
+						pass
+					else:
+						visible_cells.append(cell)
+					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
+						obstructions = _add_obstruction(obstructions, cell_angles)
+				elif NOT_VISIBLE_BLOCKS_VISION:
+					obstructions = _add_obstruction(obstructions, cell_angles)
+
+		iteration += 1
+
+	return visible_cells
+
+static func _cone_cast_octant(x_center, y_center, oct, radius, tiles, step_cut, iteration_cut) -> PoolVector2Array:
+	var iteration = 1
+	var visible_cells = []
+	var obstructions = []
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	var origin_cell = Vector2(x_center, y_center)
+	# End conditions:
+	#   iteration > radius
+	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
+	#      to 1)
+	while iteration <= radius and not (obstructions.size() == 1 and
+										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+
+		# Start at the center (vertical or horizontal line) and step outwards
+		for step in range(iteration + 1 ):
+			var cell = _cell_at(x_center, y_center, oct, step, iteration)
+			cell = Vector2(int(cell.x), int(cell.y))
+			if _cell_in_radius(x_center, y_center, cell, radius):
+				var cell_angles = CellAngles.new((float(step) * angle_allocation),
+											(float(step + .5) * angle_allocation),
+											(float(step + 1) * angle_allocation))
+				if _cell_is_visible(cell_angles, obstructions):
+					if (!oct.shift and step == num_cells_in_row - 1) or (oct.shift and step == 0):
+						pass
+					elif step <= step_cut and iteration <= iteration_cut:
+						visible_cells.append(cell)
+					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
+						obstructions = _add_obstruction(obstructions, cell_angles)
+				elif NOT_VISIBLE_BLOCKS_VISION:
+					obstructions = _add_obstruction(obstructions, cell_angles)
+
+		iteration += 1
+		
+	return visible_cells
+
+static func cast_cone(x_center, y_center, radius, angle, tiles, width):
+	var max_point = Vector2(radius*-1, 0).rotated(angle)
+	var right_max = Vector2(max_point.x, max_point.y).rotated(width/2).round()
+	var left_max = Vector2(right_max.x, right_max.y).reflect(max_point).round()
+	var right_oct = get_octant(Vector2.ZERO, right_max)
+	var left_oct = get_octant(Vector2.ZERO, left_max)
+	var right_iteration = _iteration_at(0, 0, right_max.x, right_max.y, right_oct)
+	var left_iteration = _iteration_at(0, 0, left_max.x, left_max.y, left_oct)
+	var right_step = _step_at(0, 0, right_max.x, right_max.y, right_oct)
+	var left_step = _step_at(0, 0, left_max.x, left_max.y, left_oct)
+	var cells = _cone_cast_octant(x_center, y_center, right_oct, radius, tiles, right_step, right_iteration)
+	cells.append_array(_cone_cast_octant(x_center, y_center, left_oct, radius, tiles, left_step, left_iteration))
+	return cells
+	
 # Returns a Vector2.
-static func _cell_at(x_center, y_center, quad_x, quad_y, step, iteration, is_vertical) -> Vector2:
+static func _cell_at(x_center, y_center, oct, step, iteration) -> Vector2:
 	var cell
-	if is_vertical:
-		cell = Vector2(x_center + step * quad_x, y_center + iteration * quad_y)
+	if oct.flip:
+		cell = Vector2(x_center + step * oct.x, y_center + iteration * oct.y)
 	else:
-		cell = Vector2(x_center + iteration * quad_x, y_center + step * quad_y)
+		cell = Vector2(x_center + iteration * oct.x, y_center + step * oct.y)
 	return cell
+
+
+static func _iteration_at(x_center, y_center, cell_x, cell_y, oct) -> int:
+	var iteration
+	if oct.flip:
+		iteration = (cell_y - y_center)/oct.y
+	else:
+		iteration = (cell_x - x_center)/oct.x
+	return iteration
+
+static func _step_at(x_center, y_center, cell_x, cell_y, oct) -> int:
+	var step
+	if oct.flip:
+		step = (cell_x - x_center)/oct.x
+	else:
+		step = (cell_y - y_center)/oct.y
+	return step
 
 static func _cell_in_radius(x_center, y_center, cell, radius) -> bool:
 	var cell_distance = sqrt((x_center - cell.x) * (x_center - cell.x) +
@@ -178,9 +390,12 @@ static func _combine_obstructions(old, new) -> bool:
 
 	return false
 
+static func octant_line_to_point(center_x, center_y, quad_x, quad_y, radius, tiles, is_vertical):
+	pass
+
 static func can_see_point(from, to, tiles, site_range):
-	var oct_def = get_octant(from, to)
-	for tile in _visible_cells_in_octant_from(from.x, from.y, oct_def[0], oct_def[1], site_range, tiles, oct_def[2]):
+	var oct = get_octant(from, to)
+	for tile in _visible_cells_in_octant_from(from.x, from.y, oct, site_range, tiles):
 		if tile == to:
 			return true
 	return false
@@ -188,46 +403,22 @@ static func can_see_point(from, to, tiles, site_range):
 static func get_octant(from, to):
 	var mod_x
 	var mod_y
-	var delta = (from - to).normalized()
-	var delta_abs = delta.abs()
-	if delta_abs.y > delta_abs.x:
-		mod_x = delta.y
-		mod_y = delta.x
+	var delta_v = (to - from)
+	var delta_abs = delta_v.abs()
+	if from.x + (delta_abs.x) == to.x:
+		mod_x = 1
 	else:
-		mod_x = delta.x
-		mod_y = delta.y
-	var flip = delta_abs.x <= delta_abs.y
-	return [mod_x, mod_y, flip]
-
-#LOS code lifted from https://github.com/luctius/heresyrl/blob/master/src/fov/rpsc_fov.c
-static func calc_los_tiles(tiles, from, to):
-	var max_x = tiles.size()
-	var max_y = tiles[0].tiles.size()
-	var mod_x = 1
-	var mod_y = 1
-	var los_tiles = []
-	if to.x < 0 or to.y < 0 or to.x > max_x or to.y > max_y:
-		return los_tiles
-	var delta = (from - to)
-	var delta_abs = delta.abs()
-	var flip = delta_abs.x >= delta_abs.y
-	if from.x + (delta.x * -1) == to.x:
 		mod_x = -1
-	if from.y + (delta.y * -1) == to.y:
-		mod_y = -1
-	var obstacles = 0
-	var max_obstacles = max(abs(from.x - to.x), abs(from.y - to.y)) * 3
-	var blocked_list = []
-	var cell_dst
-	var row_dst
-	if flip:
-		cell_dst = delta_abs.y
-		row_dst = delta_abs.x
+	if from.y + (delta_abs.y) == to.y:
+		mod_y = 1
 	else:
-		cell_dst = delta_abs.x
-		row_dst = delta_abs.y
-	var angle_allocation = 1.0 / float(row_dst + 1)
-	var target_angle = CellAngles.new((float(cell_dst) * angle_allocation),
-			(float(cell_dst + .5) * angle_allocation),
-			(float(cell_dst + 1) * angle_allocation))
+		mod_y = -1
+	var flip = delta_abs.x <= delta_abs.y
+	#Probably could have handled this differently
+	for oct in FOVOctants.values():
+		if oct.x == mod_x and oct.y == mod_y and oct.flip == flip:
+			return oct
+	return false
+
+
 	

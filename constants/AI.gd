@@ -7,11 +7,12 @@ extends Node
 
 enum AIInfoType {LocalAreaAction}
 
-enum AIScript {AimlessWander, PlayerChaser}
+enum AIScript {AimlessWander, PlayerChaser, FOVDebug}
 
 var PreAIScriptMapping = [
 	[AIScript.AimlessWander, "res://actors/AI/AimlessWander.gd"],
 	[AIScript.PlayerChaser, "res://actors/AI/PlayerChaser.gd"],
+	[AIScript.FOVDebug, "res://actors/AI/FOVDebugAI.gd"],
 ]
 
 var AIScriptMapping = {
