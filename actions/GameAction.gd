@@ -8,7 +8,7 @@ var action_actor
 var action_type = ACT.Type.None
 var action_targets
 var target_hints = ACT.TargetHint.None
-var action_range = 1
+var action_range = 1.5
 var action_area = 0
 var action_state = ACT.ActionState.Ready
 var target_type = ACT.TargetType.TargetNone
