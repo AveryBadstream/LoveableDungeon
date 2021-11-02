@@ -6,28 +6,57 @@ signal effect_done(effect) #mostly for actionless effects like toggle
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var effect_action
+var effect_parent
 var effect_target
+var effect_actor
+var after_queue = []
+var effect_hint_mask = EFCT.EffectHint.None
 
-func _init(action, target):
-	effect_action = action
+func _init(parent, actor, target):
+	effect_parent = parent
 	effect_target = target
+	effect_actor = actor
 
-func process_effect_response(effect_phase, effect_response, actor):
-	if self.has_method("_on_phase_"+EFCT.EffectPhase.keys()[effect_phase]+"_"+EFCT.EffectResponse.keys()[effect_response]):
-		return self.call("_on_phase_"+EFCT.EffectPhase.keys()[effect_phase]+"_"+EFCT.EffectResponse.keys()[effect_response], effect_phase, effect_response, actor)
-	elif self.has_method("_on_phase_any_"+EFCT.EffectResponse.keys()[effect_response]):
-		return self.call("_on_phase_any_"+EFCT.EffectResponse.keys()[effect_response], effect_phase, effect_response, actor)
-	elif self.has_method("_on_phase_"+EFCT.EffectPhase.keys()[effect_phase]+"_"+"any"):
-		return self.call("_on_phase_"+EFCT.EffectPhase.keys()[effect_phase]+"_"+"any", effect_phase, effect_response, actor)
-	else:
-		return EFCT.EffectResponse.Proceed
+func process_pre_effect_response(effect_response):
+	if not effect_response:
+		return
+	elif effect_response.response_type == EFCT.EffectResponseType.QueueAfter:
+		for next_effect in effect_response.new_effects:
+			after_queue.append(next_effect)
+
+func process_post_effect_response(effect_response):
+	if not effect_response:
+		return
+
+func setup():
+	pass
+
+func pre_notify():
+	process_pre_effect_response(effect_target.effect_pre(self))
+
+func post_notify():
+	process_post_effect_response(effect_target.effect_post(self))
+
+func process_after_queue():
+	for effect in after_queue:
+		EVNT.publish_effect(effect)
+
+func do_effect():
+	run_effect()
+	process_after_queue()
+	effect_after()
 
 func run_effect():
-	return EFCT.EffectResponse.Done
+	pass
 
-func effect_done():
-	effect_action.effect_done(self)
+func effect_done(effect):
+	if after_queue.has(effect):
+		after_queue.erase(effect)
+		effect_after()
+
+func effect_after():
+	if after_queue.size() == 0:
+		effect_parent.effect_done(self)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

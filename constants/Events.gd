@@ -59,7 +59,7 @@ func publish_action(action):
 
 func publish_effect(effect):
 	emit_signal("do_effect", effect)
-	effect.run_effect()
+
 
 func emit_action(who, action_array):
 	if action_array[0] == ACT.Type.None:

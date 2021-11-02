@@ -110,3 +110,7 @@ func do_action(targets):
 	self.action_targets = targets
 	self.action_state = ACT.ActionState.Acting
 	EVNT.publish_action(self)
+
+func effect_finished(effect):
+	self.action_state = ACT.ActionState.Complete
+	EVNT.emit_signal("action_complete", self)

@@ -6,22 +6,23 @@ extends GameEffect
 # var b = "text"
 
 
-func _init(parent, targets).(parent, targets):
+func _init(parent, toggle_object, targets).(parent, toggle_object, targets):
 	pass
 
-func run_effect():
-	if WRLD.cell_is_visible(effect_action.game_position):
-		EFCT.queue_effect(self)
-		AUD.play_sound(AUD.SFX.Switch)
-		var cur_frame = effect_action.frame
-		var next_frame = ( effect_action.frame + 1 ) % 2
-		var tween:Tween = WRLD.get_free_tween()
-		tween.interpolate_property(effect_action, "frame", cur_frame, next_frame, 0.1, Tween.TRANS_QUAD, Tween.EASE_OUT)
-		tween.start()
-		yield(tween, "tween_all_completed")
+func setup():
+	effect_hint_mask |= EFCT.EffectHint.Interact | EFCT.EffectHint.Triggered
+
+func pre_notify():
 	for target in effect_target:
-		target._on_toggle(effect_action)
-	EFCT.effect_done(self)
+		process_pre_effect_response(target.effect_pre(self))
+
+func post_notify():
+	for target in effect_target:
+		process_post_effect_response(target.effect_post(self))
+
+func run_effect():
+	var visible = WRLD.cell_is_visible(effect_actor.game_position) and WRLD.cell_is_visible(effect_actor.game_position)
+	effect_actor.toggle(visible)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

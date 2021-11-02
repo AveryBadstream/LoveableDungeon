@@ -15,6 +15,7 @@ export(bool) var blocks_vision setget set_blocks_vision, get_blocks_vision
 export var player_remembers := false
 var last_game_position = Vector2(0,0)
 var connects_to = []
+var claiming_effects = []
 
 var tentatively_visible = false
 var my_ghost
@@ -35,6 +36,18 @@ func supports_action(action) -> bool:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
+
+func effect_pre(effect):
+	return null
+
+func effect_post(effect):
+	return null
+
+func effect_claim(effect):
+	claiming_effects.append(effect)
+
+func effect_release(effect):
+	claiming_effects.erase(effect)
 
 func can_do_action(action) -> bool:
 	var funcname = "_can_do_"+ACT.Type.keys()[action.action_type]
@@ -115,6 +128,10 @@ func set_game_position(new_position: Vector2):
 		EVNT.emit_signal("update_visible_map", get_game_position(), true)
 		EVNT.emit_signal("update_fov")
 	self.position = new_position * 16
+	if WRLD.cell_is_visible(new_position):
+		self.set_visible(true)
+	else:
+		self.set_visible(false)
 	EVNT.emit_signal("object_moved", self, last_game_position)
 
 func get_game_position() -> Vector2:

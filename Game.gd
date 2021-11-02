@@ -38,6 +38,7 @@ func _ready():
 	EVNT.subscribe("action_complete", self, "_on_action_complete")
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
+	EVNT.subscribe("do_effect", self, "_on_do_effect")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
@@ -82,6 +83,12 @@ func _on_world_ready():
 	turn_order = $GameWorld/LevelActors.get_children()
 	current_actor = Player
 	Player.activate()
+
+func _on_do_effect(effect):
+	effect.setup()
+	effect.pre_notify()
+	effect.do_effect()
+	effect.post_notify()
 
 func _on_do_action(action):
 	if action.target_type == ACT.TargetType.TargetNone:

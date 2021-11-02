@@ -1,7 +1,70 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://objects/CellBars.gd" type="Script" id=1]
 [ext_resource path="res://art/Openables.png" type="Texture" id=2]
+[ext_resource path="res://art/FF_punch.wav" type="AudioStream" id=3]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Close"
+length = 0.3
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.12 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 1, 0 ]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("CellBarsPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 3 )
+} ],
+"times": PoolRealArray( 0 )
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "Close"
+length = 0.3
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.12 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 0, 1 ]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("CellBarsPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 3 )
+} ],
+"times": PoolRealArray( 0 )
+}
 
 [node name="CellBars" type="Sprite"]
 texture = ExtResource( 2 )
@@ -11,5 +74,13 @@ region_enabled = true
 region_rect = Rect2( 0, 0, 32, 16 )
 script = ExtResource( 1 )
 default_action = 0
+display_name = "Cell Bars"
 is_phaseable = true
 player_remembers = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Close = SubResource( 1 )
+anims/Open = SubResource( 2 )
+
+[node name="CellBarsPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )

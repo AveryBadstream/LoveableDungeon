@@ -27,7 +27,7 @@ func impossible():
 	.impossible()
 
 func finish():
-	self.publish_effect(use_effect.new(self, self.action_targets[0].game_position))
+	self.publish_effect(use_effect.new(self, self.action_actor, self.action_targets[0]))
 
 func effect_finished(effect):
 	self.action_state = ACT.ActionState.Complete

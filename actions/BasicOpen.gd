@@ -5,7 +5,7 @@ extends GameAction
 # var a = 2
 # var b = "text"
 
-
+var use_effect = preload("res://effects/Use.gd")
 # Called when the node enters the scene tree for the first time.
 func _init(actor).(actor):
 	self.target_type = ACT.TargetType.TargetObject
@@ -27,9 +27,7 @@ func impossible():
 	.impossible()
 
 func finish():
-	#Objects need to open themselves I suppose?
-	self.action_state = ACT.ActionState.Complete
-	EVNT.emit_signal("action_complete", self)
+	self.publish_effect(use_effect.new(self, self.action_actor, self.action_targets[0]))
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
