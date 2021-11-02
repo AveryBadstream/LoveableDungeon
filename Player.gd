@@ -22,7 +22,10 @@ func _input(event):
 		return
 	if event is InputEventMouseButton:
 			if event.button_index == BUTTON_LEFT and event.pressed:
-				act_at_tile(WRLD)
+				var m_cell = WRLD.get_mouse_game_position()
+				if not act_at_location(m_cell):
+					var at_cell = (m_cell - get_game_position()).normalized().snapped(Vector2(1,1))
+					act_in_direction(at_cell)
 	if event.is_action("move_left"):
 		act_in_direction(Vector2.LEFT)
 	elif event.is_action("move_right"):
@@ -44,12 +47,22 @@ func _input(event):
 		pending_action = local_default_actions[ACT.Type.Move]
 		pending_action.mark_pending()
 		
-
+func act_at_location(at_cell: Vector2):
+	for hint in WRLD.get_action_hints(at_cell.round()):
+		if local_default_actions.has(hint):
+			var candidate_action = local_default_actions[hint]
+			if candidate_action.test_action_at(at_cell):
+				acting_state = ACT.ActingState.Wait
+				candidate_action.do_action_at(at_cell)
+				return true
+	return false
+	
 func act_in_direction(dir: Vector2):
 	if not pending_action:
 		var action_hint = WRLD.get_action_hint(self.get_game_position() + dir)
 		print("Got default action: " + ACT.Type.keys()[action_hint])
 		if local_default_actions.has(action_hint):
+			acting_state = ACT.ActingState.Wait
 			local_default_actions[action_hint].do_action_at(self.get_game_position() + dir)
 		else:
 			return

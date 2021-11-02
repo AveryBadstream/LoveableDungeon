@@ -35,7 +35,7 @@ func do_action(targets):
 
 func finish():
 	#Maybe this is a case to add the event structures I want?
-	action_targets[0].game_position = action_targets[0].game_position  - (self.action_actor.game_position  - action_targets[0].game_position).normalized() 
+	action_targets[0].game_position = action_targets[0].game_position  - (self.action_actor.game_position  - action_targets[0].game_position).normalized().round() 
 	self.action_state = ACT.ActionState.Complete
 	EVNT.emit_signal("action_complete", self)
 

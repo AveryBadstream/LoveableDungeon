@@ -34,6 +34,9 @@ signal action_impossible(action)
 signal action_failed(action)
 signal action_complete(action)
 
+#Effect signals
+signal do_effect(effect)
+
 #FOV calculations
 signal update_fov()
 signal begin_fov()
@@ -53,6 +56,10 @@ func subscribe(signal_name, target, target_method):
 
 func publish_action(action):
 	emit_signal("do_action", action)
+
+func publish_effect(effect):
+	emit_signal("do_effect", effect)
+	effect.run_effect()
 
 func emit_action(who, action_array):
 	if action_array[0] == ACT.Type.None:

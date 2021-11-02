@@ -14,6 +14,7 @@ var action_state = ACT.ActionState.Ready
 var target_type = ACT.TargetType.TargetNone
 var target_area = ACT.TargetArea.TargetSingle
 var target_priority = [ACT.TargetType.TargetTile, ACT.TargetType.TargetObject, ACT.TargetType.TargetItem, ACT.TargetType.TargetActor]
+var running_effects = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -58,6 +59,25 @@ func do_action_at(target_cell):
 	self.impossible()
 	return false
 
+func test_action_at(at_cell):
+	if action_actor.game_position.distance_to(at_cell) > action_range:
+		return false
+	var targets = WRLD.get_action_targets_cell(self, at_cell)
+	if targets.size() == 0:
+		return false
+	return true
+
+func publish_effect(effect):
+	self.running_effects.append(effect)
+	EVNT.publish_effect(effect)
+
+func effect_done(effect):
+	self.running_effects.erase(effect)
+	if running_effects.size() == 0:
+		self.action_targets = []
+		self.action_state = ACT.ActionState.Complete
+		EVNT.emit_signal("action_complete", self)
+
 func get_action_targets():
 	return WRLD.get_action_targets_area(self, self.get_origin_cell(), self.action_range)
 
@@ -84,11 +104,9 @@ func impossible():
 func finish():
 	self.action_targets = []
 	self.action_state = ACT.ActionState.Complete
+	EVNT.emit_signal("action_complete", self)
 
 func do_action(targets):
 	self.action_targets = targets
 	self.action_state = ACT.ActionState.Acting
 	EVNT.publish_action(self)
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

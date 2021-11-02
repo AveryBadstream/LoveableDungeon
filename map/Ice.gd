@@ -13,7 +13,7 @@ func _init(is_walkable, is_flyable, is_phaseable, blocks_fov).(is_walkable, is_f
 	pass
 
 func object_entered(object, from_cell):
-	var to_cell = object.game_position  - (from_cell  - object.game_position).normalized()
+	var to_cell = object.game_position  - (from_cell  - object.game_position).normalized().round()
 	if WRLD.is_tile_walkable(to_cell):
 		object.game_position = to_cell
 

@@ -13,6 +13,8 @@ export var is_phaseable := false
 var is_player := false
 export(bool) var blocks_vision setget set_blocks_vision, get_blocks_vision
 export var player_remembers := false
+var last_game_position = Vector2(0,0)
+var connects_to = []
 
 var tentatively_visible = false
 var my_ghost
@@ -105,8 +107,7 @@ func _on_end_fov():
 	self.set_visible(tentatively_visible)
 
 func set_game_position(new_position: Vector2):
-	var old_position = get_game_position()
-	if new_position == old_position:
+	if new_position == last_game_position:
 		return
 	if self.blocks_vision:
 		EVNT.emit_signal("update_visible_map", get_game_position(), false)
@@ -114,7 +115,7 @@ func set_game_position(new_position: Vector2):
 		EVNT.emit_signal("update_visible_map", get_game_position(), true)
 		EVNT.emit_signal("update_fov")
 	self.position = new_position * 16
-	EVNT.emit_signal("object_moved", self, old_position)
+	EVNT.emit_signal("object_moved", self, last_game_position)
 
 func get_game_position() -> Vector2:
 	return self.position / 16
@@ -128,7 +129,7 @@ func get_blocks_vision():
 	return _blocks_vision
 
 func connect_to(target_object):
-	self.connect("toggle", target_object, "_on_toggle")
+	self.connects_to.append(target_object)
 
 func _on_toggle(toggled_by):
 	pass
@@ -136,6 +137,8 @@ func _on_toggle(toggled_by):
 func check_adjacent(object):
 	return (self.game_position - object.game_position).length() == 1
 
+func effect_done(effect):
+	pass
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
