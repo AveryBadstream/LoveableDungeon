@@ -273,6 +273,19 @@ region_rect = Rect2( 96, 144, 16, 16 )
 script = ExtResource( 11 )
 default_action = 0
 display_name = "You"
+is_walkable = null
+is_flyable = null
+is_phaseable = null
+blocks_vision = null
+player_remembers = null
+supported_actions = null
+mob_ai = null
+actions = null
+default_move = null
+default_open = null
+default_close = null
+default_push = null
+default_use = null
 
 [node name="Camera2D" type="Camera2D" parent="GameWorld/LevelActors/Player"]
 current = true

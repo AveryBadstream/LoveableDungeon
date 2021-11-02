@@ -20,6 +20,9 @@ var pending_action = ACT.Type.None
 func _input(event):
 	if !event.is_pressed() or self.acting_state == ACT.ActingState.Wait:
 		return
+	if event is InputEventMouseButton:
+			if event.button_index == BUTTON_LEFT and event.pressed:
+				act_at_tile(WRLD)
 	if event.is_action("move_left"):
 		act_in_direction(Vector2.LEFT)
 	elif event.is_action("move_right"):
@@ -36,6 +39,9 @@ func _input(event):
 		pending_action.mark_pending()
 	elif event.is_action("push"):
 		pending_action = local_default_actions[ACT.Type.Push]
+		pending_action.mark_pending()
+	elif event.is_action("move"):
+		pending_action = local_default_actions[ACT.Type.Move]
 		pending_action.mark_pending()
 		
 

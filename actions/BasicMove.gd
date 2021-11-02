@@ -21,6 +21,9 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 	self.action_state = ACT.ActionState.Failed
 	return ACT.ActionResponse.Failed
 
+func mark_pending():
+	MSG.action_message("Move where?", self)
+
 func finish():
 	self.action_actor.game_position = self.action_targets[0].game_position
 	self.action_state = ACT.ActionState.Complete

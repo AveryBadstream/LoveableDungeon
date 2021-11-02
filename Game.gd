@@ -40,23 +40,23 @@ func _ready():
 #func _process(delta):
 #	pass
 
-func _input(event):
-	if event is InputEventMouseButton:
-		if event.button_index == BUTTON_LEFT and event.pressed:
-			var tilepos = GameWorld.TMap.world_to_map(get_global_mouse_position())
-			if WRLD.world_dimensions and (
-					tilepos.x  < 0 or tilepos.x > WRLD.world_dimensions.x
-					or tilepos.y < 0 or tilepos.y > WRLD.world_dimensions.y):
-						return
-			DBG.clear_highlight()
-			var highlight = highlight_lines.pop_back()
-			while highlight:
-				LineHighlight.remove_child(highlight)
-				highlight.queue_free()
-				highlight = highlight_lines.pop_back()
-			var angle = tilepos.angle_to_point(Player.game_position)
-			for cell in FOV.cast_cone_at(Player.game_position, tilepos, deg2rad(45), 10, GameWorld.fov_block_map):
-				DBG.highlight_cell(cell)
+#func _input(event):
+#	if event is InputEventMouseButton:
+#		if event.button_index == BUTTON_LEFT and event.pressed:
+#			var tilepos = GameWorld.TMap.world_to_map(get_global_mouse_position())
+#			if WRLD.world_dimensions and (
+#					tilepos.x  < 0 or tilepos.x > WRLD.world_dimensions.x
+#					or tilepos.y < 0 or tilepos.y > WRLD.world_dimensions.y):
+#						return
+#			DBG.clear_highlight()
+#			var highlight = highlight_lines.pop_back()
+#			while highlight:
+#				LineHighlight.remove_child(highlight)
+#				highlight.queue_free()
+#				highlight = highlight_lines.pop_back()
+#			var angle = tilepos.angle_to_point(Player.game_position)
+#			for cell in FOV.cast_cone_at(Player.game_position, tilepos, deg2rad(45), 10, GameWorld.fov_block_map):
+#				DBG.highlight_cell(cell)
 			
 #			var oct = FOV.get_octant(Player.game_position, tilepos)
 #			for cell in FOV.cast_lerp_line(Player.game_position, tilepos, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
