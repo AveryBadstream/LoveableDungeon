@@ -11,6 +11,7 @@ class_name ITile
 
 var game_position: Vector2
 var actual_utile
+var claiming_effects = []
 
 var blocks_vision setget , get_blocks_vision
 
@@ -44,7 +45,17 @@ func do_action_post(action) -> int:
 func do_action(action) -> int:
 	return actual_utile.do_action(action)
 
+func effect_pre(effect):
+	return actual_utile.effect_pre(effect)
 
+func effect_post(effect):
+	return actual_utile.effect_post(effect)
+
+func effect_claim(effect):
+	claiming_effects.append(effect)
+
+func effect_release(effect):
+	claiming_effects.erase(effect)
 # Called when the node enters the scene tree for the first time.
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

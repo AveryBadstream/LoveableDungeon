@@ -2,22 +2,24 @@ extends Node
 
 signal effects_done()
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-enum Type {None, Move, Fly, Phase, Open, Close, Push, Pull, Use}
-# Called when the node enters the scene tree for the first time.
+enum EffectHint {None = 0, Movement = 1, Interact = 2, Triggered = 4}
 
-enum Effect {Movement, Hostile}
-
-enum ActionState {Failed, Ready, Acting, Complete, Impossible}
-
-enum EffectResponse {Stop, Impossible, Proceed, Hijacked, Failed, Done}
+enum EffectResponseType {Stop, Impossible, Proceed, Hijacked, Failed, Done, QueueAfter}
 
 enum EffectPhase {Pre, Do, Post}
 
 enum Effects {Move, Use, Toggle}
 
+class EffectResponse:
+	var response_from
+	var response_type
+	var new_effects = []
+	func _init(from, type):
+		response_from = from
+		response_type = type
+	
+	func add_effect(effect):
+		new_effects.append(effect)
 
 var PreEffectMapping = [
 	[Effects.Move, "res://effects/Move.gd"],

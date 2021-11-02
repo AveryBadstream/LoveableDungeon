@@ -91,10 +91,11 @@ func get_mouse_game_position():
 	return GameWorld.TMap.world_to_map(GameWorld.get_global_mouse_position())
 
 func cell_is_visible(at_cell):
-	if GameWorld.last_visiblilty_rect.has_point(at_cell):
-		for cell in GameWorld.last_visible_set:
-			if cell == at_cell:
-				return true
+	if is_ready:
+		if GameWorld.last_visiblilty_rect.has_point(at_cell):
+			for cell in GameWorld.last_visible_set:
+				if cell == at_cell:
+					return true
 	return false
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

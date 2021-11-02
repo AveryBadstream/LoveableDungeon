@@ -25,7 +25,7 @@ func mark_pending():
 	MSG.action_message("Move where?", self)
 
 func finish():
-	self.publish_effect(move_effect.new(self, self.action_targets[0].game_position))
+	self.publish_effect(move_effect.new(self, self.action_actor, self.action_targets[0]))
 
 func effect_finished(effect):
 	EVNT.emit_signal("action_complete", self)

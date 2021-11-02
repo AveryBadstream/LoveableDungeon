@@ -10,6 +10,7 @@ var default_action = ACT.Type.None
 var display_name = "ERROR"
 var supported_actions = []
 var blocks_vision = false
+var claiming_effects = []
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -62,6 +63,18 @@ func do_action_post(action) -> int:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
+
+func effect_pre(effect):
+	return null
+
+func effect_post(effect):
+	return null
+
+func effect_claim(effect):
+	claiming_effects.append(effect)
+
+func effect_release(effect):
+	claiming_effects.erase(effect)
 
 func do_action(action) -> int:
 	if self.has_method("_do_action"+ACT.Type.keys()[action.action_type]):
