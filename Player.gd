@@ -46,6 +46,9 @@ func _input(event):
 	elif event.is_action("move"):
 		pending_action = local_default_actions[ACT.Type.Move]
 		pending_action.mark_pending()
+	elif event.is_action("forcewave"):
+		pending_action = local_actions[ACT.Type.Push][0]
+		pending_action.mark_pending()
 		
 func act_at_location(at_cell: Vector2):
 	for hint in WRLD.get_action_hints(at_cell.round()):

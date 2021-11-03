@@ -50,6 +50,9 @@ signal ai_request_info(actor, ai_info_type, extra_info)
 
 #FX Signals
 signal FX_done(FX)
+
+#UI Targetting Hint Signals
+signal hint_area_cone(from, radius, width)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
