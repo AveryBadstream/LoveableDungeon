@@ -6,7 +6,7 @@
 
 [sub_resource type="Animation" id=1]
 resource_name = "Off"
-length = 0.4
+length = 0.12
 step = 0.01
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:frame")
@@ -37,7 +37,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id=2]
 resource_name = "On"
-length = 0.4
+length = 0.12
 step = 0.01
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:frame")
@@ -47,7 +47,7 @@ tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0, 0.02 ),
-"transitions": PoolRealArray( 1, 1 ),
+"transitions": PoolRealArray( 1, 1e-05 ),
 "update": 1,
 "values": [ 0, 1 ]
 }
@@ -70,6 +70,7 @@ tracks/1/keys = {
 texture = ExtResource( 2 )
 centered = false
 hframes = 2
+frame = 1
 region_enabled = true
 region_rect = Rect2( 0, 16, 32, 16 )
 script = ExtResource( 1 )

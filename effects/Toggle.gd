@@ -22,7 +22,15 @@ func post_notify():
 
 func run_effect():
 	var visible = WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(effect_actor.game_position)
+	if visible:
+		EFCT.queue_effect(self)
 	effect_actor.toggle(visible)
+	if FX.in_priority:
+		yield(FX, "priority_over")
+	running = false
+	if visible:
+		EFCT.effect_done(self)
+	emit_signal("effect_done", self)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

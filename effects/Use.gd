@@ -19,12 +19,17 @@ func setup():
 	self.effect_hint_mask |= EFCT.EffectHint.Interact
 
 func run_effect():
+	running = true
 	if WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(effect_target.game_position):
+		EFCT.queue_effect(self)
 		var tween:Tween = WRLD.get_free_tween()
 		tween.interpolate_property(effect_actor, "position", from, to, 0.05, Tween.TRANS_QUAD, Tween.EASE_OUT)
 		tween.interpolate_property(effect_actor, "position", to, from, 0.05, Tween.TRANS_QUAD, Tween.EASE_IN, 0.05)
 		tween.start()
 		yield(tween, "tween_all_completed")
+		EFCT.effect_done(self)
+	running = false
+	emit_signal("effect_done")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

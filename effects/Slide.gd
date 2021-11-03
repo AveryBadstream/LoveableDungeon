@@ -11,13 +11,13 @@ var from
 var to
 # Called when the node enters the scene tree for the first time.
 
-func _init(parent, actor, target, to_cell).(parent, actor, target):
+func _init(parent, actor, target, from_cell, to_cell).(parent, actor, target):
+	from = from_cell
 	to = to_cell
 	
 
 func run_effect():
 	running = true
-	from = effect_target.game_position
 	effect_target.set_game_position(to, false)
 	if WRLD.cell_is_visible(from) or WRLD.cell_is_visible(to):
 		EFCT.queue_effect(self)
