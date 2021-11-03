@@ -4,6 +4,9 @@ class_name GameObject
 
 signal actor_did_action(actor, object, action_type, success)
 signal toggle(myself)
+signal position_update_complete()
+
+const is_action = false
 
 export(ACT.Type) var default_action := ACT.Type.Move
 export var display_name := "ERROR"
@@ -13,7 +16,7 @@ export var is_phaseable := false
 var is_player := false
 export(bool) var blocks_vision setget set_blocks_vision, get_blocks_vision
 export var player_remembers := false
-var last_game_position = Vector2(0,0)
+var last_game_position = position/16
 var connects_to = []
 var claiming_effects = []
 
@@ -27,6 +30,10 @@ export(Array, ACT.Type) var supported_actions
 # var b = "text"
 
 var game_position: Vector2 setget set_game_position, get_game_position
+
+func set_initial_game_position(at_cell:Vector2):
+	position = at_cell * 16
+	last_game_position = at_cell
 
 func supports_action(action) -> bool:
 	var funcname = "_can_support_"+ACT.Type.keys()[action.action_type]
@@ -120,22 +127,24 @@ func _on_end_fov():
 	self.set_visible(tentatively_visible)
 
 func set_game_position(new_position: Vector2):
-	if new_position == last_game_position:
-		return
-	if self.blocks_vision:
-		EVNT.emit_signal("update_visible_map", get_game_position(), false)
+	if new_position != last_game_position:
+		if self.blocks_vision:
+			EVNT.emit_signal("update_visible_map", get_game_position(), false)
+			self.position = new_position * 16
+			EVNT.emit_signal("update_visible_map", get_game_position(), true)
+			EVNT.emit_signal("update_fov")
+			yield(EVNT, "end_fov")
 		self.position = new_position * 16
-		EVNT.emit_signal("update_visible_map", get_game_position(), true)
-		EVNT.emit_signal("update_fov")
-	self.position = new_position * 16
-	if WRLD.cell_is_visible(new_position):
-		self.set_visible(true)
-	else:
-		self.set_visible(false)
-	EVNT.emit_signal("object_moved", self, last_game_position)
+		if WRLD.cell_is_visible(new_position):
+			self.set_visible(true)
+		else:
+			self.set_visible(false)
+		last_game_position = new_position
+		EVNT.emit_signal("object_moved", self, last_game_position)
+	emit_signal("position_update_complete")
 
 func get_game_position() -> Vector2:
-	return self.position / 16
+	return last_game_position
 
 func set_blocks_vision(should_block):
 	if _blocks_vision != should_block:

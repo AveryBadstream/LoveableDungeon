@@ -21,7 +21,7 @@ func post_notify():
 		process_post_effect_response(target.effect_post(self))
 
 func run_effect():
-	var visible = WRLD.cell_is_visible(effect_actor.game_position) and WRLD.cell_is_visible(effect_actor.game_position)
+	var visible = WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(effect_actor.game_position)
 	effect_actor.toggle(visible)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

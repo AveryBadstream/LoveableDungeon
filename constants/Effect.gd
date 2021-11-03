@@ -2,7 +2,7 @@ extends Node
 
 signal effects_done()
 
-enum EffectHint {None = 0, Movement = 1, Interact = 2, Triggered = 4}
+enum EffectHint {None = 0, Movement = 1, Interact = 2, Triggered = 4, Forced = 8}
 
 enum EffectResponseType {Stop, Impossible, Proceed, Hijacked, Failed, Done, QueueAfter}
 

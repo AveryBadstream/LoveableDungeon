@@ -165,7 +165,7 @@ func _on_place_thing(thing_type, thing_index, at_cell):
 	var new_thing
 	if thing_type == ACT.TargetType.TargetObject:
 		new_thing = WRLD.object_types[thing_index].instance()
-		new_thing.game_position = at_cell
+		new_thing.set_initial_game_position(at_cell)
 		LevelObjects.add_child(new_thing)
 
 func _on_connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell):
@@ -253,7 +253,7 @@ func thing_at_position(position, prefer_actor=true):
 	return found_object if found_object else found_actor
 	
 func _on_player_start_position(start_pos):
-	Player.game_position = start_pos # Replace with function body.
+	Player.set_initial_game_position(start_pos) # Replace with function body.
 	
 func _on_tiles_ready(fov_block_tiles):
 	fov_block_map = fov_block_tiles

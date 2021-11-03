@@ -2,15 +2,20 @@ extends Reference
 
 class_name GameEffect
 
-signal effect_done(effect) #mostly for actionless effects like toggle
+signal effect_done(effect) #coroutines are confusing :(
+
+const is_action = false
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
 var effect_parent
 var effect_target
 var effect_actor
+var step
+var steps = []
 var after_queue = []
 var effect_hint_mask = EFCT.EffectHint.None
+var running = false
 
 func _init(parent, actor, target):
 	effect_parent = parent
@@ -44,6 +49,10 @@ func process_after_queue():
 func do_effect():
 	run_effect()
 	process_after_queue()
+	while running:
+		yield(self, "effect_done")
+		run_effect()
+		process_after_queue()
 	effect_after()
 
 func run_effect():
@@ -55,7 +64,7 @@ func effect_done(effect):
 		effect_after()
 
 func effect_after():
-	if after_queue.size() == 0:
+	if after_queue.size() == 0 and not running and steps.size() == 0:
 		effect_parent.effect_done(self)
 
 

@@ -113,8 +113,6 @@ static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:in
 	var target_cells := PoolVector2Array()
 	var prefer_x := false
 	var last_cell = target
-	if !tiles[target.x][target.y]:
-		target_cells.append(last_cell)
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
 	var delta = target - origin
