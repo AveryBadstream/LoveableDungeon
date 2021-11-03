@@ -5,7 +5,7 @@ extends GameAction
 # var a = 2
 # var b = "text"
 
-var use_effect = preload("res://effects/Use.gd")
+var use_effect = preload("res://effects/Open.gd")
 # Called when the node enters the scene tree for the first time.
 func _init(actor).(actor):
 	self.target_type = ACT.TargetType.TargetObject

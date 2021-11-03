@@ -4,7 +4,7 @@ extends GameAction
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var use_effect = preload("res://effects/Use.gd")
+var use_effect = preload("res://effects/Close.gd")
 
 func _init(actor).(actor):
 	self.target_type = ACT.TargetType.TargetObject

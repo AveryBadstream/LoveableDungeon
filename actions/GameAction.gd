@@ -3,6 +3,7 @@ extends Reference
 class_name GameAction
 # Declare member variables here. Examples:
 # var a = 2
+const is_action = false
 # var b = "text"
 var action_actor
 var action_type = ACT.Type.None

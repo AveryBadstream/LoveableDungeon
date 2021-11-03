@@ -28,6 +28,7 @@ func toggle(visibly):
 			animation_player.play("On")
 		else:
 			animation_player.play("Off")
+		FX.spawn_puff(self.get_game_position())
 		yield(animation_player, "animation_finished")
 	set_toggled(!_toggled)
 

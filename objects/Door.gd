@@ -12,7 +12,7 @@ onready var animation_player = $AnimationPlayer
 # Called when the node enters the scene tree for the first time.
 
 func effect_pre(effect):
-	if effect.effect_hint_mask & (EFCT.EffectHint.Interact):
+	if effect.effect_hint_mask & (EFCT.EffectHint.Interact & EFCT.EffectHint.Triggered):
 		var response = EFCT.EffectResponse.new(self, EFCT.EffectResponseType.QueueAfter)
 		var new_effect
 		if _opened:

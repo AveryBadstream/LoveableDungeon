@@ -47,6 +47,8 @@ signal end_fov()
 #AI Signals
 signal ai_request_info(actor, ai_info_type, extra_info)
 
+#FX Signals
+signal FX_done(FX)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -59,7 +61,6 @@ func publish_action(action):
 
 func publish_effect(effect):
 	emit_signal("do_effect", effect)
-
 
 func emit_action(who, action_array):
 	if action_array[0] == ACT.Type.None:
