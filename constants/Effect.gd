@@ -31,22 +31,26 @@ var EffectMapping = {
 	
 }
 
-var queued_effects = 0
+var effect_queues = []
 var delayed_effects = []
+var queued_effects = []
 
 func queue_effect(effect):
-	queued_effects += 1
+	if not queued_effects.has(effect):
+		queued_effects.append(effect)
 
 func queue_delayed(effect):
 	delayed_effects.append(effect)
 
 func effect_done(effect):
-	queued_effects -= 1
-	if queued_effects == 0:
+	if queued_effects.has(effect):
+		queued_effects.erase(effect)
+	if queued_effects.size() == 0:
 		if delayed_effects.size() > 0:
-			for effect in delayed_effects:
+			var next_effect = delayed_effects.pop_back()
+			while next_effect:
 				EVNT.publish_effect(effect)
-			delayed_effects = []
+				next_effect = delayed_effects.pop_back()
 		emit_signal("effects_done")
 
 

@@ -48,11 +48,9 @@ func process_after_queue():
 
 func do_effect():
 	run_effect()
-	process_after_queue()
-	while running:
+	if running:
 		yield(self, "effect_done")
-		run_effect()
-		process_after_queue()
+	process_after_queue()
 	effect_after()
 
 func run_effect():
@@ -64,7 +62,7 @@ func effect_done(effect):
 		effect_after()
 
 func effect_after():
-	if after_queue.size() == 0 and not running and steps.size() == 0:
+	if after_queue.size() == 0:
 		effect_parent.effect_done(self)
 
 

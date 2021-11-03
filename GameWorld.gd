@@ -14,6 +14,9 @@ onready var Player = $LevelActors/Player
 onready var FogOfWar = $FogOfWar
 onready var Unexplored = $Unexplored
 onready var FOWGhosts = $FOWGhosts
+var tilecount = 0
+var tiles_updated = 0
+var time_before
 var LevelGenerator = load("res://map/Generators/basic_levelgen.tres")
 
 var last_visiblilty_rect = Rect2(0,0,0,0)
@@ -64,6 +67,7 @@ func _ready():
 	EVNT.subscribe("update_fov", self, "_on_update_fov")
 	EVNT.subscribe("object_moved", self, "_on_object_moved")
 	EVNT.subscribe("try_action_at", self, "_on_actor_try_action_at")
+	EVNT.subscribe("fov_cell_updated", self, "_on_fov_cell_updated")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
@@ -121,8 +125,8 @@ func _on_update_visible_map(where, should_block):
 		pending_block_map_updates.append([where, should_block])
 	elif where.x > 0 and where.y > 0 and where.x < WRLD.world_dimensions.x and where.y < WRLD.world_dimensions.y:
 		fov_block_map[where.x][where.y] = 1 if should_block else 0
-		if last_visiblilty_rect.has_point(where):
-			EVNT.emit_signal("update_fov")
+		#if true or last_visiblilty_rect.has_point(where):
+		EVNT.emit_signal("update_fov")
 
 func can_do_action_at_location(at_location, action):
 	var found_object = object_at_cell(at_location)
@@ -257,6 +261,7 @@ func _on_player_start_position(start_pos):
 	
 func _on_tiles_ready(fov_block_tiles):
 	fov_block_map = fov_block_tiles
+	tilecount = WRLD.world_dimensions.x * WRLD.world_dimensions.y
 	for x in range(WRLD.world_dimensions.x):
 		for y in range(WRLD.world_dimensions.y):
 			FogOfWar.set_cell(x, y, 0)
@@ -311,9 +316,10 @@ func _on_update_fov():
 	update_fov_by_signal(Player.game_position)
 
 func update_fov_by_signal(from_position):
+	var tiles_updated = 0
 	if !WRLD.is_ready:
 		return
-	var time_before = OS.get_system_time_msecs()
+	time_before = OS.get_system_time_msecs()
 	EVNT.emit_signal("begin_fov")
 	var min_x = INF
 	var min_y = INF
@@ -322,6 +328,7 @@ func update_fov_by_signal(from_position):
 	for cell in last_visible_set:
 		FogOfWar.set_cellv(cell, 0)
 	var cells = FOV.cast_area(from_position, WRLD.SIGHT_RANGE, fov_block_map)
+	tilecount = cells.size()
 	for cell in cells:
 		min_x = min(cell.x, min_x)
 		min_y = min(cell.y, min_y)
@@ -330,9 +337,9 @@ func update_fov_by_signal(from_position):
 		FogOfWar.set_cellv(cell, -1)
 		Unexplored.set_cellv(cell, -1)
 		EVNT.emit_signal("update_fov_cell", cell)
-	EVNT.emit_signal("end_fov")
 	last_visiblilty_rect.position = Vector2(min_x, min_y)
 	last_visiblilty_rect.end = Vector2(max_x + 1, max_y + 1)
-	var total_time = OS.get_system_time_msecs() - time_before
 	last_visible_set = cells
+	var total_time = OS.get_system_time_msecs() - time_before
 	print("FOVUpdate Took: " + str(total_time))
+	EVNT.emit_signal("end_fov")

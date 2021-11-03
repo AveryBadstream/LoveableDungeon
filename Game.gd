@@ -136,7 +136,7 @@ func _on_GameWorld_action_failed(actor):
 
 
 func _on_action_complete(action):
-	if EFCT.queued_effects > 0:
+	if EFCT.queued_effects.size() > 0:
 		yield(EFCT, "effects_done")
 	var current_i = turn_order.find(action.action_actor)
 	if current_i + 1 >= turn_order.size():
