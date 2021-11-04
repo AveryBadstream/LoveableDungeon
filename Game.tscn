@@ -407,6 +407,9 @@ margin_bottom = 176.0
 [node name="GameUI" type="Node2D" parent="."]
 script = ExtResource( 20 )
 
+[node name="Line2D" type="Line2D" parent="GameUI"]
+width = 4.0
+
 [node name="AreaHighlight" type="Node2D" parent="GameUI"]
 
 [node name="Tweens" type="Node" parent="."]

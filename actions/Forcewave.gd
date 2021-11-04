@@ -19,7 +19,7 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 
 func mark_pending():
 	MSG.action_message("FUS", self)
-	EVNT.emit_signal("hint_area_cone", action_actor.game_position, 5, deg2rad(35))
+	EVNT.emit_signal("hint_area_cone", action_actor.game_position, 5, deg2rad(90))
 
 func impossible():
 	MSG.action_message("You can't push that.", self)
