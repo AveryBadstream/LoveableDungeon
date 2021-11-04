@@ -50,11 +50,6 @@ _global_script_classes=[ {
 "path": "res://objects/GameObject.gd"
 }, {
 "base": "Reference",
-"class": "GameTile",
-"language": "GDScript",
-"path": "res://map/GameTile.gd"
-}, {
-"base": "Reference",
 "class": "ITile",
 "language": "GDScript",
 "path": "res://map/ITile.gd"
@@ -73,7 +68,6 @@ _global_script_class_icons={
 "GameAstar": "",
 "GameEffect": "",
 "GameObject": "",
-"GameTile": "",
 "ITile": "",
 "UTile": ""
 }
