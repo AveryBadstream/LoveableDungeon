@@ -94,9 +94,9 @@ MSG="*res://constants/Messages.gd"
 AI="*res://constants/AI.gd"
 EFCT="*res://constants/Effect.gd"
 DBG="*res://constants/Debug.gd"
-FOV="*res://constants/FOVMRPAS.gd"
 AUD="*res://constants/Audio.gd"
 FX="*res://constants/FX.gd"
+FOV="*res://constants/FOVMRPAS_array_shiftless.gd"
 
 [display]
 
@@ -154,6 +154,16 @@ move={
 forcewave={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":70,"unicode":0,"echo":false,"script":null)
+ ]
+}
+wheel_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":4,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+wheel_down={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":5,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
 

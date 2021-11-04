@@ -79,43 +79,43 @@ class CellAngles extends Reference:
 
 #Cast out to radius from origin based on a tile mask tiles.  Used for FOV and 
 #explosions 
-static func cast_area(origin:Vector2, radius:int, tiles:Array) ->PoolVector2Array:
-	var cells = PoolVector2Array()
+static func cast_area(origin:Vector2, radius:int, tiles:Array) ->Array:
+	var cells = []
 	for oct in FOVOctants.values():
 		cells.append_array(_visible_cells_in_octant_from(origin, oct, radius, tiles))
 	cells.append(origin)
 	return cells
 
 #Cast a shadow-cast friendly lerpline that should reach any visible cell
-static func cast_lerp_line(origin:Vector2, target:Vector2, max_length:int, tiles:Array) -> PoolVector2Array:
+static func cast_lerp_line(origin:Vector2, target:Vector2, max_length:int, tiles:Array) -> Array:
 	var oct = _get_octant(origin, target)
 	return _lerp_line(origin, target, oct, max_length, tiles)
 
 #Cast a circle segment from from aiming at to with width(ish) radians angle out
 #to radius, shadowcasting against tiles.  Buggy, slow and has many possible
 #input values that don't look right
-static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> PoolVector2Array:
+static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> Array:
 	var time_before = OS.get_system_time_msecs()
 	var angle_v := from.direction_to(to) * radius
 	var angle := to.angle_to_point(from)
 	var min_v := angle_v.rotated(-(width/2))
 	var max_v := angle_v.rotated(width/2)
 	var octs := _get_angle_range_octants(min_v, max_v)
-	var cells := PoolVector2Array()
+	var cells := []
 	for oct in FOVOctants.values():
 		cells.append_array(_visible_cells_in_octant_from_in_range(from, oct, radius, tiles, min_v, max_v))
 	var total_time = OS.get_system_time_msecs() - time_before
 	print("cast_cone_at took: " + str(total_time))
 	return cells
 
-static func cast_cone_at_corrected(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> PoolVector2Array:
+static func cast_cone_at_corrected(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> Array:
 	var time_before = OS.get_system_time_msecs()
 	var angle_v := from.direction_to(to) * radius
 	var angle := to.angle_to_point(from)
 	var min_v := angle_v.rotated(-(width/2))
 	var max_v := angle_v.rotated(width/2)
 	var octs := _get_angle_range_octants(min_v, max_v)
-	var cells := PoolVector2Array()
+	var cells := []
 	var offset_x = 0
 	var offset_y = 0
 	var delta = (to - from)
@@ -143,12 +143,12 @@ static func can_see_point(from, to, tiles, site_range):
 #Cast a line to a point in oct maxing at radius, will prefer a lerp line but 
 #can deflect a little to allow targeting any visible cell.  Lerp lines and
 #bresenham look much better
-static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:int, tiles:Array) -> PoolVector2Array:
+static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:int, tiles:Array) -> Array:
 	var target_iteration := _iteration_at(origin, target, oct)
 	var target_step := _step_at(origin, target, oct)
 	var target_allocation := 1.0 / float(target_iteration + 1)
 	var target_angles := CellAngles.new(float(target_step) * target_allocation, float(target_step+0.5) * target_allocation, float(target_step + 1) * target_allocation)
-	var target_cells := PoolVector2Array()
+	var target_cells := []
 	var prefer_x := false
 	var last_cell = target
 	var max_x = tiles.size()
@@ -185,13 +185,13 @@ static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:in
 			target_cells.append(best_cell)
 			last_cell = best_cell
 		else:
-			target_cells = PoolVector2Array()
+			target_cells = []
 			
 	return target_cells
 
-static func  _visible_cells_in_octant_from_in_range_w_offset(origin, oct, radius, tiles, min_v, max_v, offset) -> PoolVector2Array:
+static func  _visible_cells_in_octant_from_in_range_w_offset(origin, oct, radius, tiles, min_v, max_v, offset) -> Array:
 	var iteration = 1
-	var visible_cells = PoolVector2Array()
+	var visible_cells = []
 	var obstructions = []
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
@@ -226,9 +226,9 @@ static func  _visible_cells_in_octant_from_in_range_w_offset(origin, oct, radius
 
 	return visible_cells
 
-static func  _visible_cells_in_octant_from_in_range(origin, oct, radius, tiles, min_v, max_v) -> PoolVector2Array:
+static func  _visible_cells_in_octant_from_in_range(origin, oct, radius, tiles, min_v, max_v) -> Array:
 	var iteration = 1
-	var visible_cells = PoolVector2Array()
+	var visible_cells = []
 	var obstructions = []
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
@@ -264,7 +264,7 @@ static func  _visible_cells_in_octant_from_in_range(origin, oct, radius, tiles, 
 	return visible_cells
 
 #Finds all cells from origin in oct out to radius shadowcasting against tiles
-static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, radius:int, tiles:Array) -> PoolVector2Array:
+static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, radius:int, tiles:Array) -> Array:
 	var iteration = 1
 	var visible_cells = []
 	var obstructions = []
