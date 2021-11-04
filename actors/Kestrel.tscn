@@ -12,5 +12,5 @@ region_rect = Rect2( 160, 208, 16, 16 )
 script = ExtResource( 2 )
 default_action = 0
 display_name = "Kestrel"
-supported_actions = [ 0 ]
+supported_actions = [ 6 ]
 mob_ai = [ 0 ]

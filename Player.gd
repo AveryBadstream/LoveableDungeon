@@ -51,13 +51,20 @@ func _input(event):
 		pending_action.mark_pending()
 		
 func act_at_location(at_cell: Vector2):
-	for hint in WRLD.get_action_hints(at_cell.round()):
-		if local_default_actions.has(hint):
-			var candidate_action = local_default_actions[hint]
-			if candidate_action.test_action_at(at_cell):
-				acting_state = ACT.ActingState.Wait
-				candidate_action.do_action_at(at_cell)
-				return true
+	if not pending_action:
+		for hint in WRLD.get_action_hints(at_cell.round()):
+			if local_default_actions.has(hint):
+				var candidate_action = local_default_actions[hint]
+				if candidate_action.test_action_at(at_cell):
+					acting_state = ACT.ActingState.Wait
+					candidate_action.do_action_at(at_cell)
+					return true
+	else:
+		var next_action = pending_action
+		pending_action = ACT.Type.None
+		EVNT.emit_signal("hint_area_none")
+		next_action.do_action_at(at_cell)
+		return true
 	return false
 	
 func act_in_direction(dir: Vector2):
@@ -72,6 +79,7 @@ func act_in_direction(dir: Vector2):
 	else:
 		var next_action = pending_action
 		pending_action = ACT.Type.None
+		EVNT.emit_signal("hint_area_none")
 		next_action.do_action_at(self.get_game_position() + dir)
 # Called when the node enters the scene tree for the first time.
 func _ready():

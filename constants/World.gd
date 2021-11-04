@@ -58,7 +58,7 @@ func get_action_targets_cell(action, at_cell:Vector2) -> Array:
 			targets.append(thing)
 	return targets
 
-func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Dictionary:
+func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Array:
 	var action_area = []
 	var origin_cell = action.get_origin_cell()
 	var area_radius_int = ceil(area_radius)
@@ -68,6 +68,12 @@ func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Di
 			var distance = Vector2(x, y).distance_to(action.get_origin_cell())
 			if Vector2(x, y).distance_to(action.get_origin_cell()) <= area_radius:
 				targets.append_array(get_action_targets_cell(action, Vector2(x,y)))
+	return targets
+
+func get_action_targets_cone(action, at_cell:Vector2) -> Array:
+	var targets = []
+	for cell in FOV.cast_psuedo_cone(action.action_actor.game_position, at_cell, action.action_area, action.action_range, GameWorld.fov_block_map):
+		targets.append_array(get_action_targets_cell(action, cell))
 	return targets
 
 func get_action_hint(at_cell):

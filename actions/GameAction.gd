@@ -37,7 +37,11 @@ func get_origin_cell():
 	return self.action_actor.game_position
 
 func do_action_at(target_cell):
-	var targets = WRLD.get_action_targets_cell(self, target_cell)
+	var targets
+	if target_area == ACT.TargetArea.TargetCell or target_area == ACT.TargetArea.TargetSingle:
+		targets = WRLD.get_action_targets_cell(self, target_cell)
+	elif target_area == ACT.TargetArea.TargetCone:
+		targets = WRLD.get_action_targets_cone(self, target_cell)
 	if targets.size() == 0:
 		self.impossible()
 		return false
@@ -54,7 +58,7 @@ func do_action_at(target_cell):
 				actual_target = target
 		self.do_action([actual_target])
 		return
-	elif target_area == ACT.TargetArea.TargetCell:
+	elif target_area == ACT.TargetArea.TargetCell or target_area == ACT.TargetArea.TargetCone:
 		self.do_action(targets)
 		return true
 	self.impossible()

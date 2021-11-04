@@ -5,7 +5,7 @@ extends Node
 #I might remove this and replace with r^2, but there are a lot of improvements
 #before that
 # RADIUS_FUDGE should always be a value between 0 and 1.
-const RADIUS_FUDGE = 1.0 / 5.0
+const RADIUS_FUDGE = 1.0 / 3.0
 
 # If this is False, some cells will unexpectedly be visible.
 #
@@ -91,6 +91,47 @@ static func cast_lerp_line(origin:Vector2, target:Vector2, max_length:int, tiles
 	var oct = _get_octant(origin, target)
 	return _lerp_line(origin, target, oct, max_length, tiles)
 
+#casts a cone more reliably than cast cone, doesn't work for values under 35. 
+#actual width is quite a bit more than advertised
+static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, radius: int, tiles:Array) -> Array:
+	var side_length = radius / cos(width/2)
+	var look_xform = Transform2D(towards.angle_to_point(from), from)
+	var x_pushback = 0
+	var y_pushout = 1
+	if width <= deg2rad(35):
+		x_pushback = -5
+		y_pushout = 3
+	elif width <= deg2rad(45):
+		x_pushback = -3
+	elif width <= deg2rad(50):
+		x_pushback = -3
+	elif width <= deg2rad(75):
+		x_pushback = -2
+	elif width <= deg2rad(95):
+		x_pushback = -1
+	var start_offset = Vector2(x_pushback, y_pushout)
+	var end_offset = Vector2(x_pushback, -y_pushout)
+	var lines = [
+		[look_xform.xform(start_offset),look_xform.xform(Vector2(side_length, 0).rotated(-(width/2)))],
+		[look_xform.xform(Vector2(side_length, 0).rotated(width/2)), look_xform.xform(end_offset)]
+	]
+	var cells = []
+	for oct in FOVOctants.values():
+		_cast_convex_polygon(from, lines, oct, radius, tiles, cells)
+	return cells
+
+static func cast_wide_beam(from:Vector2, towards:Vector2, width: float, radius: int, tiles:Array) -> Array:
+	var look_xform = Transform2D(towards.angle_to_point(from), from)
+	var cells = []
+	var lines = [
+		[look_xform.xform(Vector2(0.5, width)), look_xform.xform(Vector2(0.5, -width))],
+		[look_xform.xform(Vector2(0.5, -width)), look_xform.xform(Vector2(radius, -width))],
+		[look_xform.xform(Vector2(radius, -width)), look_xform.xform(Vector2(radius, width))],
+		[look_xform.xform(Vector2(radius, width)), look_xform.xform(Vector2(0.5,width))],
+	]
+	for oct in FOVOctants.values():
+		_cast_convex_polygon(from, lines, oct, radius+1, tiles, cells)
+	return cells
 #Cast a circle segment from from aiming at to with width(ish) radians angle out
 #to radius, shadowcasting against tiles.  Buggy, slow and has many possible
 #input values that don't look right
@@ -130,6 +171,51 @@ static func can_see_point(from, to, tiles, site_range):
 			return true
 	return false
 
+static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, radius:int, tiles:Array, cell_list:Array) -> Array:
+	var planes = []
+	for line in area:
+		var dvec = (line[1] - line[0]).normalized()
+		var normal = Vector2(dvec.y, -dvec.x)
+		planes.append([normal, normal.dot(line[1])])
+	var iteration = 1
+	var obstructions = []
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	# End conditions:
+	#   iteration > radius
+	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
+	#      to 1)
+	while iteration <= radius and not (obstructions.size() == 1 and
+										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+
+		# Start at the center (vertical or horizontal line) and step outwards
+		for step in range(num_cells_in_row):
+			var cell = _cell_at(origin, oct, step, iteration)
+			if _cell_in_radius(origin, cell, radius):
+				var cell_angles = CellAngles.new((float(step) * angle_allocation),
+											(float(step + .5) * angle_allocation),
+											(float(step + 1) * angle_allocation))
+				if _cell_is_visible(cell_angles, obstructions):
+					if cell_list.has(cell):
+						pass
+					else:
+						var in_polygon = true
+						for plane in planes:
+							if plane[0].dot(cell) - plane[1] > 0:
+								in_polygon = false
+								break
+						if in_polygon:
+							cell_list.append(cell)
+					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
+						obstructions = _add_obstruction(obstructions, cell_angles)
+				elif NOT_VISIBLE_BLOCKS_VISION:
+					obstructions = _add_obstruction(obstructions, cell_angles)
+
+		iteration += 1
+
+	return cell_list
 #Cast a line to a point in oct maxing at radius, will prefer a lerp line but 
 #can deflect a little to allow targeting any visible cell.  Lerp lines and
 #bresenham look much better
