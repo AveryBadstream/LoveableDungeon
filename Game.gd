@@ -39,6 +39,7 @@ func _ready():
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
 	EVNT.subscribe("do_effect", self, "_on_do_effect")
+	EVNT.subscribe("world_ready", self, "_on_world_ready")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

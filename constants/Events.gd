@@ -14,6 +14,7 @@ signal place_thing(thing_type, thing_index, at_cell)
 signal remove_thing(thing_type, thing_index, at_cell)
 signal connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell)
 signal player_start_position(start_pos)
+signal world_ready()
 #Visibility management
 signal update_visible_map(position, should_block)
 

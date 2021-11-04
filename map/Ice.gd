@@ -9,7 +9,7 @@ extends UTile
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
-func _init(is_walkable, is_flyable, is_phaseable, blocks_fov).(is_walkable, is_flyable, is_phaseable, blocks_fov):
+func _init(name, is_walkable, is_flyable, is_phaseable, blocks_fov, occupies_cell).(name, is_walkable, is_flyable, is_phaseable, blocks_fov, occupies_cell):
 	pass
 
 func object_entered(object, from_cell):

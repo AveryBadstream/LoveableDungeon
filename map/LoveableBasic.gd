@@ -78,6 +78,9 @@ func get_tile(x: int, y: int):
 	if tile_i == -1:
 		return tile_i
 	return tile_type_map[get_cell(x, y)]
+
+func get_utile(x:int, y:int):
+	return TIL.utiles[tile_type_map[get_cell(x, y)]]
 	
 func is_tile_walkable(target_position: Vector2):
 	return TIL.TILE_WALKABLE[get_tilev(target_position)]

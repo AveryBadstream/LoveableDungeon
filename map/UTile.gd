@@ -9,8 +9,14 @@ const thing_type = ACT.TargetType.TargetTile
 var default_action = ACT.Type.None
 var display_name = "ERROR"
 var supported_actions = []
-var blocks_vision = false
+var cell_mask_properties:int = TIL.CellInteractions.None
+export var is_walkable := false
+export var is_flyable := false
+export var is_phaseable := false
+export var occupies_cell := true
+export var blocks_vision := false
 var claiming_effects = []
+var cell_interaction_mask = 0
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -21,7 +27,8 @@ var game_position: Vector2
 func _ready():
 	pass # Replace with function body.
 
-func _init(is_walkable, is_flyable, is_phaseable, blocks_fov):
+func _init(name, is_walkable, is_flyable, is_phaseable, blocks_fov, occupies_cell):
+	self.display_name = name
 	if is_walkable:
 		self.supported_actions.append(ACT.Type.Move)
 		self.default_action = ACT.Type.Move
@@ -31,6 +38,18 @@ func _init(is_walkable, is_flyable, is_phaseable, blocks_fov):
 		self.supported_actions.append(ACT.Type.Phase)
 	if blocks_fov:
 		self.blocks_vision = true
+	if occupies_cell:
+		self.occupies_cell = true
+	if blocks_fov:
+		cell_interaction_mask |= TIL.CellInteractions.BlocksFOV
+	if is_walkable:
+		cell_interaction_mask |= TIL.CellInteractions.Walkable
+	if is_flyable:
+		cell_interaction_mask |= TIL.CellInteractions.Flyable
+	if is_phaseable:
+		cell_interaction_mask |= TIL.CellInteractions.Phaseable
+	if occupies_cell:
+		cell_interaction_mask |= TIL.CellInteractions.Occupies
 
 func supports_action(action) -> bool:
 	if self.has_method("_can_support_"+ACT.Type.keys()[action.action_type]):

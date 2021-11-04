@@ -10,7 +10,7 @@ func _init(actor).(actor):
 	self.target_area = ACT.TargetArea.TargetCone
 	self.target_priority = [ACT.TargetType.TargetActor, ACT.TargetType.TargetObject, ACT.TargetType.TargetItem, ACT.TargetType.TargetTile]
 	self.action_range = 5
-	self.action_area = deg2rad(90)
+	self.action_area = deg2rad(60)
 
 func get_viable_targets():
 	pass

@@ -13,13 +13,14 @@ export var display_name := "ERROR"
 export var is_walkable := false
 export var is_flyable := false
 export var is_phaseable := false
+export var occupies_cell := true
 var is_player := false
 export(bool) var blocks_vision setget set_blocks_vision, get_blocks_vision
 export var player_remembers := false
 var last_game_position = position/16
 var connects_to = []
 var claiming_effects = []
-
+var cell_interaction_mask = 0
 var tentatively_visible = false
 var my_ghost
 var _blocks_vision = false
@@ -96,6 +97,16 @@ func actor_do_action(actor, action_type:int) -> bool:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	if blocks_vision:
+		cell_interaction_mask |= TIL.CellInteractions.BlocksFOV
+	if is_walkable:
+		cell_interaction_mask |= TIL.CellInteractions.Walkable
+	if is_flyable:
+		cell_interaction_mask |= TIL.CellInteractions.Flyable
+	if is_phaseable:
+		cell_interaction_mask |= TIL.CellInteractions.Phaseable
+	if occupies_cell:
+		cell_interaction_mask |= TIL.CellInteractions.Occupies
 	EVNT.subscribe("begin_fov", self, "_on_begin_fov")
 	EVNT.subscribe("update_fov_cell", self, "_on_update_fov_cell")
 	if self.player_remembers:
