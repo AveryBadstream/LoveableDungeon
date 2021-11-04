@@ -8,7 +8,7 @@ class_name FOWGhost
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	EVNT.subscribe("update_fov_cell", self, "_on_update_fov_cell") # Replace with function body.
 	
 func set_mimic(mortal_form: Sprite):
 	self.position = mortal_form.position
@@ -21,6 +21,10 @@ func set_mimic(mortal_form: Sprite):
 	self.set_vframes(mortal_form.get_vframes())
 	self.set_centered(mortal_form.is_centered())
 	self.frame = mortal_form.frame
+
+func _on_update_fov_cell(cell):
+	if self.position == cell * 16:
+		self.queue_free
 
 func set_visible(visibility):
 	if visibility and self.is_visible():

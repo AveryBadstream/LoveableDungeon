@@ -30,9 +30,14 @@ var walk_door_pathf = AStar2D.new()
 var fly_door_pathf = AStar2D.new()
 
 var world_gen_timer
+var queued_things = []
+var queued_connections = []
+var queued_removals = []
 
 const Door = preload("res://objects/Door.tscn")
 var fov_block_map
+var cell_interaction_mask_map = []
+var cell_occupancy_map = []
 var pending_block_map_updates = []
 # Declare member variables here. Examples:
 # var a = 2
@@ -68,6 +73,7 @@ func _ready():
 	EVNT.subscribe("object_moved", self, "_on_object_moved")
 	EVNT.subscribe("try_action_at", self, "_on_actor_try_action_at")
 	EVNT.subscribe("fov_cell_updated", self, "_on_fov_cell_updated")
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
@@ -166,13 +172,39 @@ func _on_place_door(at_cell: Vector2):
 	pending_block_map_updates.append([new_door.game_position, true])
 	
 func _on_place_thing(thing_type, thing_index, at_cell):
+	if WRLD.is_ready:
+		add_thing(thing_type, thing_index, at_cell)
+	else:
+		queued_things.append([thing_type, thing_index, at_cell])
+
+func add_thing(thing_type, thing_index, at_cell):
 	var new_thing
 	if thing_type == ACT.TargetType.TargetObject:
 		new_thing = WRLD.object_types[thing_index].instance()
 		new_thing.set_initial_game_position(at_cell)
+		add_to_maps(new_thing)
 		LevelObjects.add_child(new_thing)
 
+func add_to_maps(thing):
+	var at_cell = thing.game_position
+	cell_occupancy_map[at_cell.x][at_cell.y].append(thing)
+	add_to_cim(thing, at_cell)
+
+func add_to_cim(thing, at_cell):
+	var should_update_fov = false
+	if ~(cell_interaction_mask_map[at_cell.x][at_cell.y] & TIL.CellInteractions.BlocksFOV):
+		should_update_fov = true
+	cell_interaction_mask_map[at_cell.x][at_cell.y] |= thing.cell_interaction_mask
+	if should_update_fov:
+		EVNT.emit_signal("update_fov")
+
 func _on_connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell):
+	if WRLD.is_ready:
+		connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell)
+	else:
+		queued_connections.append([from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell])
+
+func connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell):
 	var from_thing = find_thing_by_type_index_cell(from_thing_type, from_thing_index, from_thing_cell)
 	var to_thing = find_thing_by_type_index_cell(to_thing_type, to_thing_index, to_thing_cell)
 	if not from_thing or not to_thing:
@@ -180,20 +212,38 @@ func _on_connect_things(from_thing_type, from_thing_index, from_thing_cell, to_t
 	from_thing.connect_to(to_thing)
 
 func _on_remove_thing(thing_type, thing_index, at_cell):
+	if WRLD.is_ready:
+		remove_thing(thing_type, thing_index, at_cell)
+	else:
+		queued_removals.append([thing_type, thing_index, at_cell])
+	
+
+func remove_thing(thing_type, thing_index, at_cell):
 	var should_rebuild_fov = false
 	var found_thing = find_thing_by_type_index_cell(thing_type, thing_index, at_cell)
 	if not found_thing:
 		return
-	if found_thing.blocks_vision:
-		should_rebuild_fov = true
-	LevelObjects.remove_child(found_thing)
-	found_thing.queue_free()
-	if should_rebuild_fov:
-		var fov_blocked = false
-		for thing in everything_at_cell(at_cell):
-			if thing.blocks_vision:
-				fov_blocked = true
-		EVNT.emit_signal("update_visible_map", at_cell, fov_blocked)
+	match thing_type:
+		ACT.TargetType.TargetObject:
+			remove_object(found_thing)
+			
+func remove_object(object_to_remove):
+	remove_from_maps(object_to_remove)
+	LevelObjects.remove_child(object_to_remove)
+	object_to_remove.queue_free()
+
+func remove_from_maps(thing):
+	var at_cell = thing.game_position
+	cell_occupancy_map[at_cell.x][at_cell.y].erase(thing)
+	remove_from_cim(thing, at_cell)
+
+func remove_from_cim(thing, at_cell):
+	var blocked_vision = thing.cell_interaction_mask & TIL.CellInteractions.BlocksFOV
+	var new_mask = 0
+	for thing in cell_occupancy_map[at_cell.x][at_cell.y]:
+		new_mask |= thing.cell_interaction_mask
+	if blocked_vision and new_mask & TIL.CellInteractions.BlocksFOV:
+		EVNT.emit_signal("update_fov")
 
 func find_thing_by_type_index_cell(thing_type, thing_index, at_cell):
 	for thing in everything_at_cell(at_cell, thing_type):
@@ -263,28 +313,55 @@ func _on_tiles_ready(fov_block_tiles):
 	fov_block_map = fov_block_tiles
 	tilecount = WRLD.world_dimensions.x * WRLD.world_dimensions.y
 	for x in range(WRLD.world_dimensions.x):
+		cell_interaction_mask_map.append([])
+		cell_occupancy_map.append([])
 		for y in range(WRLD.world_dimensions.y):
 			FogOfWar.set_cell(x, y, 0)
 			Unexplored.set_cell(x, y, 0)
-	for block_map_update in pending_block_map_updates:
-		_on_update_visible_map(block_map_update[0], block_map_update[1])
+			var utile = TMap.get_utile(x, y)
+			cell_occupancy_map[x].append([utile])
+			cell_interaction_mask_map[x].append(utile.cell_interaction_mask)
 	var total_time = OS.get_system_time_msecs() - world_gen_timer
+#	var door_list = []
+#	for object in LevelObjects.get_children():
+#		if object.get_filename() == Door.get_path():
+#			door_list.append(object.game_position)
+#	for x in WRLD.world_dimensions.x:
+#		for y in WRLD.world_dimensions.y:
+#			var tile_pos = Vector2(x,y)
+#			var tile_type = TMap.get_tilev(tile_pos)
+#			update_path(walk_pathf, tile_pos, TIL.TILE_WALKABLE[tile_type], TIL.TILE_WALKABLE, door_list, true, false, true) #update non door walkable path
+#			update_path(walk_door_pathf, tile_pos, TIL.TILE_WALKABLE[tile_type], TIL.TILE_WALKABLE, [], true, false, true) #update door walkable path
+#			update_path(fly_pathf, tile_pos, TIL.TILE_FLYABLE[tile_type], TIL.TILE_FLYABLE, door_list, true, false, true) #update non-door flyable path
+#			update_path(fly_door_pathf, tile_pos, TIL.TILE_FLYABLE[tile_type], TIL.TILE_FLYABLE, [], true, false, true) #update door flyable path
+#			update_path(phase_pathf, tile_pos, TIL.TILE_PHASEABLE[tile_type], TIL.TILE_PHASEABLE, [], true, false, true)
+#	pending_block_map_updates = []
+	process_add_queue()
+	process_remove_queue()
+	process_connection_queue()
 	print("Worldgen Took: " + str(total_time))
-	var door_list = []
-	for object in LevelObjects.get_children():
-		if object.get_filename() == Door.get_path():
-			door_list.append(object.game_position)
-	for x in WRLD.world_dimensions.x:
-		for y in WRLD.world_dimensions.y:
-			var tile_pos = Vector2(x,y)
-			var tile_type = TMap.get_tilev(tile_pos)
-			update_path(walk_pathf, tile_pos, TIL.TILE_WALKABLE[tile_type], TIL.TILE_WALKABLE, door_list, true, false, true) #update non door walkable path
-			update_path(walk_door_pathf, tile_pos, TIL.TILE_WALKABLE[tile_type], TIL.TILE_WALKABLE, [], true, false, true) #update door walkable path
-			update_path(fly_pathf, tile_pos, TIL.TILE_FLYABLE[tile_type], TIL.TILE_FLYABLE, door_list, true, false, true) #update non-door flyable path
-			update_path(fly_door_pathf, tile_pos, TIL.TILE_FLYABLE[tile_type], TIL.TILE_FLYABLE, [], true, false, true) #update door flyable path
-			update_path(phase_pathf, tile_pos, TIL.TILE_PHASEABLE[tile_type], TIL.TILE_PHASEABLE, [], true, false, true)
-	pending_block_map_updates = []
-	emit_signal("world_ready")
+	EVNT.emit_signal("world_ready")
+	process_add_queue()
+	process_remove_queue()
+	process_connection_queue()
+
+func process_add_queue():
+	var old_queue = queued_things
+	queued_things = []
+	for thing in old_queue:
+		add_thing(thing[0], thing[1], thing[2])
+
+func process_connection_queue():
+	var old_queue = queued_connections
+	queued_connections = []
+	for connection in queued_connections:
+		connect_things(connection[0], connection[1], connection[2], connection[3], connection[4], connection[5])
+
+func process_remove_queue():
+	var old_queue = queued_removals
+	queued_removals = []
+	for thing in old_queue:
+		remove_thing(thing[0], thing[1], thing[2])
 
 func update_path(to_update, tile_pos, is_connected, tile_mask, exclude_objects = [], create_point = false, remove_point = false, first_pass=false):	
 	var points_to_connect = []

@@ -70,6 +70,9 @@ func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Ar
 				targets.append_array(get_action_targets_cell(action, Vector2(x,y)))
 	return targets
 
+func get_cone_action_cells(action, at_cell:Vector2) -> Array:
+	return FOV.cast_psuedo_cone(action.get_origin_cell(), at_cell, action.action_area, action.action_range, GameWorld.fov_block_map)
+
 func get_action_targets_cone(action, at_cell:Vector2) -> Array:
 	var targets = []
 	for cell in FOV.cast_psuedo_cone(action.action_actor.game_position, at_cell, action.action_area, action.action_range, GameWorld.fov_block_map):

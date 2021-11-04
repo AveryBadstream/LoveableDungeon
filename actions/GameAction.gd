@@ -11,6 +11,7 @@ var action_targets
 var target_hints = ACT.TargetHint.None
 var action_range = 1.5
 var action_area = 0
+var targeted_cell_range = []
 var action_state = ACT.ActionState.Ready
 var target_type = ACT.TargetType.TargetNone
 var target_area = ACT.TargetArea.TargetSingle
@@ -37,11 +38,16 @@ func get_origin_cell():
 	return self.action_actor.game_position
 
 func do_action_at(target_cell):
-	var targets
+	var targets = []
+	action_targets = []
+	targeted_cell_range = []
 	if target_area == ACT.TargetArea.TargetCell or target_area == ACT.TargetArea.TargetSingle:
+		targeted_cell_range = [target_cell]
 		targets = WRLD.get_action_targets_cell(self, target_cell)
 	elif target_area == ACT.TargetArea.TargetCone:
-		targets = WRLD.get_action_targets_cone(self, target_cell)
+		targeted_cell_range = WRLD.get_cone_action_cells(self, target_cell)
+		for target_cell in targeted_cell_range:
+			targets.append_array(WRLD.get_action_targets_cell(self, target_cell))
 	if targets.size() == 0:
 		self.impossible()
 		return false
@@ -59,6 +65,10 @@ func do_action_at(target_cell):
 		self.do_action([actual_target])
 		return
 	elif target_area == ACT.TargetArea.TargetCell or target_area == ACT.TargetArea.TargetCone:
+		var actual_targets = []
+		for target in targets:
+			if !actual_targets.has(target):
+				actual_targets.append(target)
 		self.do_action(targets)
 		return true
 	self.impossible()

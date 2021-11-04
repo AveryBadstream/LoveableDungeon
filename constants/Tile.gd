@@ -16,14 +16,16 @@ var utiles = {}
 
 const IceTile = preload("res://map/Ice.gd")
 
+enum CellInteractions {None = 0, BlocksFOV = 1, Walkable = 2, Flyable = 4, Phaseable = 8, Occupies = 16}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	utiles[Type.Floor] = UTile.new(true, true, true, false)
-	utiles[Type.Wall] = UTile.new(false, false, true, true)
-	utiles[Type.Ground] = UTile.new(true, true, true, false)
-	utiles[Type.Rock] = UTile.new(false, false, false, true)
-	utiles[Type.None] = UTile.new(false, false, false, true)
-	utiles[Type.Ice] = IceTile.new(true, true, true, false)
+	utiles[Type.Floor] = UTile.new("Floor", true, true, true, false, false)
+	utiles[Type.Wall] = UTile.new("Wall", false, false, true, true, true)
+	utiles[Type.Ground] = UTile.new("Ground", true, true, true, false, false)
+	utiles[Type.Rock] = UTile.new("Rock", false, false, false, true, true)
+	utiles[Type.None] = UTile.new("NONE", false, false, false, true, true)
+	utiles[Type.Ice] = IceTile.new("Ice", true, true, true, false, false)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
