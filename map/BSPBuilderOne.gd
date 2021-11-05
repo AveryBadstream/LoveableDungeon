@@ -208,6 +208,13 @@ func build_map(rng = null):
 	tiles[73][38]= TIL.Type.Ice
 	tiles[72][38]= TIL.Type.Ice
 	tiles[71][38]= TIL.Type.Ice
+	tiles[70][38]= TIL.Type.Ice
+	tiles[69][38]= TIL.Type.Ice
+	tiles[68][38]= TIL.Type.Ice
+	tiles[67][38]= TIL.Type.Ice
+	tiles[66][38]= TIL.Type.Ice
+	tiles[65][38]= TIL.Type.Ice
+	tiles[64][38]= TIL.Type.Ice
 	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 2, Vector2(76, 39))
 	EVNT.emit_signal("remove_thing", ACT.TargetType.TargetObject, 0, Vector2(77, 40))
 	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 3, Vector2(77, 40))

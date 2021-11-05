@@ -42,7 +42,7 @@ func set_tilev(pos: Vector2, tile_type: int):
 
 func set_tile(x: int, y: int, tile_type: int):
 	var tile_i = -1
-	if tile_type == - 1:
+	if tile_type == -1:
 		tile_i = tile_type
 	else:
 		tile_i = tile_type_map.find(tile_type)

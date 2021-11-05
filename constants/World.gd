@@ -79,7 +79,7 @@ func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Ar
 	return targets
 
 func get_cone_action_cells(action, at_cell:Vector2) -> Array:
-	return FOV.cast_psuedo_cone(action.get_origin_cell(), at_cell, action.action_area, action.action_range, GameWorld.fov_block_map)
+	return FOV.cast_psuedo_cone(action.get_origin_cell(), at_cell, action.action_area, action.action_range, TIL.CellInteractions.Occupies)
 
 func get_action_targets_cone(action, at_cell:Vector2) -> Array:
 	var targets = []
@@ -116,7 +116,8 @@ func cell_is_visible(at_cell):
 	return false
 
 func cell_occupied(at_cell):
-	return cell_interaction_mask_map[at_cell.x][at_cell.y] & TIL.CellInteractions.Occupies
+	var target_cim = cell_interaction_mask_map[at_cell.x][at_cell.y]
+	return target_cim & TIL.CellInteractions.Occupies
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

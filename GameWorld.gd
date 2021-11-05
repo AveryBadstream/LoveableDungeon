@@ -30,6 +30,7 @@ var world_gen_timer
 var queued_things = []
 var queued_connections = []
 var queued_removals = []
+var recently_moved = {}
 
 const Door = preload("res://objects/Door.tscn")
 var cell_interaction_mask_map = []
@@ -68,6 +69,7 @@ func _ready():
 	EVNT.subscribe("object_moved", self, "_on_object_moved")
 	EVNT.subscribe("try_action_at", self, "_on_actor_try_action_at")
 	EVNT.subscribe("update_cimmap", self, "_on_update_cimmap")
+	EVNT.subscribe("slammed", self, "_on_slammed")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -90,8 +92,30 @@ func _on_do_action(action):
 
 func _on_object_moved(thing, from_cell, to_cell):
 	move_in_maps(thing, from_cell, to_cell)
+	for triggered_thing in cell_occupancy_map[to_cell.x][to_cell.y]:
+		EVNT.trigger_MovedTo(thing, triggered_thing, from_cell, to_cell )
+	if !recently_moved.keys().has(thing.name):
+		recently_moved[thing.name] = []
+	recently_moved[thing.name].append([thing, from_cell, to_cell])
 	if thing.is_player:
 		EVNT.emit_signal("update_fov")
+
+func _on_slammed(thing, into, from, to):
+	EVNT.trigger_SlammedInto(into, thing, from, to)
+
+func step_end():
+	print(str(recently_moved.size()) + " recently moved")
+	for move_records in recently_moved.values():
+		print(str(move_records.size()) + " move records for " + str(move_records[0][0].name))
+		var move_record = move_records[-1]
+		var thing = move_record[0]
+		var from_cell = move_record[1]
+		var to_cell = move_record[2]
+		print("Last move for "+str(thing.name)+" from:"+str(from_cell)+" to:"+str(to_cell))
+		for triggered_thing in cell_occupancy_map[to_cell.x][to_cell.y]:
+			EVNT.trigger_EndedMovement(thing, triggered_thing, from_cell, to_cell)
+	recently_moved = {}
+		
 
 func move_in_maps(thing, from_cell, to_cell):
 	cell_occupancy_map[from_cell.x][from_cell.y].erase(thing)
@@ -329,7 +353,6 @@ func _on_tiles_ready():
 #	pending_block_map_updates = []
 	process_add_queue()
 	process_remove_queue()
-	process_connection_queue()
 	print("Worldgen Took: " + str(total_time))
 	EVNT.emit_signal("world_ready")
 	process_add_queue()
@@ -350,7 +373,7 @@ func process_add_queue():
 func process_connection_queue():
 	var old_queue = queued_connections
 	queued_connections = []
-	for connection in queued_connections:
+	for connection in old_queue:
 		connect_things(connection[0], connection[1], connection[2], connection[3], connection[4], connection[5])
 
 func process_remove_queue():
