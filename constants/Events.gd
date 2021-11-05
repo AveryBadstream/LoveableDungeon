@@ -36,14 +36,17 @@ signal action_failed(action)
 signal action_complete(action)
 
 #Effect signals
-signal do_effect(effect)
+signal effect_done(effect)
+signal all_effects_done()
+signal queue_complete()
 
-#FOV calculations
+#Map management signals
 signal update_fov()
 signal begin_fov()
 signal update_fov_cell(cell)
 signal fov_cell_updated(cell)
 signal object_moved(object, from_position)
+signal update_cimmap(at_cell)
 signal end_fov()
 
 #AI Signals
@@ -56,6 +59,7 @@ signal FX_done(FX)
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()
 # Called when the node enters the scene tree for the first time.
+
 func _ready():
 	pass # Replace with function body.
 
@@ -74,6 +78,9 @@ func emit_action(who, action_array):
 	var action_class = ACT.action_class_map[action_array[0]]
 	if action_class == ACT.ActionClass.PositionBased:
 		emit_signal("try_action_at", who, action_array[1], action_array[0])
+
+func events_done():
+	emit_signal("all_effects_done")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

@@ -65,6 +65,8 @@ func set_opened(is_open:bool):
 		default_action = ACT.Type.Open
 		frame = 0
 	self.set_blocks_vision(!_opened)
+	self.set_is_walkable(_opened)
+	self.set_is_flyable(_opened)
 
 func get_opened()->bool:
 	return _opened

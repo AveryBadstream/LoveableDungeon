@@ -23,9 +23,6 @@ func impossible():
 	MSG.action_message("You can't fus there.", self)
 	.impossible()
 
-func finish():
-	for target in action_targets:
-		self.publish_effect(push_effect.new(self, self.action_actor, target, 3))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

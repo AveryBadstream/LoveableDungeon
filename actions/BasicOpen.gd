@@ -26,8 +26,8 @@ func impossible():
 	MSG.action_message("You can't open that.", self)
 	.impossible()
 
-func finish():
-	self.publish_effect(use_effect.new(self, self.action_actor, self.action_targets[0]))
+func do():
+	EFCT.queue_now(use_effect.new(self.action_actor, self.action_targets[0]))
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

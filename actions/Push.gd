@@ -26,16 +26,8 @@ func impossible():
 	MSG.action_message("You can't push that.", self)
 	.impossible()
 
-func do_action(targets):
-	assert(targets.size() == 1)
-	if WRLD.is_tile_walkable(targets[0].game_position  - (self.action_actor.game_position  - targets[0].game_position).normalized() ):
-		.do_action(targets)
-	else:
-		impossible()
-
-func finish():
-	#Maybe this is a case to add the event structures I want?
-	self.publish_effect(push_effect.new(self, self.action_actor, self.action_targets[0], 1))
+func do():
+	EFCT.queue_now(push_effect.new(self.action_actor, self.action_targets[0], 1))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
