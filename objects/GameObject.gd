@@ -29,6 +29,7 @@ var _is_walkable = false
 var _is_flyable = false
 var _is_phaseable = false
 var _occupies_cell = false
+var triggers = []
 var thing_type = ACT.TargetType.TargetObject
 export(Array, ACT.Type) var supported_actions
 # Declare member variables here. Examples:
@@ -71,8 +72,13 @@ func can_do_action(action) -> bool:
 	else:
 		return ACT.ActionResponse.Stop
 
-func trigger(triggered_by):
-	pass
+func trigger(trigger_details):
+	var funcname = "_trigger_"+ EVNT.TriggerType.keys()[trigger_details.trigger_type]
+	if self.has_method(funcname):
+		self.call(funcname, trigger_details)
+	for ext_trigger in self.triggers:
+		if ext_trigger.trigger_type == trigger_details.trigger_type:
+			call(ext_trigger.trigger_func_ref, trigger_details)
 
 func do_action_pre(action) -> int:
 	var func_name = "_do_action_pre_"+ACT.Type.keys()[action.action_type]

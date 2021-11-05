@@ -37,7 +37,7 @@ func update_hint_area(mouse_pos):
 func hint_cone_update(mouse_pos):
 	last_mouse_game_position = mouse_pos
 	clear_hints()
-	var cells = FOV.cast_psuedo_cone(hint_area_args[0], mouse_pos, hint_area_args[2], hint_area_args[1], WRLD.GameWorld.fov_block_map)
+	var cells = FOV.cast_psuedo_cone(hint_area_args[0], mouse_pos, hint_area_args[2], hint_area_args[1], TIL.CellInteractions.Occupies)
 	for cell in cells:
 		var new_hint:ColorRect = area_hint_indicator.instance()
 		new_hint.rect_position = cell * 16

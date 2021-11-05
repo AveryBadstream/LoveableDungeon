@@ -12,6 +12,6 @@ region_rect = Rect2( 0, 128, 16, 16 )
 script = ExtResource( 1 )
 default_action = 6
 display_name = "Thing"
-blocks_vision = true
+occupies_cell = true
 player_remembers = true
 supported_actions = [ 6 ]

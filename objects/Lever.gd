@@ -16,7 +16,7 @@ func _ready():
 
 func toggle(visibly):
 	for connection in connects_to:
-		connection.trigger(self)
+		EVNT.trigger_Connection(self, connection)
 	if visibly:
 		FX.start_priority_animation(animation_player)
 		if _toggled:

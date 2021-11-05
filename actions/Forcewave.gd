@@ -23,7 +23,9 @@ func impossible():
 	MSG.action_message("You can't fus there.", self)
 	.impossible()
 
-
+func do():
+	for target in self.action_targets:
+		EFCT.queue_now(push_effect.new(action_actor, target, 5))
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

@@ -52,6 +52,12 @@ func queue_now(effect):
 	if running:
 		run_effect_now(effect)
 
+func queue_next(effect):
+	if running:
+		queue_at_offset(effect, 1)
+	else:
+		queue_now(effect)
+
 func queue_at_offset(effect, offset):
 	var target_queue = current_queue + offset
 	while effect_queues.size() - 1 < target_queue:
@@ -123,9 +129,16 @@ func run_effect_now(effect):
 		effect_queues[current_queue].erase(effect)
 	running_effects += 1
 	effect.run()
-	
+
+func pending_effects():
+	var total_queued = 0
+	if effect_queues.size() > current_queue:
+		for i in range(current_queue, effect_queues.size()):
+			total_queued += effect_queues[i].size()
+	return total_queued
 
 func _on_queue_complete():
+	running = false
 	for effect in effect_queues[current_queue]:
 		effect.finish()
 	current_queue += 1

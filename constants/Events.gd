@@ -40,6 +40,9 @@ signal effect_done(effect)
 signal all_effects_done()
 signal queue_complete()
 
+#Game effect signals
+signal slammed(thing, into, from, to)
+
 #Map management signals
 signal update_fov()
 signal begin_fov()
@@ -59,6 +62,9 @@ signal FX_done(FX)
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()
 # Called when the node enters the scene tree for the first time.
+
+enum TriggerType {Connection, MovedTo, EndedMovement, SlammedInto }
+
 
 func _ready():
 	pass # Replace with function body.
@@ -81,6 +87,29 @@ func emit_action(who, action_array):
 
 func events_done():
 	emit_signal("all_effects_done")
+
+func trigger_Connection(from, to):
+	to.trigger({"triggered_by": from, "trigger_type": TriggerType.Connection})
+
+func trigger_MovedTo(thing, triggered_thing, from_cell, to_cell):
+	triggered_thing.trigger({"triggered_by": thing, \
+							"trigger_type": TriggerType.MovedTo, \
+							"from_cell": from_cell, "to_cell": to_cell})
+
+func trigger_EndedMovement(thing, triggered_thing, from_cell, to_cell):
+	triggered_thing.trigger({"triggered_by": thing, \
+							"trigger_type": TriggerType.EndedMovement, \
+							"from_cell": from_cell, "to_cell": to_cell})
+
+func trigger_SlammedInto(thing, triggered_thing, from_cell, to_cell):
+	triggered_thing.trigger({"triggered_by": thing, \
+							"trigger_type": TriggerType.SlammedInto, \
+							"from_cell": from_cell, "to_cell": to_cell})
+
+func trigger_SlammedAt(thing, triggered_thing, from_cell, to_cell):
+	triggered_thing.trigger({"triggered_by": thing, \
+							"trigger_type": TriggerType.SlammedAt, \
+							"from_cell": from_cell, "to_cell": to_cell})
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

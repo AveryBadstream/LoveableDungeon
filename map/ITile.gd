@@ -30,6 +30,9 @@ func _init(parent_utile, at_cell):
 	self.actual_utile = parent_utile
 	self.game_position = at_cell
 
+func trigger(trigger_details):
+	actual_utile.trigger(trigger_details)
+
 func supports_action(action) -> bool:
 	return actual_utile.supports_action(action)
 

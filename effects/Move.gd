@@ -17,11 +17,14 @@ func _init(actor, target).(actor, target):
 
 func run():
 	if WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(target_cell):
+		effect_actor.set_game_position(target_cell, false)
 		var tween:Tween = WRLD.get_free_tween()
-		tween.interpolate_property(effect_actor, "position", from, to, 0.1, Tween.TRANS_SINE, Tween.EASE_IN_OUT)
+		tween.interpolate_property(effect_actor, "position", from, to, 0.05, Tween.TRANS_SINE, Tween.EASE_IN_OUT)
 		tween.start()
 		AUD.play_sound(AUD.SFX.Footstep)
-#		yield(tween, "tween_all_completed")
+		yield(tween, "tween_all_completed")
+	else:
+		effect_actor.game_position = target_cell
 	effect_actor.game_position = target_cell
 	EVNT.emit_signal("effect_done", self)
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -1,6 +1,5 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=22 format=2]
 
-[ext_resource path="res://actors/Kestrel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://art/black_tile.tres" type="TileSet" id=2]
 [ext_resource path="res://Game.gd" type="Script" id=3]
 [ext_resource path="res://art/loveable_rogue.png" type="Texture" id=4]
@@ -291,10 +290,6 @@ drag_margin_top = 0.0
 drag_margin_right = 0.0
 drag_margin_bottom = 0.0
 editor_draw_limits = true
-
-[node name="Kestrel" parent="GameWorld/LevelActors" instance=ExtResource( 1 )]
-mob_ai = [ 1, 0 ]
-actions = [ 0 ]
 
 [node name="FOWGhosts" type="Node2D" parent="GameWorld"]
 

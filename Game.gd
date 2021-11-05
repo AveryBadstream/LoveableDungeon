@@ -108,6 +108,11 @@ func _on_do_action(action):
 func _on_action_complete(action):
 	EFCT.run_effects()
 	yield(EVNT, "all_effects_done")
+	GameWorld.step_end()
+	while EFCT.pending_effects() > 0:
+		EFCT.run_effects()
+		yield(EVNT, "all_effects_done")
+		GameWorld.step_end()
 	var current_i = turn_order.find(action.action_actor)
 	if current_i + 1 >= turn_order.size():
 		current_actor = turn_order[0]

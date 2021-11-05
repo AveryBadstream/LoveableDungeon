@@ -15,6 +15,7 @@ export var is_flyable := false
 export var is_phaseable := false
 export var occupies_cell := true
 export var blocks_vision := false
+var triggers = []
 var claiming_effects = []
 var cell_interaction_mask = 0
 # Declare member variables here. Examples:
@@ -100,6 +101,14 @@ func hide():
 
 func show():
 	pass
+
+func trigger(trigger_details):
+	var funcname = "_trigger_"+ EVNT.TriggerType.keys()[trigger_details.trigger_type]
+	if self.has_method(funcname):
+		self.call(funcname, trigger_details)
+	for ext_trigger in self.triggers:
+		if ext_trigger.trigger_type == trigger_details.trigger_type:
+			call(ext_trigger.trigger_func_ref, trigger_details)
 
 func do_action(action) -> int:
 	if self.has_method("_do_action"+ACT.Type.keys()[action.action_type]):
