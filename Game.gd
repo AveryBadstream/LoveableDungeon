@@ -29,6 +29,7 @@ func _ready():
 	DBG.TileHighlight = TileHighlight
 	DBG.HighlightGroup = LineHighlight
 	DebugSeed.text = "Seed: " + str(rng.seed)
+	EVNT.subscribe("world_ready", self, "_on_world_ready")
 	GameWorld.build(rng)
 	WRLD.rng = rng
 	WRLD.tween = OnlyTween
@@ -39,7 +40,6 @@ func _ready():
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
 	EVNT.subscribe("do_effect", self, "_on_do_effect")
-	EVNT.subscribe("world_ready", self, "_on_world_ready")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
@@ -77,6 +77,7 @@ func _ready():
 func _on_world_ready():
 	MSG.MessageBox = $CanvasLayer/VBoxContainer/MessageBox
 	MSG.LogBox = $CanvasLayer/VBoxContainer/ScrollContainer/LogBox
+	WRLD.set_game_world($GameWorld)
 	WRLD.GameWorld = $GameWorld
 	WRLD.TMap = $GameWorld/LoveableBasic
 	WRLD.is_ready = true

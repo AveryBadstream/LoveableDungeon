@@ -16,8 +16,8 @@ const RADIUS_FUDGE = 1.0 / 3.0
 # not, which is unexpected and probably not desired.
 #
 # Setting it to True, however, makes the algorithm more restrictive.
-const NOT_VISIBLE_BLOCKS_VISION = true
-
+#const NOT_VISIBLE_BLOCKS_VISION = true
+const NVBV = true
 # Determines how restrictive the algorithm is.
 #
 # 0 - if you have a line to the near, center, or far, it will return as visible
@@ -25,7 +25,8 @@ const NOT_VISIBLE_BLOCKS_VISION = true
 # 2 - if you have a line to all the near, center, and far, it will return as visible
 #
 # If any other value is given, it will treat it as a 2.
-const RESTRICTIVENESS = 0
+#const RESTRICTIVENESS = 0
+const R = 0
 
 # If VISIBLE_ON_EQUAL is False, an obstruction will obstruct its endpoints. If True, it will not.
 #
@@ -33,7 +34,8 @@ const RESTRICTIVENESS = 0
 # be unobstructed in True, and obstructed on False.
 #
 # Setting this to False will make the algorithm more restrictive.
-const VISIBLE_ON_EQUAL = false
+#const VISIBLE_ON_EQUAL = false
+const VOE = false
 
 #Octant lookup, used for finding octants to test in templates, min_a and max_a 
 #are totally wrong and only work by rotating Vector2.LEFT, but I can't be
@@ -50,18 +52,6 @@ const FOVOctants = {
 	FOVOctantType.NNE: {x = 1, y = -1, flip = true, shift=true, min_a = deg2rad(270), max_a = deg2rad(315), name="NorthNorthEast" },
 	FOVOctantType.NEE: {x = 1, y = -1, flip = false, shift=false, min_a = deg2rad(315), max_a = deg2rad(360), name="NorthEastEast" },
 }
-
-#const FOVOctants = {
-#	FOVOctantType.NWW: {x = -1, y = -1, flip = false, shift=false, min_a = deg2rad(180), max_a = deg2rad(225), name="NorthWestWest" },
-#	FOVOctantType.NNW: {x = -1, y = -1, flip = true, shift=true, min_a = deg2rad(225), max_a = deg2rad(270), name="NorthNorthWest" },
-#	FOVOctantType.SSW: {x = -1, y = 1, flip = true, shift=false, min_a = deg2rad(90), max_a = deg2rad(135), name="SouthSouthWest" },
-#	FOVOctantType.SWW: {x = -1, y = 1, flip = false, shift=true, min_a = deg2rad(135), max_a = deg2rad(180), name="SouthWestWest" },
-#	FOVOctantType.SEE: {x = 1, y = 1, flip = false, shift=false, min_a = deg2rad(0), max_a = deg2rad(45), name="SouthEastEast" },
-#	FOVOctantType.SSE: {x = 1, y = 1, flip = true, shift=true, min_a = deg2rad(45), max_a = deg2rad(90), name="SouthSouthEast" },
-#	FOVOctantType.NNE: {x = 1, y = -1, flip = true, shift=false, min_a = deg2rad(270), max_a = deg2rad(315), name="NorthNorthEast" },
-#	FOVOctantType.NEE: {x = 1, y = -1, flip = false, shift=true, min_a = deg2rad(315), max_a = deg2rad(360), name="NorthEastEast" },
-#}
-
 class CellAngles extends Reference:
 	var near
 	var far
@@ -79,21 +69,39 @@ class CellAngles extends Reference:
 
 #Cast out to radius from origin based on a tile mask tiles.  Used for FOV and 
 #explosions 
-static func cast_area(origin:Vector2, radius:int, tiles:Array) ->Array:
+static func cast_area(origin:Vector2, radius:int, \
+					cell_mask: int = TIL.CellInteractions.BlocksFOV,
+					VISIBLE_ON_EQUAL := VOE, \
+					NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+					RESTRICTIVENESS := R, \
+					tiles:Array = WRLD.cell_interaction_mask_map) ->Array:
 	var cells = []
 	for oct in FOVOctants.values():
-		_visible_cells_in_octant_from(origin, oct, radius, tiles, cells)
+		_visible_cells_in_octant_from(origin, oct, radius, tiles, cells, \
+									cell_mask, NOT_VISIBLE_BLOCKS_VISION ,
+									 RESTRICTIVENESS , VISIBLE_ON_EQUAL )
 	cells.append(origin)
 	return cells
 
 #Cast a shadow-cast friendly lerpline that should reach any visible cell
-static func cast_lerp_line(origin:Vector2, target:Vector2, max_length:int, tiles:Array) -> Array:
+static func cast_lerpish_line(origin:Vector2, target:Vector2, max_length:int, \
+							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+							RESTRICTIVENESS := R, \
+							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
 	var oct = _get_octant(origin, target)
-	return _lerp_line(origin, target, oct, max_length, tiles)
+	return _lerpish_line(origin, target, oct, max_length, tiles, [], cell_mask,
+					 NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 
 #casts a cone more reliably than cast cone, doesn't work for values under 35. 
 #actual width is quite a bit more than advertised
-static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, radius: int, tiles:Array) -> Array:
+static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, \
+							radius: int, \
+							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							VISIBLE_ON_EQUAL := VOE, \
+							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+							RESTRICTIVENESS := R, \
+							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
 	var side_length = radius / cos(width/2)
 	var look_xform = Transform2D(towards.angle_to_point(from), from)
 	var x_pushback = 0
@@ -117,10 +125,18 @@ static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, radius
 	]
 	var cells = []
 	for oct in FOVOctants.values():
-		_cast_convex_polygon(from, lines, oct, radius, tiles, cells)
+		_cast_convex_polygon(from, lines, oct, radius, tiles, cells, \
+							cell_mask, VISIBLE_ON_EQUAL, \
+							NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 	return cells
 
-static func cast_wide_beam(from:Vector2, towards:Vector2, width: float, radius: int, tiles:Array) -> Array:
+static func cast_wide_beam(from:Vector2, towards:Vector2, width: float, \
+						radius: int, \
+						cell_mask: int = TIL.CellInteractions.BlocksFOV,
+						VISIBLE_ON_EQUAL := VOE, \
+						NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+						RESTRICTIVENESS := R, \
+						tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
 	var look_xform = Transform2D(towards.angle_to_point(from), from)
 	var cells = []
 	var lines = [
@@ -130,48 +146,55 @@ static func cast_wide_beam(from:Vector2, towards:Vector2, width: float, radius: 
 		[look_xform.xform(Vector2(radius, width)), look_xform.xform(Vector2(0.5,width))],
 	]
 	for oct in FOVOctants.values():
-		_cast_convex_polygon(from, lines, oct, radius+1, tiles, cells)
-	return cells
-#Cast a circle segment from from aiming at to with width(ish) radians angle out
-#to radius, shadowcasting against tiles.  Buggy, slow and has many possible
-#input values that don't look right
-static func cast_cone_at(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> Array:
-	var time_before = OS.get_system_time_msecs()
-	var angle_v := from.direction_to(to) * radius
-	var angle := to.angle_to_point(from)
-	var min_v := angle_v.rotated(-(width/2))
-	var max_v := angle_v.rotated(width/2)
-	var octs := _get_angle_range_octants(min_v, max_v)
-	var cells := []
-	for oct in octs:
-		_visible_cells_in_octant_from_in_range(from, oct, radius, tiles, min_v, max_v, cells)
-	var total_time = OS.get_system_time_msecs() - time_before
-	print("cast_cone_at took: " + str(total_time))
-	return cells
-
-static func cast_cone_at_corrected(from: Vector2, to: Vector2, width: float, radius: int, tiles: Array) -> Array:
-	var time_before = OS.get_system_time_msecs()
-	var angle_v := from.direction_to(to) * radius
-	var angle := to.angle_to_point(from)
-	var min_v := angle_v.rotated(-(width/2))
-	var max_v := angle_v.rotated(width/2)
-	var octs := _get_angle_range_octants(min_v, max_v)
-	var cells := []
-	for oct in FOVOctants.values():
-		_visible_cells_in_octant_from_in_range(from, oct, radius, tiles, min_v, max_v, cells)
-	var total_time = OS.get_system_time_msecs() - time_before
-	print("cast_cone_at took: " + str(total_time))
+		_cast_convex_polygon(from, lines, oct, radius+1, tiles, cells, \
+							cell_mask, VISIBLE_ON_EQUAL, \
+							NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 	return cells
 
 #tests if point to seen from from within site_range using tiles as a block map
-static func can_see_point(from, to, tiles, site_range):
+static func can_see_point(from:Vector2, to:Vector2, radius: int, \
+						cell_mask: int = TIL.CellInteractions.BlocksFOV,
+						VISIBLE_ON_EQUAL := VOE, \
+						NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+						RESTRICTIVENESS := R, \
+						tiles:Array = WRLD.cell_interaction_mask_map) -> bool:
 	var oct = _get_octant(from, to)
-	for tile in _visible_cells_in_octant_from(from, oct, site_range, tiles, []):
+	for tile in _visible_cells_in_octant_from(from, oct, radius, tiles, [], \
+									cell_mask, VISIBLE_ON_EQUAL, \
+									NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS):
 		if tile == to:
 			return true
 	return false
 
-static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, radius:int, tiles:Array, cell_list:Array) -> Array:
+#cast a lerp line up to a certain distance
+static func cast_lerp_line_toward(origin:Vector2, direction:Vector2, length:int, \
+							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+							RESTRICTIVENESS := R, \
+							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
+	var target = (direction * length).snapped(Vector2(1,1))
+	return cast_lerp_line(origin, target, length, cell_mask, NOT_VISIBLE_BLOCKS_VISION, \
+						RESTRICTIVENESS, tiles)
+
+static func cast_lerp_line(origin:Vector2, target:Vector2, length:int, \
+							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+							RESTRICTIVENESS := R, \
+							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
+	var cells = []
+	var N = target.distance_to(origin)
+	for i in range(N+1):
+		var t = i/N if i > 0 else 0.0
+		var new_cell = Vector2( int(lerp(origin.x, target.x, t)), int(lerp(origin.y, target.y, t)))
+		if !cells.has(new_cell):
+			cells.append(new_cell)
+	return cells
+
+static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, \
+								radius:int, tiles:Array, cell_list:Array, \
+								cell_mask: int = TIL.CellInteractions.BlocksFOV,
+								NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+								RESTRICTIVENESS := R, VISIBLE_ON_EQUAL := VOE) -> Array:
 	var planes = []
 	for line in area:
 		var dvec = (line[1] - line[0]).normalized()
@@ -189,15 +212,18 @@ static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, ra
 										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
 		var num_cells_in_row = iteration + 1
 		var angle_allocation = 1.0 / float(num_cells_in_row)
-
+		var bad_cell_count = 0
 		# Start at the center (vertical or horizontal line) and step outwards
 		for step in range(num_cells_in_row):
 			var cell = _cell_at(origin, oct, step, iteration)
+			if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y:
+				bad_cell_count += 1
+				continue
 			if _cell_in_radius(origin, cell, radius):
 				var cell_angles = CellAngles.new((float(step) * angle_allocation),
 											(float(step + .5) * angle_allocation),
 											(float(step + 1) * angle_allocation))
-				if _cell_is_visible(cell_angles, obstructions):
+				if _cell_is_visible(cell_angles, obstructions, RESTRICTIVENESS, VISIBLE_ON_EQUAL):
 					if cell_list.has(cell):
 						pass
 					else:
@@ -208,18 +234,23 @@ static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, ra
 								break
 						if in_polygon:
 							cell_list.append(cell)
-					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
+					if tiles[cell.x][cell.y] & cell_mask:
 						obstructions = _add_obstruction(obstructions, cell_angles)
 				elif NOT_VISIBLE_BLOCKS_VISION:
 					obstructions = _add_obstruction(obstructions, cell_angles)
-
+		if bad_cell_count == num_cells_in_row:
+			break
 		iteration += 1
 
 	return cell_list
+
 #Cast a line to a point in oct maxing at radius, will prefer a lerp line but 
 #can deflect a little to allow targeting any visible cell.  Lerp lines and
 #bresenham look much better
-static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:int, tiles:Array) -> Array:
+static func _lerpish_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:int, \
+						tiles:Array, cell_list:Array, \
+						cell_mask = TIL.CellInteractions.BlocksFOV, \
+						NOT_VISIBLE_BLOCKS_VISION := NVBV, RESTRICTIVENESS := R) -> Array:
 	var target_iteration := _iteration_at(origin, target, oct)
 	var target_step := _step_at(origin, target, oct)
 	var target_allocation := 1.0 / float(target_iteration + 1)
@@ -247,13 +278,13 @@ static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:in
 			var cell = _cell_at(origin, oct, step, iteration)
 			if cell.x >= max_x or cell.x < 0 or cell.y >= max_y or cell.y < 0:
 				continue
-			if !tiles[cell.x][cell.y]:
+			if !(tiles[cell.x][cell.y] & cell_mask):
 				if cell == lerp_target_cell:
 					best_cell = cell
 					best_step = step
 					break
 				var cell_dist = abs(target_angles.center - (float(step) * angle_allocation))
-				if cell_dist < closest_dist:
+				if cell_dist < closest_dist and not best_cell and not best_step:
 					closest_dist = cell_dist
 					best_cell = cell
 					best_step = step
@@ -265,79 +296,12 @@ static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:in
 			
 	return target_cells
 
-static func  _visible_cells_in_octant_from_in_range_w_offset(origin:Vector2, oct:Dictionary, radius:int, tiles:Array, min_v:Vector2, max_v:Vector2, cell_list:Array, offset_min:Vector2, offset_max:Vector2) -> Array:
-	var iteration = 1
-	var obstructions = []
-	var max_x = tiles.size()
-	var max_y = tiles[0].size()
-	var radius_sq = radius * radius
-	# End conditions:
-	#   iteration > radius
-	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
-	#      to 1)
-	while iteration <= radius and not (obstructions.size() == 1 and
-										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
-		var num_cells_in_row = iteration + 1
-		var angle_allocation = 1.0 / float(num_cells_in_row)
-
-		# Start at the center (vertical or horizontal line) and step outwards
-		for step in range(iteration + 1):
-			var cell = _cell_at(origin, oct, step, iteration)
-			if _cell_in_radius(origin, cell, radius):
-				var cell_angles = CellAngles.new((float(step) * angle_allocation),
-											(float(step + .5) * angle_allocation),
-											(float(step + 1) * angle_allocation))
-				if _cell_is_visible(cell_angles, obstructions):
-					if _cell_in_segment_w_offset(origin, cell, min_v, max_v, offset_min, offset_max) and !cell_list.has(cell):
-						cell_list.append(cell)
-					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
-							obstructions = _add_obstruction(obstructions, cell_angles)
-				elif NOT_VISIBLE_BLOCKS_VISION:
-					obstructions = _add_obstruction(obstructions, cell_angles)
-
-		iteration += 1
-
-	return cell_list
-
-static func  _visible_cells_in_octant_from_in_range(origin: Vector2, oct: Dictionary, radius: int, tiles: Array, min_v:Vector2, max_v:Vector2, cell_list:Array) -> Array:
-	var iteration = 1
-	var visible_cells = []
-	var obstructions = []
-	var max_x = tiles.size()
-	var max_y = tiles[0].size()
-	var radius_sq = radius * radius
-	# End conditions:
-	#   iteration > radius
-	#   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0
-	#      to 1)
-	while iteration <= radius and not (obstructions.size() == 1 and
-										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
-		var num_cells_in_row = iteration + 1
-		var angle_allocation = 1.0 / float(num_cells_in_row)
-
-		# Start at the center (vertical or horizontal line) and step outwards
-		for step in range(iteration + 1):
-			var cell = _cell_at(origin, oct, step, iteration)
-			if _cell_in_radius(origin, cell, radius):
-				var cell_angles = CellAngles.new((float(step) * angle_allocation),
-											(float(step + .5) * angle_allocation),
-											(float(step + 1) * angle_allocation))
-				if _cell_is_visible(cell_angles, obstructions):
-					if cell_list.has(cell):
-						pass
-					elif _cell_in_segment(origin, cell, min_v, max_v):
-						cell_list.append(cell)
-					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
-							obstructions = _add_obstruction(obstructions, cell_angles)
-				elif NOT_VISIBLE_BLOCKS_VISION:
-					obstructions = _add_obstruction(obstructions, cell_angles)
-
-		iteration += 1
-
-	return cell_list
-
 #Finds all cells from origin in oct out to radius shadowcasting against tiles
-static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, radius:int, tiles:Array, cell_list:Array) -> Array:
+static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, \
+										radius:int, tiles:Array, cell_list:Array, \
+										cell_mask = TIL.CellInteractions.BlocksFOV, \
+										NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+										RESTRICTIVENESS := R, VISIBLE_ON_EQUAL := VOE) -> Array:
 	var iteration = 1
 	var visible_cells = []
 	var obstructions = []
@@ -351,24 +315,28 @@ static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, radiu
 										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
 		var num_cells_in_row = iteration + 1
 		var angle_allocation = 1.0 / float(num_cells_in_row)
-
+		var bad_cell_count = 0
 		# Start at the center (vertical or horizontal line) and step outwards
 		for step in range(num_cells_in_row):
 			var cell = _cell_at(origin, oct, step, iteration)
+			if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y:
+				bad_cell_count += 1
+				continue
 			if _cell_in_radius(origin, cell, radius):
 				var cell_angles = CellAngles.new((float(step) * angle_allocation),
 											(float(step + .5) * angle_allocation),
 											(float(step + 1) * angle_allocation))
-				if _cell_is_visible(cell_angles, obstructions):
+				if _cell_is_visible(cell_angles, obstructions, RESTRICTIVENESS, VISIBLE_ON_EQUAL):
 					if cell_list.has(cell):
 						pass
 					else:
 						cell_list.append(cell)
-					if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y or tiles[cell.x][cell.y]:
+					if tiles[cell.x][cell.y] & cell_mask:
 						obstructions = _add_obstruction(obstructions, cell_angles)
 				elif NOT_VISIBLE_BLOCKS_VISION:
 					obstructions = _add_obstruction(obstructions, cell_angles)
-
+		if bad_cell_count == num_cells_in_row:
+			break
 		iteration += 1
 
 	return cell_list
@@ -404,10 +372,11 @@ static func _cell_at(origin:Vector2, oct:Dictionary, step:int, iteration:int) ->
 #inline
 static func _cell_in_radius(origin:Vector2, cell:Vector2, radius:int) -> bool:
 	var fudged_radius = (float(radius) + RADIUS_FUDGE)
-	return origin.distance_squared_to(cell) <= radius * radius
+	return origin.distance_squared_to(cell) <= fudged_radius * fudged_radius
 
 #check if a cell is obstructed by any obstruction
-static func _cell_is_visible(cell_angles:CellAngles, obstructions:Array) -> bool:
+static func _cell_is_visible(cell_angles:CellAngles, obstructions:Array, \
+							RESTRICTIVENESS := R, VISIBLE_ON_EQUAL := VOE) -> bool:
 	var near_visible := true
 	var center_visible := true
 	var far_visible := true
@@ -469,14 +438,12 @@ static func _combine_obstructions(old:CellAngles, new:CellAngles) -> bool:
 
 	return false
 
-#Find which oct from from to is in.  We use shift logic from 
+#Find which oct from from to is in.  I used to use shift logic from 
 #https://github.com/luctius/heresyrl/blob/master/src/fov/rpsc_fov.c because
 #we don't have sets, and I hate iterating a list over and over again to 
 #remove elements already found.  Because of this we have a bunch of weird
-#checks to find the right octant.  It might be best to remove the shift
-#logic and replace it with iterating over the PoolVector2 and skipping
-#already found entries.  Shift logic might be useful there to reduce the
-#amount of unique checks needed.
+#checks to find the right octant.  Shift logic has been replaced with array.has
+#with no noticeable impact in FOV calculations.  This needs refactor
 static func _get_octant(from:Vector2, to:Vector2) -> Dictionary:
 	var mod_x
 	var mod_y
@@ -517,66 +484,3 @@ static func _get_octant(from:Vector2, to:Vector2) -> Dictionary:
 	else:
 		return last_candidate_oct
 
-#Find all octants that overlap a circle segment described by min_v and max_v.
-static func _get_angle_range_octants(min_v:Vector2, max_v:Vector2) -> Array:
-	var octs := []
-	for oct in FOVOctants.values():
-		if _angle_in_range(min_v, max_v, oct.min_a) or _angle_in_range(min_v, max_v, oct.max_a):
-			octs.append(oct)
-	return octs
-
-#Check if a cell is in the circle segment described by min_v and max_v from
-#origin
-static func _cell_in_segment(origin:Vector2, cell:Vector2, min_v:Vector2, max_v:Vector2) -> bool:
-	return _vector_in_vector_angle_range(min_v, max_v, origin - cell)
-
-static func _cell_in_segment_w_offset(origin:Vector2, cell:Vector2, min_v:Vector2, max_v:Vector2, offset_min:Vector2, offset_max:Vector2) -> bool:
-	return _is_clockwise(min_v, (origin + offset_min) - cell) and _is_clockwise((origin + offset_max) -cell, max_v)
-#Check if vector is within the circle segment described by min_v and max_v by
-#testing if it is clockwise of min_v and counterclockwise of max_v
-static func _vector_in_vector_angle_range(min_v:Vector2, max_v:Vector2, test_v:Vector2) -> bool:
-	return _is_clockwise(min_v, test_v) and _is_clockwise(test_v, max_v)
-
-#Check if angle is within the circle segment described by ccw_v and cw_v by
-#testing if it is clockwise of ccw_v and counterclockwise of cw_v
-static func _angle_in_range(min_v:Vector2, max_v:Vector2, test_a:float) -> bool:
-	var test_v = Vector2.LEFT.rotated(test_a)
-	return _is_clockwise(min_v, test_v) and _is_clockwise(test_v, max_v)
-
-#Check if v2 is clockwise of v1... maybe, I'm bad at vector math but it seems
-#to work \{**}/
-static func _is_clockwise(v1: Vector2, v2: Vector2) -> bool:
-	return v1.tangent().dot(v2) >= 0
-
-#static func _get_cone_corrected_angles(from:Vector2, to:Vector2, radius:int, width:float):
-#	var delta = to - from
-#	var offset_min := Vector2(0,0)
-#	var offset_max := Vector2(0,0)
-##	if delta.x < 0:
-##		if delta.y > delta.x:
-##			offset_min.y = 1
-##		offset_max.x = 1
-##		offset_min.x = 1
-#	var angle_v := ((from.direction_to(to) + offset_min) * radius)
-#	var min_v :Vector2 = (((from + offset_min).direction_to(to)) * radius).rotated(-(width/2))
-#	var max_v :Vector2 = (((from + offset_max).direction_to(to)) * radius).rotated(width/2)
-#	return [min_v, max_v, offset_min, offset_max]
-#
-#static func _get_cone_angle_offset(from:Vector2, to:Vector2):
-#	var min_offset = Vector2(0,0)
-#	var max_offset = Vector2(0,0)
-##	var delta = (to - from).normalized()
-##	var delta_abs = delta.abs()
-##	if delta.x > 0:
-##		min_offset.x +=1
-##		max_offset.x +=1
-##	elif delta.x < 0:
-##		min_offset.x -= 1
-##		max_offset.x -= 1
-##	if delta.y > 0:
-##		min_offset.y += 1
-##		max_offset.y += 1
-##	elif delta.y < 0:
-##		min_offset.y -= 1
-##		max_offset.y -= 1
-#	return [min_offset, max_offset]

@@ -14,9 +14,6 @@ onready var Player = $LevelActors/Player
 onready var FogOfWar = $FogOfWar
 onready var Unexplored = $Unexplored
 onready var FOWGhosts = $FOWGhosts
-var tilecount = 0
-var tiles_updated = 0
-var time_before
 var LevelGenerator = load("res://map/Generators/basic_levelgen.tres")
 
 var last_visiblilty_rect = Rect2(0,0,0,0)
@@ -35,10 +32,9 @@ var queued_connections = []
 var queued_removals = []
 
 const Door = preload("res://objects/Door.tscn")
-var fov_block_map
 var cell_interaction_mask_map = []
 var cell_occupancy_map = []
-var pending_block_map_updates = []
+var pending_cimmap_updates = []
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -55,7 +51,6 @@ func try_move(actor, direction):
 func _ready():
 	.connect("message_0", MSG, "_on_message_0")
 	.connect("log_2", MSG, "_on_log_2")
-	EVNT.subscribe("update_visible_map", self, "_on_update_visible_map")
 	EVNT.subscribe("build_finished", TMap, "_on_build_finished")
 	EVNT.subscribe("export_generator_config", WRLD, "_on_export_generator_config")
 	EVNT.subscribe("player_start_position", self, "_on_player_start_position")
@@ -72,7 +67,7 @@ func _ready():
 	EVNT.subscribe("update_fov", self, "_on_update_fov")
 	EVNT.subscribe("object_moved", self, "_on_object_moved")
 	EVNT.subscribe("try_action_at", self, "_on_actor_try_action_at")
-	EVNT.subscribe("fov_cell_updated", self, "_on_fov_cell_updated")
+	EVNT.subscribe("update_cimmap", self, "_on_update_cimmap")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -93,9 +88,17 @@ func _on_do_action(action):
 				action.fail()
 				EVNT.emit_signal("action_failed", action)
 
-func _on_object_moved(object, from_position):
-	if object.is_player:
+func _on_object_moved(thing, from_cell):
+	move_in_maps(thing, from_cell)
+	if thing.is_player:
 		EVNT.emit_signal("update_fov")
+
+func move_in_maps(thing, from_cell):
+	var at_cell = thing.game_position
+	cell_occupancy_map[from_cell.x][from_cell.y].erase(thing)
+	cell_occupancy_map[at_cell.x][at_cell.y].append(thing)
+	remove_from_cim(thing, from_cell)
+	add_to_cim(thing, at_cell)
 
 func actor_do_action_to(actor, action, subject):
 	if !actor.actions_available.has(action):
@@ -125,14 +128,6 @@ func _on_actor_try_action_at(actor, target_position, action = null):
 	else:
 		emit_signal("action_failed", actor, null, null)
 	actor_do_action_to(actor, target_thing.default_action if action == ACT.Type.None else action, target_thing)
-
-func _on_update_visible_map(where, should_block):
-	if !fov_block_map:
-		pending_block_map_updates.append([where, should_block])
-	elif where.x > 0 and where.y > 0 and where.x < WRLD.world_dimensions.x and where.y < WRLD.world_dimensions.y:
-		fov_block_map[where.x][where.y] = 1 if should_block else 0
-		#if true or last_visiblilty_rect.has_point(where):
-		#EVNT.emit_signal("update_fov")
 
 func can_do_action_at_location(at_location, action):
 	var found_object = object_at_cell(at_location)
@@ -164,12 +159,6 @@ func _on_create_ghost(ghost):
 func _on_end_ghost(ghost):
 	FOWGhosts.remove_child(ghost)
 	ghost.queue_free()
-
-func _on_place_door(at_cell: Vector2):
-	var new_door = Door.instance()
-	new_door.game_position = at_cell
-	LevelObjects.add_child(new_door)
-	pending_block_map_updates.append([new_door.game_position, true])
 	
 func _on_place_thing(thing_type, thing_index, at_cell):
 	if WRLD.is_ready:
@@ -194,7 +183,9 @@ func add_to_cim(thing, at_cell):
 	var should_update_fov = false
 	if ~(cell_interaction_mask_map[at_cell.x][at_cell.y] & TIL.CellInteractions.BlocksFOV):
 		should_update_fov = true
+	var int_mask = thing.cell_interaction_mask
 	cell_interaction_mask_map[at_cell.x][at_cell.y] |= thing.cell_interaction_mask
+	var new_mask = cell_interaction_mask_map[at_cell.x][at_cell.y]
 	if should_update_fov:
 		EVNT.emit_signal("update_fov")
 
@@ -244,6 +235,12 @@ func remove_from_cim(thing, at_cell):
 		new_mask |= thing.cell_interaction_mask
 	if blocked_vision and new_mask & TIL.CellInteractions.BlocksFOV:
 		EVNT.emit_signal("update_fov")
+
+func _on_update_cimmap(thing):
+	if WRLD.is_ready:
+		add_to_cim(thing, thing.game_position)
+	else:
+		pending_cimmap_updates.append(thing)
 
 func find_thing_by_type_index_cell(thing_type, thing_index, at_cell):
 	for thing in everything_at_cell(at_cell, thing_type):
@@ -309,9 +306,7 @@ func thing_at_position(position, prefer_actor=true):
 func _on_player_start_position(start_pos):
 	Player.set_initial_game_position(start_pos) # Replace with function body.
 	
-func _on_tiles_ready(fov_block_tiles):
-	fov_block_map = fov_block_tiles
-	tilecount = WRLD.world_dimensions.x * WRLD.world_dimensions.y
+func _on_tiles_ready():
 	for x in range(WRLD.world_dimensions.x):
 		cell_interaction_mask_map.append([])
 		cell_occupancy_map.append([])
@@ -344,6 +339,11 @@ func _on_tiles_ready(fov_block_tiles):
 	process_add_queue()
 	process_remove_queue()
 	process_connection_queue()
+	process_cimmap_updates()
+	
+func process_cimmap_updates():
+	for thing in pending_cimmap_updates:
+		add_to_cim(thing, thing.game_position)
 
 func process_add_queue():
 	var old_queue = queued_things
@@ -390,33 +390,38 @@ func update_path(to_update, tile_pos, is_connected, tile_mask, exclude_objects =
 		to_update.connect_points(point_id, point)
 			
 func _on_update_fov():
-	update_fov_by_signal(Player.game_position)
+	update_fov_by_location(Player.game_position)
 
-func update_fov_by_signal(from_position):
-	var tiles_updated = 0
+func update_fov_by_location(from_cell, hide_old_fov = true):
 	if !WRLD.is_ready:
 		return
-	time_before = OS.get_system_time_msecs()
-	EVNT.emit_signal("begin_fov")
+	var time_before = OS.get_system_time_msecs()
 	var min_x = INF
 	var min_y = INF
 	var max_x = 0
 	var max_y = 0
-	for cell in last_visible_set:
-		FogOfWar.set_cellv(cell, 0)
-	var cells = FOV.cast_area(from_position, WRLD.SIGHT_RANGE, fov_block_map)
-	tilecount = cells.size()
+	if hide_old_fov:
+		for cell in last_visible_set:
+			hide_cell(cell)
+	var cells = FOV.cast_area(from_cell, WRLD.SIGHT_RANGE, TIL.CellInteractions.BlocksFOV)
 	for cell in cells:
 		min_x = min(cell.x, min_x)
 		min_y = min(cell.y, min_y)
 		max_x = max(cell.x, max_x)
 		max_y = max(cell.y, max_y)
-		FogOfWar.set_cellv(cell, -1)
-		Unexplored.set_cellv(cell, -1)
-		EVNT.emit_signal("update_fov_cell", cell)
+		show_cell(cell)
 	last_visiblilty_rect.position = Vector2(min_x, min_y)
 	last_visiblilty_rect.end = Vector2(max_x + 1, max_y + 1)
 	last_visible_set = cells
 	var total_time = OS.get_system_time_msecs() - time_before
-	print("FOVUpdate Took: " + str(total_time))
-	EVNT.emit_signal("end_fov")
+
+func hide_cell(at_cell):
+	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:
+		occupant.hide()
+	FogOfWar.set_cellv(at_cell, 0)
+
+func show_cell(at_cell):
+	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:
+		occupant.show()
+	FogOfWar.set_cellv(at_cell, -1)
+	Unexplored.set_cellv(at_cell, -1)

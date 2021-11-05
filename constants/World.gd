@@ -7,6 +7,9 @@ var is_ready = false
 var tween
 var rng
 
+var cell_interaction_mask_map = []
+var cell_occupancy_map = []
+
 var object_types
 
 enum GeneratorSignal {MapDimension, ActorList, ObjectList, TileList}
@@ -19,6 +22,11 @@ const SIGHT_RANGE = 200
 func _ready():
 	pass # Replace with function body.
 
+func set_game_world(new_game_world):
+	GameWorld = new_game_world
+	cell_interaction_mask_map = GameWorld.cell_interaction_mask_map
+	cell_occupancy_map = GameWorld.cell_occupancy_map
+
 func get_free_tween():
 	return tween
 
@@ -29,7 +37,7 @@ func is_tile_walkable(at_cell):
 	return true
 
 func can_see_player(actor):
-	return FOV.can_see_point(actor.game_position, GameWorld.Player.game_position, GameWorld.fov_block_map, SIGHT_RANGE)
+	return FOV.can_see_point(actor.game_position, GameWorld.Player.game_position, SIGHT_RANGE)
 
 func _on_export_generator_config(config_type, config_value):
 	if config_type == GeneratorSignal.MapDimension:
@@ -106,6 +114,8 @@ func cell_is_visible(at_cell):
 				if cell == at_cell:
 					return true
 	return false
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

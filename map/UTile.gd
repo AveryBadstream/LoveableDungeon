@@ -95,6 +95,12 @@ func effect_claim(effect):
 func effect_release(effect):
 	claiming_effects.erase(effect)
 
+func hide():
+	pass
+
+func show():
+	pass
+
 func do_action(action) -> int:
 	if self.has_method("_do_action"+ACT.Type.keys()[action.action_type]):
 		return self.call("_do_action" + ACT.Type.keys()[action.action_type], action)

@@ -7,6 +7,7 @@ extends GameEffect
 
 var from
 var towards
+var to
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -14,7 +15,7 @@ func _ready():
 func _init(parent, actor, target, magnitude).(parent, actor, target):
 	from = target.game_position
 	var possible_target = (((from - actor.game_position).normalized() * magnitude) + from).snapped(Vector2.ONE)
-	steps = FOV.cast_lerp_line(target.game_position, possible_target, magnitude, WRLD.GameWorld.fov_block_map)
+	steps = FOV.cast_lerp_line(target.game_position, possible_target, magnitude, TIL.CellInteractions.Occupies)
 	var i = steps.size() - 1
 	to = steps[i]
 	steps.remove(i)

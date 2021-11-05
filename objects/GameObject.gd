@@ -97,7 +97,7 @@ func actor_do_action(actor, action_type:int) -> bool:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	if blocks_vision:
+	if _blocks_vision:
 		cell_interaction_mask |= TIL.CellInteractions.BlocksFOV
 	if is_walkable:
 		cell_interaction_mask |= TIL.CellInteractions.Walkable
@@ -107,37 +107,21 @@ func _ready():
 		cell_interaction_mask |= TIL.CellInteractions.Phaseable
 	if occupies_cell:
 		cell_interaction_mask |= TIL.CellInteractions.Occupies
-	EVNT.subscribe("begin_fov", self, "_on_begin_fov")
-	EVNT.subscribe("update_fov_cell", self, "_on_update_fov_cell")
-	if self.player_remembers:
-		EVNT.subscribe("end_fov", self, "_on_end_fov_and_ghost")
-	else:
-		EVNT.subscribe("end_fov", self, "_on_end_fov")
-	if self.get_blocks_vision():
-		EVNT.emit_signal("update_visible_map", get_game_position(), true)
+	EVNT.emit_signal("update_cimmap", self)
 
-func _on_begin_fov():
-	self.tentatively_visible = false
-
-func _on_update_fov_cell(cell):
-	if cell == self.get_game_position():
-		self.tentatively_visible = true
-
-func _on_end_fov_and_ghost():
-	if self.visible == tentatively_visible:
-		return
-	if tentatively_visible and my_ghost:
-		EVNT.emit_signal("end_ghost", my_ghost)
-		my_ghost = null
-	elif visible and !tentatively_visible and !my_ghost:
+func hide():
+	if player_remembers and !my_ghost:
 		var new_ghost = FOWGhost.new()
 		new_ghost.set_mimic(self)
 		EVNT.emit_signal("create_ghost", new_ghost)
 		my_ghost = new_ghost
-	self.set_visible(tentatively_visible)
+	.hide()
 
-func _on_end_fov():
-	self.set_visible(tentatively_visible)
+func show():
+	if player_remembers and my_ghost:
+		EVNT.emit_signal("end_ghost", my_ghost)
+		my_ghost = null
+	.show()
 
 func set_game_position(new_position: Vector2, update_real_position=true, update_fov=true):
 	if new_position != last_game_position:
@@ -149,10 +133,6 @@ func set_game_position(new_position: Vector2, update_real_position=true, update_
 			#yield(WRLD.GameWorld, "end_fov")
 		if update_real_position:
 			self.position = new_position * 16
-		if WRLD.cell_is_visible(new_position):
-			self.set_visible(true)
-		else:
-			self.set_visible(false)
 		last_game_position = new_position
 		EVNT.emit_signal("object_moved", self, last_game_position)
 	emit_signal("position_update_complete")

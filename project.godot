@@ -90,7 +90,7 @@ EFCT="*res://constants/Effect.gd"
 DBG="*res://constants/Debug.gd"
 AUD="*res://constants/Audio.gd"
 FX="*res://constants/FX.gd"
-FOV="*res://constants/FOVMRPAS_array_shiftless.gd"
+FOV="*res://constants/FOVRPAS.gd"
 
 [display]
 
