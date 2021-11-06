@@ -71,34 +71,36 @@ class CellAngles extends Reference:
 #explosions 
 static func cast_area(origin:Vector2, radius:int, \
 					cell_mask: int = TIL.CellInteractions.BlocksFOV,
-					VISIBLE_ON_EQUAL := VOE, \
+					include_blockers:= true, VISIBLE_ON_EQUAL := VOE, \
 					NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 					RESTRICTIVENESS := R, \
 					tiles:Array = WRLD.cell_interaction_mask_map) ->Array:
 	var cells = []
 	for oct in FOVOctants.values():
 		_visible_cells_in_octant_from(origin, oct, radius, tiles, cells, \
-									cell_mask, NOT_VISIBLE_BLOCKS_VISION ,
-									 RESTRICTIVENESS , VISIBLE_ON_EQUAL )
+									cell_mask, include_blockers, \
+									NOT_VISIBLE_BLOCKS_VISION, \
+									RESTRICTIVENESS, VISIBLE_ON_EQUAL )
 	cells.append(origin)
 	return cells
 
 #Cast a shadow-cast friendly lerpline that should reach any visible cell
 static func cast_lerpish_line(origin:Vector2, target:Vector2, max_length:int, \
 							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							include_blockers:= true, \
 							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 							RESTRICTIVENESS := R, \
 							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
 	var oct = _get_octant(origin, target)
 	return _lerpish_line(origin, target, oct, max_length, tiles, [], cell_mask,
-					 NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
+					 include_blockers, NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 
 #casts a cone more reliably than cast cone, doesn't work for values under 35. 
 #actual width is quite a bit more than advertised
 static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, \
 							radius: int, \
 							cell_mask: int = TIL.CellInteractions.BlocksFOV,
-							VISIBLE_ON_EQUAL := VOE, \
+							include_blockers:= true, VISIBLE_ON_EQUAL := VOE, \
 							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 							RESTRICTIVENESS := R, \
 							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
@@ -126,14 +128,14 @@ static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, \
 	var cells = []
 	for oct in FOVOctants.values():
 		_cast_convex_polygon(from, lines, oct, radius, tiles, cells, \
-							cell_mask, VISIBLE_ON_EQUAL, \
+							cell_mask, include_blockers, VISIBLE_ON_EQUAL, \
 							NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 	return cells
 
 static func cast_wide_beam(from:Vector2, towards:Vector2, width: float, \
 						radius: int, \
 						cell_mask: int = TIL.CellInteractions.BlocksFOV,
-						VISIBLE_ON_EQUAL := VOE, \
+						include_blockers:= true, VISIBLE_ON_EQUAL := VOE, \
 						NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 						RESTRICTIVENESS := R, \
 						tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
@@ -151,41 +153,73 @@ static func cast_wide_beam(from:Vector2, towards:Vector2, width: float, \
 							NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 	return cells
 
+static func cast_wall(from:Vector2, towards:Vector2, width:int, max_distance:int, \
+						cell_mask: int = TIL.CellInteractions.BlocksFOV,
+						include_blockers:= true, VISIBLE_ON_EQUAL := VOE, \
+						NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+						RESTRICTIVENESS := R, \
+						tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
+	var dvec := (towards - from).normalized()
+	var oct = _get_octant(from, towards)
+	var max_point = _forward_lerpish_line(from, towards, oct, max_distance, tiles, \
+										[], cell_mask, include_blockers, \
+										NOT_VISIBLE_BLOCKS_VISION, \
+										RESTRICTIVENESS, 
+										VISIBLE_ON_EQUAL)[-1]
+	var cells = [max_point]
+	if width == 0:
+		return cells
+	var normal = Vector2(dvec.y, -dvec.x)
+	var tangent = Vector2(-dvec.y, dvec.x)
+	cells.append_array(cast_lerp_line_toward(max_point, (normal*width)+max_point, \
+					width, cell_mask, include_blockers, \
+					NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS, tiles))
+	cells.append_array(cast_lerp_line_toward(max_point, (tangent*width)+max_point, \
+					width, cell_mask, include_blockers, \
+					NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS, tiles))
+	return cells
+	
+
 #tests if point to seen from from within site_range using tiles as a block map
 static func can_see_point(from:Vector2, to:Vector2, radius: int, \
 						cell_mask: int = TIL.CellInteractions.BlocksFOV,
-						VISIBLE_ON_EQUAL := VOE, \
+						include_blockers:= true, VISIBLE_ON_EQUAL := VOE, \
 						NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 						RESTRICTIVENESS := R, \
 						tiles:Array = WRLD.cell_interaction_mask_map) -> bool:
 	var oct = _get_octant(from, to)
 	for tile in _visible_cells_in_octant_from(from, oct, radius, tiles, [], \
-									cell_mask, VISIBLE_ON_EQUAL, \
+									cell_mask, include_blockers, VISIBLE_ON_EQUAL, \
 									NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS):
 		if tile == to:
 			return true
 	return false
 
 #cast a lerp line up to a certain distance
-static func cast_lerp_line_toward(origin:Vector2, direction:Vector2, length:int, \
-							cell_mask: int = TIL.CellInteractions.BlocksFOV,
-							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+static func cast_lerp_line_toward(origin:Vector2, toward:Vector2, length:int, \
+							cell_mask: int = TIL.CellInteractions.BlocksFOV, \
+							include_blockers:= true, NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 							RESTRICTIVENESS := R, \
 							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
-	var target = (direction * length).snapped(Vector2(1,1))
-	return cast_lerp_line(origin, target, length, cell_mask, NOT_VISIBLE_BLOCKS_VISION, \
-						RESTRICTIVENESS, tiles)
+	var target = (((toward - origin).normalized() * length) + origin).snapped(Vector2(1,1))
+	return cast_lerp_line(origin, target, cell_mask, include_blockers, 
+						NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS, tiles)
 
-static func cast_lerp_line(origin:Vector2, target:Vector2, length:int, \
+static func cast_lerp_line(origin:Vector2, target:Vector2, \
 							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							include_blockers:= true, \
 							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 							RESTRICTIVENESS := R, \
 							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
 	var cells = []
-	var N = target.distance_to(origin)
+	var delta = origin - target
+	var N = max(abs(delta.x), abs(delta.y))
+	#var N = target.distance_to(origin)
 	for i in range(N+1):
-		var t = i/N if i > 0 else 0.0
-		var new_cell = Vector2( int(lerp(origin.x, target.x, t)), int(lerp(origin.y, target.y, t)))
+		if i == 0:
+			continue
+		var t = i/N
+		var new_cell = Vector2( round(lerp(origin.x, target.x, t)), round(lerp(origin.y, target.y, t)))
 		if !cells.has(new_cell):
 			cells.append(new_cell)
 	return cells
@@ -193,6 +227,7 @@ static func cast_lerp_line(origin:Vector2, target:Vector2, length:int, \
 static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, \
 								radius:int, tiles:Array, cell_list:Array, \
 								cell_mask: int = TIL.CellInteractions.BlocksFOV,
+								include_blockers:= true, \
 								NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 								RESTRICTIVENESS := R, VISIBLE_ON_EQUAL := VOE) -> Array:
 	var planes = []
@@ -224,18 +259,17 @@ static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, \
 											(float(step + .5) * angle_allocation),
 											(float(step + 1) * angle_allocation))
 				if _cell_is_visible(cell_angles, obstructions, RESTRICTIVENESS, VISIBLE_ON_EQUAL):
-					if cell_list.has(cell):
-						pass
-					else:
-						var in_polygon = true
-						for plane in planes:
-							if plane[0].dot(cell) - plane[1] > 0:
-								in_polygon = false
-								break
-						if in_polygon:
-							cell_list.append(cell)
+					var in_polygon = true
+					for plane in planes:
+						if plane[0].dot(cell) - plane[1] > 0:
+							in_polygon = false
+							break
 					if tiles[cell.x][cell.y] & cell_mask:
 						obstructions = _add_obstruction(obstructions, cell_angles)
+						if include_blockers and in_polygon and !cell_list.has(cell):
+							cell_list.append(cell)
+					elif in_polygon and !cell_list.has(cell):
+						cell_list.append(cell)
 				elif NOT_VISIBLE_BLOCKS_VISION:
 					obstructions = _add_obstruction(obstructions, cell_angles)
 		if bad_cell_count == num_cells_in_row:
@@ -250,6 +284,7 @@ static func _cast_convex_polygon(origin:Vector2, area: Array, oct:Dictionary, \
 static func _lerpish_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:int, \
 						tiles:Array, cell_list:Array, \
 						cell_mask = TIL.CellInteractions.BlocksFOV, \
+						include_blockers:= true, 
 						NOT_VISIBLE_BLOCKS_VISION := NVBV, RESTRICTIVENESS := R) -> Array:
 	var target_iteration := _iteration_at(origin, target, oct)
 	var target_step := _step_at(origin, target, oct)
@@ -270,7 +305,7 @@ static func _lerpish_line(origin:Vector2, target:Vector2, oct:Dictionary, radius
 		var closest_dist = INF
 		var best_cell = null
 		var best_step = 0
-		var t = float(iteration)/float(N)
+		var t = float(iteration-1)/float(N)
 		var lerp_target_cell = Vector2(round(lerp(target.x, origin.x, t)), round(lerp(target.y, origin.y, t)))
 		# Start at the center (vertical or horizontal line) and step outwards
 		target_step = _step_at(origin, lerp_target_cell, oct)
@@ -296,12 +331,69 @@ static func _lerpish_line(origin:Vector2, target:Vector2, oct:Dictionary, radius
 			
 	return target_cells
 
+#Cast a line to a point in oct maxing at radius, will prefer a lerp line but 
+#can deflect a little to allow targeting any visible cell.  Lerp lines and
+#bresenham look much better.  This one runs forward, instead of working backward
+static func  _forward_lerpish_line(origin:Vector2, target:Vector2, oct:Dictionary, \
+										radius:int, tiles:Array, cell_list:Array, \
+										cell_mask = TIL.CellInteractions.BlocksFOV, \
+										include_blockers:= true, \
+										NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+										RESTRICTIVENESS := R, 
+										VISIBLE_ON_EQUAL := VOE) -> Array:
+	var iteration = 1
+	var visible_cells = []
+	var obstructions = []
+	var max_x = tiles.size()
+	var max_y = tiles[0].size()
+	var delta = target - origin
+	var N = max(abs(delta.x), abs(delta.y))
+	while iteration <= radius and not (obstructions.size() == 1 and
+										obstructions[0].near == 0.0 and obstructions[0].far == 1.0):
+		var num_cells_in_row = iteration + 1
+		var angle_allocation = 1.0 / float(num_cells_in_row)
+		var bad_cell_count = 0
+		var best_cell = null
+		var t = float(iteration)/float(N)
+		var lerp_target_cell = origin.linear_interpolate(target, t).snapped(Vector2.ONE)
+		# Start at the center (vertical or horizontal line) and step outwards
+		for step in range(num_cells_in_row):
+			var cell = _cell_at(origin, oct, step, iteration)
+			if cell.x < 0 or cell.y < 0 or cell.x >= max_x or cell.y >= max_y:
+				bad_cell_count += 1
+				continue
+			if _cell_in_radius(origin, cell, radius):
+				var cell_angles = CellAngles.new((float(step) * angle_allocation),
+											(float(step + .5) * angle_allocation),
+											(float(step + 1) * angle_allocation))
+				if _cell_is_visible(cell_angles, obstructions, RESTRICTIVENESS, VISIBLE_ON_EQUAL):
+					if cell_list.has(cell):
+						pass
+					else:
+						if cell == lerp_target_cell:
+							best_cell = cell
+					if tiles[cell.x][cell.y] & cell_mask:
+						obstructions = _add_obstruction(obstructions, cell_angles)
+				elif NOT_VISIBLE_BLOCKS_VISION:
+					obstructions = _add_obstruction(obstructions, cell_angles)
+		if bad_cell_count == num_cells_in_row:
+			break
+		if best_cell:
+			cell_list.append(best_cell)
+		else:
+			break
+		iteration += 1
+
+	return cell_list
+	
 #Finds all cells from origin in oct out to radius shadowcasting against tiles
 static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, \
 										radius:int, tiles:Array, cell_list:Array, \
 										cell_mask = TIL.CellInteractions.BlocksFOV, \
+										include_blockers:= true, \
 										NOT_VISIBLE_BLOCKS_VISION := NVBV, \
-										RESTRICTIVENESS := R, VISIBLE_ON_EQUAL := VOE) -> Array:
+										RESTRICTIVENESS := R, 
+										VISIBLE_ON_EQUAL := VOE) -> Array:
 	var iteration = 1
 	var visible_cells = []
 	var obstructions = []
@@ -371,6 +463,9 @@ static func _cell_at(origin:Vector2, oct:Dictionary, step:int, iteration:int) ->
 #Find out if a cell is within radius of the origin.  Probably could be done
 #inline
 static func _cell_in_radius(origin:Vector2, cell:Vector2, radius:int) -> bool:
+	if origin.distance_to(cell) > radius:
+		return cell == (((cell - origin).normalized()*radius) + origin).snapped(Vector2.ONE)
+	return true
 	var fudged_radius = (float(radius) + RADIUS_FUDGE)
 	return origin.distance_squared_to(cell) <= fudged_radius * fudged_radius
 

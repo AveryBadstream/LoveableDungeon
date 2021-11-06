@@ -21,8 +21,8 @@ func _init(actor, target, max_magnitude).(actor, target):
 	direction = (from - actor.game_position).normalized()
 	var possible_target = ((direction * magnitude) + from).snapped(Vector2.ONE)
 	steps = FOV.cast_lerp_line(target.game_position, possible_target, magnitude, TIL.CellInteractions.None)
-	step = 1
-	to = steps[1]
+	step = 0
+	to = steps[0]
 
 func prep():
 	if WRLD.cell_occupied(steps[1]):

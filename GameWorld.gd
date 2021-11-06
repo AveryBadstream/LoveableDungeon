@@ -104,14 +104,11 @@ func _on_slammed(thing, into, from, to):
 	EVNT.trigger_SlammedInto(into, thing, from, to)
 
 func step_end():
-	print(str(recently_moved.size()) + " recently moved")
 	for move_records in recently_moved.values():
-		print(str(move_records.size()) + " move records for " + str(move_records[0][0].name))
 		var move_record = move_records[-1]
 		var thing = move_record[0]
 		var from_cell = move_record[1]
 		var to_cell = move_record[2]
-		print("Last move for "+str(thing.name)+" from:"+str(from_cell)+" to:"+str(to_cell))
 		for triggered_thing in cell_occupancy_map[to_cell.x][to_cell.y]:
 			EVNT.trigger_EndedMovement(thing, triggered_thing, from_cell, to_cell)
 	recently_moved = {}

@@ -19,8 +19,8 @@ func _init(actor, target, in_direction).(actor, target):
 	direction = in_direction
 	var possible_target = ((direction) + from).snapped(Vector2.ONE)
 	steps = FOV.cast_lerp_line(target.game_position, possible_target, 1, TIL.CellInteractions.None)
-	step = 1
-	to = steps[1]
+	step = 0
+	to = steps[0]
 
 func prep():
 	print("Prepping slip for "+effect_target.name+" from:"+str(from)+" to:"+str(to))
