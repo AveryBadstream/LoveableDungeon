@@ -9,7 +9,7 @@ var toggle_effect = preload("res://effects/Toggle.gd")
 onready var animation_player = $AnimationPlayer
 # Called when the node enters the scene tree for the first time.
 var toggled: bool setget set_toggled, get_toggled
-var _toggled
+var _toggled = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass
@@ -24,11 +24,11 @@ func effect_pre(effect):
 
 func toggle(visibly):
 	if visibly:
+		FX.start_priority_animation(animation_player)
 		if _toggled:
 			animation_player.play("On")
 		else:
 			animation_player.play("Off")
-		FX.spawn_puff(self.get_game_position())
 		yield(animation_player, "animation_finished")
 	set_toggled(!_toggled)
 

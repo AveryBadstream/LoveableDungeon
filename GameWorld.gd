@@ -126,7 +126,7 @@ func _on_update_visible_map(where, should_block):
 	elif where.x > 0 and where.y > 0 and where.x < WRLD.world_dimensions.x and where.y < WRLD.world_dimensions.y:
 		fov_block_map[where.x][where.y] = 1 if should_block else 0
 		#if true or last_visiblilty_rect.has_point(where):
-		EVNT.emit_signal("update_fov")
+		#EVNT.emit_signal("update_fov")
 
 func can_do_action_at_location(at_location, action):
 	var found_object = object_at_cell(at_location)

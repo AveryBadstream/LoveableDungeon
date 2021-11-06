@@ -34,6 +34,7 @@ func open(visibly:bool):
 	if is_opened:
 		return
 	if visibly:
+		FX.start_priority_animation(animation_player)
 		animation_player.play("Open")
 		yield(animation_player, "animation_finished")
 	set_opened(true)
@@ -42,6 +43,7 @@ func close(visibly:bool):
 	if !is_opened:
 		return
 	if visibly:
+		FX.start_priority_animation(animation_player)
 		animation_player.play("Close")
 		yield(animation_player, "animation_finished")
 	set_opened(false)

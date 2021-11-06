@@ -128,12 +128,13 @@ func _on_end_fov_and_ghost():
 func _on_end_fov():
 	self.set_visible(tentatively_visible)
 
-func set_game_position(new_position: Vector2, update_real_position=true):
+func set_game_position(new_position: Vector2, update_real_position=true, update_fov=true):
 	if new_position != last_game_position:
 		if self.blocks_vision:
 			EVNT.emit_signal("update_visible_map", last_game_position, false)
 			EVNT.emit_signal("update_visible_map", new_position, true)
-			EVNT.emit_signal("update_fov")
+			if update_fov:
+				EVNT.emit_signal("update_fov")
 			#yield(WRLD.GameWorld, "end_fov")
 		if update_real_position:
 			self.position = new_position * 16

@@ -1,6 +1,6 @@
 extends Node2D
 
-
+signal priority_over()
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -14,6 +14,7 @@ func _ready():
 func _on_FX_done(FX):
 	self.remove_child(FX)
 	FX.queue_free()
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

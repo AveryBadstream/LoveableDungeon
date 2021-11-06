@@ -115,6 +115,8 @@ static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:in
 	var last_cell = target
 	var max_x = tiles.size()
 	var max_y = tiles[0].size()
+	target.x = clamp(target.x, 0, max_x - 1)
+	target.y = clamp(target.y, 0, max_y)
 	var delta = target - origin
 	var N = max(abs(delta.x), abs(delta.y))
 	for iteration in range(target_iteration, 0, -1):
@@ -129,6 +131,8 @@ static func _lerp_line(origin:Vector2, target:Vector2, oct:Dictionary, radius:in
 		target_step = _step_at(origin, lerp_target_cell, oct)
 		for step in range(floor(target_angles.near * num_cells_in_row), ceil(target_angles.far * num_cells_in_row)):
 			var cell = _cell_at(origin, oct, step, iteration)
+			if cell.x >= max_x or cell.x < 0 or cell.y >= max_y or cell.y < 0:
+				continue
 			if !tiles[cell.x][cell.y]:
 				if cell == lerp_target_cell:
 					best_cell = cell

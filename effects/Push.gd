@@ -20,8 +20,10 @@ func _init(parent, actor, target, magnitude).(parent, actor, target):
 	steps.remove(i)
 	i -= 1
 	var last_added = self
+	var last_position = to
 	while i >=0:
-		var next_effect = slide_effect.new(last_added, actor, target, steps[i])
+		var next_effect = slide_effect.new(last_added, actor, target, last_position, steps[i])
+		last_position = steps[i]
 		steps.remove(i)
 		last_added.after_queue.append(next_effect)
 		last_added = next_effect
