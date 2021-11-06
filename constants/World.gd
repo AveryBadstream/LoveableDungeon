@@ -119,6 +119,12 @@ func cell_occupied(at_cell):
 	var target_cim = cell_interaction_mask_map[at_cell.x][at_cell.y]
 	return target_cim & TIL.CellInteractions.Occupies
 
+func get_targets_at_by_mask(at_cell, target_mask):
+	var found_targets = []
+	for target in cell_occupancy_map[at_cell.x][at_cell.y]:
+		if target.thin_type & target_mask:
+			found_targets.append(target)
+	return found_targets
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

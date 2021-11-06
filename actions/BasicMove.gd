@@ -23,9 +23,10 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 
 func mark_pending():
 	MSG.action_message("Move where?", self)
+	.mark_pending()
 
 func do():
-	EFCT.queue_now(move_effect.new(self.action_actor, self.action_targets[0]))
+	EFCT.queue_now(move_effect.new(self.action_actor, self.action_actor, self.action_targets[0].game_position))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

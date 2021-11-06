@@ -4,50 +4,43 @@ extends Node2D
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var area_hint_indicator = preload("res://ui/AreaHintRect.tscn")
+var area_hint_indicator = preload("res://ui/AreaHint.tscn")
 var target_hint_indicator = preload("res://ui/TargetHint.tscn")
+var effect_hint_indicator = preload("res://ui/EffectHint.tscn")
 onready var angle_line = $Line2D
 
 onready var area_highlight = $AreaHighlight
 
 var hint_area_type = ACT.TargetArea.TargetNone
-var hint_area_args = []
+var currently_hinting
 var last_mouse_game_position = Vector2.ZERO
 var last_octant = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	EVNT.subscribe("hint_area_cone", self, "_on_hint_area_cone")# Replace with function body.
-	EVNT.subscribe("hint_area_none", self, "_on_hint_area_none")
+	EVNT.subscribe("hint_action", self, "_on_hint_action")
+	EVNT.subscribe("action_complete", self, "_on_end_hint")
+	EVNT.subscribe("action_impossible", self, "_on_end_hint")
+	EVNT.subscribe("action_failed", self, "_on_end_hint")
 
-func _on_hint_area_cone(from, radius, width):
-	var mouse_pos = WRLD.get_mouse_game_position()
-	hint_area_args = [from, radius, width]
-	hint_area_type = ACT.TargetArea.TargetCone
-	hint_cone_update(mouse_pos)
-
-func _on_hint_area_none():
-	hint_area_type = ACT.TargetArea.TargetNone
+func _on_end_hint(action):
+	currently_hinting = null
 	clear_hints()
 
-func update_hint_area(mouse_pos):
-	if hint_area_type == ACT.TargetArea.TargetNone:
-		return
-	elif hint_area_type == ACT.TargetArea.TargetCone:
-		hint_cone_update(mouse_pos)
+func _on_hint_action(action):
+	currently_hinting = action
+	display_hints(action.get_target_hints())
 
-func hint_cone_update(mouse_pos):
-	last_mouse_game_position = mouse_pos
+func display_hints(hint_lists):
 	clear_hints()
-	#var cells = FOV.cast_psuedo_cone(hint_area_args[0], mouse_pos, hint_area_args[2], hint_area_args[1], TIL.CellInteractions.Occupies)
-	var area_cells = FOV.cast_area(hint_area_args[0], 5, TIL.CellInteractions.Occupies)
-	#var area_cells = FOV.cast_lerp_line_toward(hint_area_args[0], mouse_pos, 5, TIL.CellInteractions.Occupies)
-	var cells = FOV.cast_wall(hint_area_args[0], mouse_pos, 1, 5, TIL.CellInteractions.Occupies)
-	for cell in area_cells:
-		if !cells.has(cell):
-			var new_hint:ColorRect = area_hint_indicator.instance()
-			new_hint.rect_position = cell * 16
-			area_highlight.add_child(new_hint)
-	for cell in cells:
+	for cell in hint_lists[0]:
+		var new_hint:ColorRect = area_hint_indicator.instance()
+		new_hint.rect_position = cell * 16
+		area_highlight.add_child(new_hint)
+	for cell in hint_lists[1]:
+		var new_hint:ColorRect = effect_hint_indicator.instance()
+		new_hint.rect_position = cell * 16
+		area_highlight.add_child(new_hint)
+	for cell in hint_lists[2]:
 		var new_hint:ColorRect = target_hint_indicator.instance()
 		new_hint.rect_position = cell * 16
 		area_highlight.add_child(new_hint)
@@ -57,11 +50,15 @@ func clear_hints():
 		area_highlight.remove_child(child)
 		child.queue_free()
 
+func hint_update(mouse_pos):
+	display_hints(currently_hinting.get_target_hints(mouse_pos))
+
 func _process(delta):
-	if hint_area_type == ACT.TargetArea.TargetCone:
-		var mouse_pos = WRLD.get_mouse_game_position()
+	var mouse_pos = WRLD.get_mouse_game_position()
+	if currently_hinting:
 		if mouse_pos != last_mouse_game_position:
-			hint_cone_update(mouse_pos)
+			hint_update(mouse_pos)
+	last_mouse_game_position = mouse_pos
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

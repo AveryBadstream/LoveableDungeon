@@ -10,10 +10,10 @@ var to
 var target_cell
 # Called when the node enters the scene tree for the first time.
 
-func _init(actor, target).(actor, target):
-	from = actor.position
-	target_cell = target.game_position
-	to = target_cell * 16
+func _init(actor, target, to_cell).(actor, target):
+	from = target.position
+	to = to_cell * 16
+	target_cell = to_cell
 
 func run():
 	if WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(target_cell):

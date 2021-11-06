@@ -18,18 +18,16 @@ func _init(actor, target, in_direction).(actor, target):
 	from = target.game_position
 	direction = in_direction
 	var possible_target = ((direction) + from).snapped(Vector2.ONE)
-	steps = FOV.cast_lerp_line(target.game_position, possible_target, 1, TIL.CellInteractions.None)
-	step = 0
-	to = steps[0]
+	steps = [from]
+	steps.append_array(FOV.lerp_line(target.game_position, possible_target, 1, TIL.CellInteractions.None))
+	step = 1
+	to = steps[1]
 
 func prep():
-	print("Prepping slip for "+effect_target.name+" from:"+str(from)+" to:"+str(to))
-	if WRLD.cell_occupied(steps[1]):
-		print("Slamming")
+	if WRLD.cell_occupied(steps[step]):
 		EFCT.queue_now(slam_effect.new(effect_actor, effect_target, direction, effect_target.game_position, 1))
 	else:
-		print("Sliding")
-		EFCT.queue_now(slide_effect.new(effect_actor, effect_target, steps, 1, 1))
+		EFCT.queue_now(slide_effect.new(effect_actor, effect_target, steps, step, 1))
 	return false
 
 func run():

@@ -21,6 +21,7 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 
 func mark_pending():
 	MSG.action_message("Push what?", self)
+	.mark_pending()
 
 func impossible():
 	MSG.action_message("You can't push that.", self)

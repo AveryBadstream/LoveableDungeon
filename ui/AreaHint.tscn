@@ -3,7 +3,7 @@
 [node name="AreaHintRect" type="ColorRect"]
 margin_right = 16.0
 margin_bottom = 16.0
-color = Color( 0.0509804, 1, 0.352941, 0.603922 )
+color = Color( 1, 0.0509804, 0.0509804, 0.490196 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

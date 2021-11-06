@@ -24,8 +24,8 @@ func _input(event):
 			if event.button_index == BUTTON_LEFT and event.pressed:
 				var m_cell = WRLD.get_mouse_game_position()
 				if not act_at_location(m_cell):
-					var at_cell = (m_cell - get_game_position()).normalized().snapped(Vector2(1,1))
-					act_in_direction(at_cell)
+					var at_cell = FOV.cast_nearest_point(get_game_position(), m_cell, 1)
+					act_at_location(at_cell)
 	if event.is_action("move_left"):
 		act_in_direction(Vector2.LEFT)
 	elif event.is_action("move_right"):
@@ -49,16 +49,25 @@ func _input(event):
 	elif event.is_action("forcewave"):
 		pending_action = local_actions[ACT.Type.Push][0]
 		pending_action.mark_pending()
+	elif event.is_action("rock"):
+		pending_action = local_actions[ACT.Type.Push][1]
+		pending_action.mark_pending()
 		
 func act_at_location(at_cell: Vector2):
+	if self.acting_state != ACT.ActingState.Act:
+		return
 	if not pending_action:
-		for hint in WRLD.get_action_hints(at_cell.round()):
+		var distance_to = at_cell.distance_to(get_game_position())
+		for hint in WRLD.get_action_hints(at_cell):
 			if local_default_actions.has(hint):
 				var candidate_action = local_default_actions[hint]
-				if candidate_action.test_action_at(at_cell):
-					acting_state = ACT.ActingState.Wait
-					candidate_action.do_action_at(at_cell)
-					return true
+				if distance_to <= candidate_action.action_range:
+					if candidate_action.test_action_at(at_cell):
+						acting_state = ACT.ActingState.Wait
+						candidate_action.do_action_at(at_cell)
+						return true
+#					for action in local_default_actions.values():
+#						if action.range <= distance_to:
 	else:
 		var next_action = pending_action
 		pending_action = ACT.Type.None
@@ -68,6 +77,8 @@ func act_at_location(at_cell: Vector2):
 	return false
 	
 func act_in_direction(dir: Vector2):
+	if self.acting_state != ACT.ActingState.Act:
+		return
 	if not pending_action:
 		var action_hint = WRLD.get_action_hint(self.get_game_position() + dir)
 		print("Got default action: " + ACT.Type.keys()[action_hint])
@@ -79,7 +90,6 @@ func act_in_direction(dir: Vector2):
 	else:
 		var next_action = pending_action
 		pending_action = ACT.Type.None
-		EVNT.emit_signal("hint_area_none")
 		next_action.do_action_at(self.get_game_position() + dir)
 # Called when the node enters the scene tree for the first time.
 func _ready():

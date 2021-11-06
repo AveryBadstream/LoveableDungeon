@@ -11,6 +11,7 @@ func _init(actor).(actor):
 	self.target_type = ACT.TargetType.TargetObject
 	self.action_type = ACT.Type.Open
 	self.target_area = ACT.TargetArea.TargetSingle
+	self.x_cim = TIL.CellInteractions.None
 
 func get_viable_targets():
 	pass
@@ -21,6 +22,7 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 
 func mark_pending():
 	MSG.action_message("Open what?", self)
+	.mark_pending()
 
 func impossible():
 	MSG.action_message("You can't open that.", self)

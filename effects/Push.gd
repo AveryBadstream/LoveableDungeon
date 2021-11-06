@@ -20,15 +20,15 @@ func _init(actor, target, max_magnitude).(actor, target):
 	magnitude = max_magnitude
 	direction = (from - actor.game_position).normalized()
 	var possible_target = ((direction * magnitude) + from).snapped(Vector2.ONE)
-	steps = FOV.cast_lerp_line(target.game_position, possible_target, magnitude, TIL.CellInteractions.None)
+	steps = FOV.lerp_line(target.game_position, possible_target, magnitude, TIL.CellInteractions.None)
 	step = 0
 	to = steps[0]
 
 func prep():
-	if WRLD.cell_occupied(steps[1]):
+	if WRLD.cell_occupied(steps[step]):
 		EFCT.queue_now(slam_effect.new(effect_actor, effect_target, direction, effect_target.game_position, magnitude))
 		return false
-	elif steps.size() > 2:
+	elif steps.size() > 1:
 		EFCT.queue_at_offset(slide_effect.new(effect_actor, effect_target, steps, step + 1, magnitude - 1), 1)
 	else:
 		EFCT.queue_at_offset(slam_effect.new(effect_actor, effect_target, direction, steps[step], magnitude - 1), 1)

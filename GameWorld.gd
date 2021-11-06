@@ -430,6 +430,7 @@ func update_fov_by_location(from_cell, hide_old_fov = true):
 	last_visiblilty_rect.end = Vector2(max_x + 1, max_y + 1)
 	last_visible_set = cells
 	var total_time = OS.get_system_time_msecs() - time_before
+	print("Fov took: " + str(total_time) + "ms")
 
 func hide_cell(at_cell):
 	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:

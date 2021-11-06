@@ -279,7 +279,7 @@ region_rect = Rect2( 96, 144, 16, 16 )
 script = ExtResource( 11 )
 default_action = 0
 display_name = "You"
-actions = [ 6 ]
+actions = [ 6, 7 ]
 
 [node name="Camera2D" type="Camera2D" parent="GameWorld/LevelActors/Player"]
 current = true

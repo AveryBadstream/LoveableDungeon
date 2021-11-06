@@ -61,6 +61,7 @@ signal FX_done(FX)
 #UI Targetting Hint Signals
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()
+signal hint_action(action)
 # Called when the node enters the scene tree for the first time.
 
 enum TriggerType {Connection, MovedTo, EndedMovement, SlammedInto }
