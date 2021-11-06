@@ -115,6 +115,8 @@ func cell_is_visible(at_cell):
 					return true
 	return false
 
+func cell_occupied(at_cell):
+	return cell_interaction_mask_map[at_cell.x][at_cell.y] & TIL.CellInteractions.Occupies
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

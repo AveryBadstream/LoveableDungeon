@@ -24,11 +24,9 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 func mark_pending():
 	MSG.action_message("Move where?", self)
 
-func finish():
-	self.publish_effect(move_effect.new(self, self.action_actor, self.action_targets[0]))
+func do():
+	EFCT.queue_now(move_effect.new(self.action_actor, self.action_targets[0]))
 
-func effect_finished(effect):
-	EVNT.emit_signal("action_complete", self)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

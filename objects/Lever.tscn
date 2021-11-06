@@ -70,7 +70,6 @@ tracks/1/keys = {
 texture = ExtResource( 2 )
 centered = false
 hframes = 2
-frame = 1
 region_enabled = true
 region_rect = Rect2( 0, 16, 32, 16 )
 script = ExtResource( 1 )

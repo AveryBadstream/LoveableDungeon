@@ -39,7 +39,6 @@ func _ready():
 	EVNT.subscribe("action_complete", self, "_on_action_complete")
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
-	EVNT.subscribe("do_effect", self, "_on_do_effect")
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
@@ -104,42 +103,11 @@ func _on_do_action(action):
 		elif action_response == ACT.ActionResponse.Failed:
 			EVNT.emit_signal("action_failed", action)
 			return
-	for target in action.action_targets:
-		var target_response = target.do_action_pre(action)
-		var action_response = action.process_action_response(ACT.ActionPhase.Pre, target_response, target)
-		if action_response == ACT.ActionResponse.Impossible:
-			EVNT.emit_signal("action_impossible", action)
-			return
-		elif action_response == ACT.ActionResponse.Failed:
-			EVNT.emit_signal("action_failed", action)
-			return
-	for target in action.action_targets:
-		var target_response = target.do_action(action)
-		var action_response = action.process_action_response(ACT.ActionPhase.Do, target_response, target)
-		if action_response == ACT.ActionResponse.Impossible:
-			EVNT.emit_signal("action_impossible", action)
-			return
-		elif action_response == ACT.ActionResponse.Failed:
-			EVNT.emit_signal("action_failed", action)
-			return
-	for target in action.action_targets:
-		var target_response = target.do_action_post(action)
-		var action_response = action.process_action_response(ACT.ActionPhase.Post, target_response, target)
-		if action_response == ACT.ActionResponse.Impossible:
-			EVNT.emit_signal("action_impossible", action)
-			return
-		elif action_response == ACT.ActionResponse.Failed:
-			EVNT.emit_signal("action_failed", action)
-			return
-	action.finish()
-
-func _on_GameWorld_action_failed(actor):
-	actor.active() # Replace with function body.
-
+	action.execute()
 
 func _on_action_complete(action):
-	if EFCT.queued_effects.size() > 0:
-		yield(EFCT, "effects_done")
+	EFCT.run_effects()
+	yield(EVNT, "all_effects_done")
 	var current_i = turn_order.find(action.action_actor)
 	if current_i + 1 >= turn_order.size():
 		current_actor = turn_order[0]

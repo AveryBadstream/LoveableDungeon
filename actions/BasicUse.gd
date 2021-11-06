@@ -26,12 +26,8 @@ func impossible():
 	MSG.action_message("You can't use that.", self)
 	.impossible()
 
-func finish():
-	self.publish_effect(use_effect.new(self, self.action_actor, self.action_targets[0]))
-
-func effect_finished(effect):
-	self.action_state = ACT.ActionState.Complete
-	EVNT.emit_signal("action_complete", self)
+func do():
+	EFCT.queue_now(use_effect.new(self.action_actor, self.action_targets[0]))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

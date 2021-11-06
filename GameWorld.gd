@@ -88,17 +88,16 @@ func _on_do_action(action):
 				action.fail()
 				EVNT.emit_signal("action_failed", action)
 
-func _on_object_moved(thing, from_cell):
-	move_in_maps(thing, from_cell)
+func _on_object_moved(thing, from_cell, to_cell):
+	move_in_maps(thing, from_cell, to_cell)
 	if thing.is_player:
 		EVNT.emit_signal("update_fov")
 
-func move_in_maps(thing, from_cell):
-	var at_cell = thing.game_position
+func move_in_maps(thing, from_cell, to_cell):
 	cell_occupancy_map[from_cell.x][from_cell.y].erase(thing)
-	cell_occupancy_map[at_cell.x][at_cell.y].append(thing)
-	remove_from_cim(thing, from_cell)
-	add_to_cim(thing, at_cell)
+	cell_occupancy_map[to_cell.x][to_cell.y].append(thing)
+	update_cim(from_cell)
+	update_cim(to_cell)
 
 func actor_do_action_to(actor, action, subject):
 	if !actor.actions_available.has(action):
@@ -177,17 +176,7 @@ func add_thing(thing_type, thing_index, at_cell):
 func add_to_maps(thing):
 	var at_cell = thing.game_position
 	cell_occupancy_map[at_cell.x][at_cell.y].append(thing)
-	add_to_cim(thing, at_cell)
-
-func add_to_cim(thing, at_cell):
-	var should_update_fov = false
-	if ~(cell_interaction_mask_map[at_cell.x][at_cell.y] & TIL.CellInteractions.BlocksFOV):
-		should_update_fov = true
-	var int_mask = thing.cell_interaction_mask
-	cell_interaction_mask_map[at_cell.x][at_cell.y] |= thing.cell_interaction_mask
-	var new_mask = cell_interaction_mask_map[at_cell.x][at_cell.y]
-	if should_update_fov:
-		EVNT.emit_signal("update_fov")
+	update_cim(at_cell)
 
 func _on_connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell):
 	if WRLD.is_ready:
@@ -226,7 +215,7 @@ func remove_object(object_to_remove):
 func remove_from_maps(thing):
 	var at_cell = thing.game_position
 	cell_occupancy_map[at_cell.x][at_cell.y].erase(thing)
-	remove_from_cim(thing, at_cell)
+	update_cim(at_cell)
 
 func remove_from_cim(thing, at_cell):
 	var blocked_vision = thing.cell_interaction_mask & TIL.CellInteractions.BlocksFOV
@@ -236,11 +225,18 @@ func remove_from_cim(thing, at_cell):
 	if blocked_vision and new_mask & TIL.CellInteractions.BlocksFOV:
 		EVNT.emit_signal("update_fov")
 
-func _on_update_cimmap(thing):
+func _on_update_cimmap(at_cell):
 	if WRLD.is_ready:
-		add_to_cim(thing, thing.game_position)
-	else:
-		pending_cimmap_updates.append(thing)
+		update_cim(at_cell)
+
+func update_cim(at_cell):
+	var new_cim = 0
+	var old_cim = cell_interaction_mask_map[at_cell.x][at_cell.y]
+	for thing in cell_occupancy_map[at_cell.x][at_cell.y]:
+		new_cim |= thing.cell_interaction_mask
+	cell_interaction_mask_map[at_cell.x][at_cell.y] = new_cim
+	if old_cim & TIL.CellInteractions.BlocksFOV != new_cim & TIL.CellInteractions.BlocksFOV:
+		EVNT.emit_signal("update_fov")
 
 func find_thing_by_type_index_cell(thing_type, thing_index, at_cell):
 	for thing in everything_at_cell(at_cell, thing_type):
@@ -343,7 +339,7 @@ func _on_tiles_ready():
 	
 func process_cimmap_updates():
 	for thing in pending_cimmap_updates:
-		add_to_cim(thing, thing.game_position)
+		update_cim(thing.game_position)
 
 func process_add_queue():
 	var old_queue = queued_things

@@ -9,21 +9,26 @@ signal position_update_complete()
 const is_action = false
 
 export(ACT.Type) var default_action := ACT.Type.Move
-export var display_name := "ERROR"
-export var is_walkable := false
-export var is_flyable := false
-export var is_phaseable := false
-export var occupies_cell := true
+export(String) var display_name := "ERROR"
+export(bool) var is_walkable setget set_is_walkable, get_is_walkable
+export(bool) var is_flyable setget set_is_flyable, get_is_flyable
+export(bool) var is_phaseable setget set_is_phaseable, get_is_phaseable
+export(bool) var occupies_cell setget set_occupies_cell, get_occupies_cell
 var is_player := false
 export(bool) var blocks_vision setget set_blocks_vision, get_blocks_vision
 export var player_remembers := false
 var last_game_position = position/16
+var _game_position = last_game_position
 var connects_to = []
 var claiming_effects = []
-var cell_interaction_mask = 0
+var cell_interaction_mask setget ,get_cim
 var tentatively_visible = false
 var my_ghost
 var _blocks_vision = false
+var _is_walkable = false
+var _is_flyable = false
+var _is_phaseable = false
+var _occupies_cell = false
 var thing_type = ACT.TargetType.TargetObject
 export(Array, ACT.Type) var supported_actions
 # Declare member variables here. Examples:
@@ -66,6 +71,9 @@ func can_do_action(action) -> bool:
 	else:
 		return ACT.ActionResponse.Stop
 
+func trigger(triggered_by):
+	pass
+
 func do_action_pre(action) -> int:
 	var func_name = "_do_action_pre_"+ACT.Type.keys()[action.action_type]
 	if self.has_method(func_name):
@@ -95,19 +103,20 @@ func do_action(action) -> int:
 func actor_do_action(actor, action_type:int) -> bool:
 	return self.call("_actor_do_" + ACT.Type.keys()[action_type], actor)
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
+func get_cim():
+	var cim = 0
 	if _blocks_vision:
-		cell_interaction_mask |= TIL.CellInteractions.BlocksFOV
-	if is_walkable:
-		cell_interaction_mask |= TIL.CellInteractions.Walkable
-	if is_flyable:
-		cell_interaction_mask |= TIL.CellInteractions.Flyable
-	if is_phaseable:
-		cell_interaction_mask |= TIL.CellInteractions.Phaseable
-	if occupies_cell:
-		cell_interaction_mask |= TIL.CellInteractions.Occupies
-	EVNT.emit_signal("update_cimmap", self)
+		cim |= TIL.CellInteractions.BlocksFOV
+	if _is_walkable:
+		cim |= TIL.CellInteractions.Walkable
+	if _is_flyable:
+		cim |= TIL.CellInteractions.Flyable
+	if _is_phaseable:
+		cim |= TIL.CellInteractions.Phaseable
+	if _occupies_cell:
+		cim |= TIL.CellInteractions.Occupies
+	return cim
+
 
 func hide():
 	if player_remembers and !my_ghost:
@@ -123,28 +132,55 @@ func show():
 		my_ghost = null
 	.show()
 
-func set_game_position(new_position: Vector2, update_real_position=true, update_fov=true):
+func set_game_position(new_position: Vector2, update_real_position=true):
 	if new_position != last_game_position:
-		if self.blocks_vision:
-			EVNT.emit_signal("update_visible_map", last_game_position, false)
-			EVNT.emit_signal("update_visible_map", new_position, true)
-			if update_fov:
-				EVNT.emit_signal("update_fov")
-			#yield(WRLD.GameWorld, "end_fov")
 		if update_real_position:
 			self.position = new_position * 16
+		var last_last_game_position = last_game_position
 		last_game_position = new_position
-		EVNT.emit_signal("object_moved", self, last_game_position)
+		EVNT.emit_signal("object_moved", self, last_last_game_position, last_game_position)
 	emit_signal("position_update_complete")
 
 func get_game_position() -> Vector2:
 	return last_game_position
 
+func set_is_walkable(should_walk):
+	if _is_walkable != should_walk:
+		_is_walkable = should_walk
+		EVNT.emit_signal("update_cimmap", self.get_game_position())
+		
+func get_is_walkable():
+	return _is_walkable
+	
+func set_is_phaseable(should_phase):
+	if _is_phaseable != should_phase:
+		_is_phaseable = should_phase
+		EVNT.emit_signal("update_cimmap", self.get_game_position())
+		
+func get_is_phaseable():
+	return _is_phaseable
+	
+func set_is_flyable(should_fly):
+	if _is_flyable != should_fly:
+		_is_flyable = should_fly
+		EVNT.emit_signal("update_cimmap", self.get_game_position())
+		
+func get_is_flyable():
+	return _is_flyable
+	
+func set_occupies_cell(should_occupy):
+	if _occupies_cell != should_occupy:
+		_occupies_cell = should_occupy
+		EVNT.emit_signal("update_cimmap", self.get_game_position())
+		
+func get_occupies_cell():
+	return _occupies_cell
+
 func set_blocks_vision(should_block):
 	if _blocks_vision != should_block:
-		EVNT.emit_signal("update_visible_map", get_game_position(), should_block)
 		_blocks_vision = should_block
-
+		EVNT.emit_signal("update_cimmap", self.get_game_position())
+		
 func get_blocks_vision():
 	return _blocks_vision
 

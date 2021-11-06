@@ -82,17 +82,6 @@ func test_action_at(at_cell):
 		return false
 	return true
 
-func publish_effect(effect):
-	self.running_effects.append(effect)
-	EVNT.publish_effect(effect)
-
-func effect_done(effect):
-	self.running_effects.erase(effect)
-	if running_effects.size() == 0:
-		self.action_targets = []
-		self.action_state = ACT.ActionState.Complete
-		EVNT.emit_signal("action_complete", self)
-
 func get_action_targets():
 	return WRLD.get_action_targets_area(self, self.get_origin_cell(), self.action_range)
 
@@ -115,6 +104,13 @@ func mark_pending():
 func impossible():
 	self.action_state = ACT.ActionState.Impossible
 	EVNT.emit_signal("action_impossible", self)
+
+func do():
+	pass
+
+func execute():
+	self.do()
+	self.finish()
 
 func finish():
 	self.action_targets = []

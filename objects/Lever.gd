@@ -5,7 +5,7 @@ extends GameObject
 # var a = 2
 # var b = "text"
 
-var toggle_effect = preload("res://effects/Toggle.gd")
+var use_effect = preload("res://effects/Toggle.gd")
 onready var animation_player = $AnimationPlayer
 # Called when the node enters the scene tree for the first time.
 var toggled: bool setget set_toggled, get_toggled
@@ -14,15 +14,9 @@ var _toggled = false
 func _ready():
 	pass
 
-func effect_pre(effect):
-	if effect.effect_hint_mask & EFCT.EffectHint.Interact:
-		var response = EFCT.EffectResponse.new(self, EFCT.EffectResponseType.QueueAfter)
-		var new_toggle = toggle_effect.new(effect, self, connects_to)
-		response.add_effect(new_toggle)
-		return response
-	return null
-
 func toggle(visibly):
+	for connection in connects_to:
+		connection.trigger(self)
 	if visibly:
 		FX.start_priority_animation(animation_player)
 		if _toggled:

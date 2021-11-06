@@ -24,6 +24,12 @@ func effect_pre(effect):
 		return response
 	return null
 
+func trigger(triggered_by):
+	if is_opened:
+		EFCT.queue_at_offset(close_effect.new(triggered_by, self), 1)
+	else:
+		EFCT.queue_at_offset(open_effect.new(triggered_by, self), 1)
+
 func effect_done(effect):
 	pass
 
