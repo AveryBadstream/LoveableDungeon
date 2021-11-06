@@ -22,9 +22,9 @@ enum TargetHint {None = 0, WholeCellMustSupport = 1}
 
 enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor = 4, TargetItem = 8, TargetAll = 15}
 
-enum TargetArea {TargetNone, TargetSingle, TargetCell}
+enum TargetArea {TargetNone, TargetSingle, TargetCell, TargetCone}
 
-enum Actions {BasicMove, BasicOpen, BasicClose, Push, BasicUse, Wait}
+enum Actions {BasicMove, BasicOpen, BasicClose, Push, BasicUse, Wait, Forcewave}
 
 
 var PreActionMapping = [
@@ -33,7 +33,8 @@ var PreActionMapping = [
 	[Actions.BasicClose, "res://actions/BasicClose.gd"],
 	[Actions.Push, "res://actions/Push.gd"],
 	[Actions.BasicUse, "res://actions/BasicUse.gd"],
-	[Actions.Wait, "res://actions/Wait.gd"]
+	[Actions.Wait, "res://actions/Wait.gd"],
+	[Actions.Forcewave, "res://actions/Forcewave.gd"]
 ]
 
 var ActionMapping = {
