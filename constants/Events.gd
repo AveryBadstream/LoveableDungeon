@@ -41,6 +41,7 @@ signal do_effect(effect)
 signal update_fov()
 signal begin_fov()
 signal update_fov_cell(cell)
+signal fov_cell_updated(cell)
 signal object_moved(object, from_position)
 signal end_fov()
 

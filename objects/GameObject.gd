@@ -113,10 +113,12 @@ func _on_update_fov_cell(cell):
 		self.tentatively_visible = true
 
 func _on_end_fov_and_ghost():
+	if self.visible == tentatively_visible:
+		return
 	if tentatively_visible and my_ghost:
 		EVNT.emit_signal("end_ghost", my_ghost)
 		my_ghost = null
-	elif !tentatively_visible and !my_ghost:
+	elif visible and !tentatively_visible and !my_ghost:
 		var new_ghost = FOWGhost.new()
 		new_ghost.set_mimic(self)
 		EVNT.emit_signal("create_ghost", new_ghost)
@@ -126,15 +128,15 @@ func _on_end_fov_and_ghost():
 func _on_end_fov():
 	self.set_visible(tentatively_visible)
 
-func set_game_position(new_position: Vector2):
+func set_game_position(new_position: Vector2, update_real_position=true):
 	if new_position != last_game_position:
 		if self.blocks_vision:
-			EVNT.emit_signal("update_visible_map", get_game_position(), false)
-			self.position = new_position * 16
-			EVNT.emit_signal("update_visible_map", get_game_position(), true)
+			EVNT.emit_signal("update_visible_map", last_game_position, false)
+			EVNT.emit_signal("update_visible_map", new_position, true)
 			EVNT.emit_signal("update_fov")
-			yield(EVNT, "end_fov")
-		self.position = new_position * 16
+			#yield(WRLD.GameWorld, "end_fov")
+		if update_real_position:
+			self.position = new_position * 16
 		if WRLD.cell_is_visible(new_position):
 			self.set_visible(true)
 		else:

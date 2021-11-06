@@ -14,6 +14,7 @@ func _init(action, actor, target).(action, actor, target):
 	from = actor.position
 	target_cell = target.game_position
 	to = target_cell * 16
+	
 
 func run_effect():
 	if WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(target_cell):

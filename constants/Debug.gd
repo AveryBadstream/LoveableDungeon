@@ -17,11 +17,6 @@ func clear_highlight():
 		HighlightGroup.remove_child(child)
 		child.queue_free()
 
-func highlight_octant(from, to):
-	var oct = FOV.get_octant(from, to)
-	for cell in FOV._visible_cells_in_octant_from(from.x, from.y, oct, WRLD.SIGHT_RANGE, WRLD.GameWorld.fov_block_map):
-		highlight_cell(cell)
-
 func highlight_fov(from):
 	var full_fov = FOV.calc_visible_cells_from(from.x, from.y, WRLD.SIGHT_RANGE, WRLD.GameWorld.fov_block_map)
 	for cell in full_fov:
