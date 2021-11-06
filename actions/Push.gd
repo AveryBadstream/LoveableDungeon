@@ -35,7 +35,7 @@ func do_action(targets):
 
 func finish():
 	#Maybe this is a case to add the event structures I want?
-	self.publish_effect(push_effect.new(self, self.action_actor, self.action_targets[0], 3))
+	self.publish_effect(push_effect.new(self, self.action_actor, self.action_targets[0], 1))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
