@@ -4,7 +4,7 @@ extends GameAction
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-
+var use_effect = preload("res://effects/Use.gd")
 
 func _init(actor).(actor):
 	self.target_type = ACT.TargetType.TargetObject | ACT.TargetType.TargetActor
@@ -27,6 +27,9 @@ func impossible():
 	.impossible()
 
 func finish():
+	self.publish_effect(use_effect.new(self, self.action_targets[0].game_position))
+
+func effect_finished(effect):
 	self.action_state = ACT.ActionState.Complete
 	EVNT.emit_signal("action_complete", self)
 

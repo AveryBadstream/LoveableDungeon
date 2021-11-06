@@ -4,6 +4,7 @@ var GameWorld = null
 var TMap = null
 var world_dimensions = Vector2(0,0)
 var is_ready = false
+var tween
 var rng
 
 var object_types
@@ -17,6 +18,9 @@ const SIGHT_RANGE = 200
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
+
+func get_free_tween():
+	return tween
 
 func is_tile_walkable(at_cell):
 	for thing in GameWorld.everything_at_cell(at_cell):
@@ -73,6 +77,25 @@ func get_action_hint(at_cell):
 			highest_action_hint = thing.default_action
 	return highest_action_hint
 
+func get_action_hints(at_cell):
+	var all_hints = []
+	for thing in GameWorld.everything_at_cell(at_cell):
+			var thing_default_action = thing.default_action
+			if thing_default_action > ACT.Type.None:
+				all_hints.append(thing_default_action)
+	all_hints.sort()
+	all_hints.invert()
+	return all_hints
+	
+func get_mouse_game_position():
+	return GameWorld.TMap.world_to_map(GameWorld.get_global_mouse_position())
+
+func cell_is_visible(at_cell):
+	if GameWorld.last_visiblilty_rect.has_point(at_cell):
+		for cell in GameWorld.last_visible_set:
+			if cell == at_cell:
+				return true
+	return false
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

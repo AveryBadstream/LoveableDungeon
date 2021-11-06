@@ -9,6 +9,7 @@ onready var GameWorld = $GameWorld
 onready var TileHighlight = $GameWorld/TileHighlight
 onready var LineHighlight = $GameUI/LineHighlight
 onready var BlueHighlight = $GameWorld/TileHighlight2
+onready var OnlyTween = $Tweens/Tween
 export var random_seed: int
 export var use_seed: bool = false
 
@@ -30,6 +31,7 @@ func _ready():
 	DebugSeed.text = "Seed: " + str(rng.seed)
 	GameWorld.build(rng)
 	WRLD.rng = rng
+	WRLD.tween = OnlyTween
 	connect("msg_0", MSG, "_on_message_0")
 	connect("log_action", MSG, "_on_log_action")
 	EVNT.subscribe("do_action", self, "_on_do_action")
@@ -127,6 +129,8 @@ func _on_GameWorld_action_failed(actor):
 
 
 func _on_action_complete(action):
+	if EFCT.queued_effects > 0:
+		yield(EFCT, "effects_done")
 	var current_i = turn_order.find(action.action_actor)
 	if current_i + 1 >= turn_order.size():
 		current_actor = turn_order[0]

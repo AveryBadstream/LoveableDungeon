@@ -85,7 +85,7 @@ func _on_do_action(action):
 
 func _on_object_moved(object, from_position):
 	if object.is_player:
-		update_fov_by_signal(object.game_position)
+		EVNT.emit_signal("update_fov")
 
 func actor_do_action_to(actor, action, subject):
 	if !actor.actions_available.has(action):
