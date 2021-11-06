@@ -15,6 +15,7 @@ signal place_door(position)
 const Door = preload("res://objects/Door.tscn")
 const Pushable = preload("res://objects/PushableThing.tscn")
 const Lever = preload("res://objects/Lever.tscn")
+const CellBars = preload("res://objects/CellBars.tscn")
 
 const MapZone = preload("res://map/MapZone.gd")
 # Declare member variables here. Examples:
@@ -61,7 +62,7 @@ func _ready():
 	pass # Replace with function body.
 
 func build_map(rng = null):
-	EVNT.emit_signal("export_generator_config", WRLD.GeneratorSignal.ObjectList, [Door, Pushable, Lever])
+	EVNT.emit_signal("export_generator_config", WRLD.GeneratorSignal.ObjectList, [Door, Pushable, Lever, CellBars])
 	initialize()
 	var start_rect = Rect2(Vector2(0,0), map_size)
 	var start_zone = MapZone.new(start_rect)
@@ -209,6 +210,8 @@ func build_map(rng = null):
 	tiles[71][38]= TIL.Type.Ice
 	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 2, Vector2(76, 39))
 	EVNT.emit_signal("remove_thing", ACT.TargetType.TargetObject, 0, Vector2(77, 40))
+	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 3, Vector2(77, 40))
+	EVNT.emit_signal("connect_things", ACT.TargetType.TargetObject, 2, Vector2(76, 39), ACT.TargetType.TargetObject, 3, Vector2(77, 40))
 	emit_signal("build_finished", tiles)
 
 func fix_rooms(zone):

@@ -24,14 +24,15 @@ enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor =
 
 enum TargetArea {TargetSingle, TargetCell}
 
-enum Actions {BasicMove, BasicOpen, BasicClose, Push}
+enum Actions {BasicMove, BasicOpen, BasicClose, Push, BasicUse}
 
 
 var PreActionMapping = [
 	[Actions.BasicMove, "res://actions/BasicMove.gd"],
 	[Actions.BasicOpen, "res://actions/BasicOpen.gd"],
 	[Actions.BasicClose, "res://actions/BasicClose.gd"],
-	[Actions.Push, "res://actions/Push.gd"]
+	[Actions.Push, "res://actions/Push.gd"],
+	[Actions.BasicUse, "res://actions/BasicUse.gd"]
 ]
 
 var ActionMapping = {

@@ -53,6 +53,7 @@ func _ready():
 	EVNT.subscribe("player_start_position", self, "_on_player_start_position")
 	EVNT.subscribe("place_thing", self, "_on_place_thing")
 	EVNT.subscribe("remove_thing", self, "_on_remove_thing")
+	EVNT.subscribe("connect_things", self, "_on_connect_things")
 	LevelGenerator.connect("build_finished", TMap, "_on_build_finished")
 	LevelGenerator.connect("place_door", self, "_on_place_door")
 	LevelGenerator.connect("player_start_position", self, "_on_player_start_position")
@@ -167,20 +168,35 @@ func _on_place_thing(thing_type, thing_index, at_cell):
 		new_thing.game_position = at_cell
 		LevelObjects.add_child(new_thing)
 
+func _on_connect_things(from_thing_type, from_thing_index, from_thing_cell, to_thing_type, to_thing_index, to_thing_cell):
+	var from_thing = find_thing_by_type_index_cell(from_thing_type, from_thing_index, from_thing_cell)
+	var to_thing = find_thing_by_type_index_cell(to_thing_type, to_thing_index, to_thing_cell)
+	if not from_thing or not to_thing:
+		return
+	from_thing.connect_to(to_thing)
+
 func _on_remove_thing(thing_type, thing_index, at_cell):
 	var should_rebuild_fov = false
-	for thing in everything_at_cell(at_cell, thing_type):
-		if thing.get_filename() == WRLD.object_types[thing_index].get_path():
-			if thing.blocks_vision:
-				should_rebuild_fov = true
-			thing.queue_free()
+	var found_thing = find_thing_by_type_index_cell(thing_type, thing_index, at_cell)
+	if not found_thing:
+		return
+	if found_thing.blocks_vision:
+		should_rebuild_fov = true
+	LevelObjects.remove_child(found_thing)
+	found_thing.queue_free()
 	if should_rebuild_fov:
 		var fov_blocked = false
 		for thing in everything_at_cell(at_cell):
 			if thing.blocks_vision:
 				fov_blocked = true
 		EVNT.emit_signal("update_visible_map", at_cell, fov_blocked)
-		
+
+func find_thing_by_type_index_cell(thing_type, thing_index, at_cell):
+	for thing in everything_at_cell(at_cell, thing_type):
+		if thing.get_filename() == WRLD.object_types[thing_index].get_path():
+			return thing
+	return null
+
 func object_at_cell(at_cell: Vector2):
 	for object in LevelObjects.get_children():
 		if object.game_position == at_cell:
