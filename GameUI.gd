@@ -5,6 +5,7 @@ extends Node2D
 # var a = 2
 # var b = "text"
 var area_hint_indicator = preload("res://ui/AreaHintRect.tscn")
+var target_hint_indicator = preload("res://ui/TargetHint.tscn")
 onready var angle_line = $Line2D
 
 onready var area_highlight = $AreaHighlight
@@ -37,9 +38,17 @@ func update_hint_area(mouse_pos):
 func hint_cone_update(mouse_pos):
 	last_mouse_game_position = mouse_pos
 	clear_hints()
-	var cells = FOV.cast_psuedo_cone(hint_area_args[0], mouse_pos, hint_area_args[2], hint_area_args[1], TIL.CellInteractions.Occupies)
+	#var cells = FOV.cast_psuedo_cone(hint_area_args[0], mouse_pos, hint_area_args[2], hint_area_args[1], TIL.CellInteractions.Occupies)
+	var area_cells = FOV.cast_area(hint_area_args[0], 5, TIL.CellInteractions.Occupies)
+	#var area_cells = FOV.cast_lerp_line_toward(hint_area_args[0], mouse_pos, 5, TIL.CellInteractions.Occupies)
+	var cells = FOV.cast_wall(hint_area_args[0], mouse_pos, 1, 5, TIL.CellInteractions.Occupies)
+	for cell in area_cells:
+		if !cells.has(cell):
+			var new_hint:ColorRect = area_hint_indicator.instance()
+			new_hint.rect_position = cell * 16
+			area_highlight.add_child(new_hint)
 	for cell in cells:
-		var new_hint:ColorRect = area_hint_indicator.instance()
+		var new_hint:ColorRect = target_hint_indicator.instance()
 		new_hint.rect_position = cell * 16
 		area_highlight.add_child(new_hint)
 
