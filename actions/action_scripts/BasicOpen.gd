@@ -7,11 +7,12 @@ extends GameAction
 
 var use_effect = preload("res://effects/Open.gd")
 # Called when the node enters the scene tree for the first time.
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_type = ACT.TargetType.TargetObject
 	self.action_type = ACT.Type.Open
 	self.target_area = ACT.TargetArea.TargetSingle
 	self.x_cim = TIL.CellInteractions.None
+	.set_owned_by(actor)
 
 func get_viable_targets():
 	pass

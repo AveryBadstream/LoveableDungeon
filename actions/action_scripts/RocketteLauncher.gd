@@ -5,7 +5,7 @@ var rock = preload("res://objects/PushableThing.tscn")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_type = ACT.TargetType.TargetObject | ACT.TargetType.TargetActor | ACT.TargetType.TargetItem
 	self.action_type = ACT.Type.Push
 	self.target_area = ACT.TargetArea.TargetWideBeam
@@ -13,6 +13,7 @@ func _init(actor).(actor):
 	self.action_range = 5
 	self.action_area = 1
 	self.x_cim = TIL.CellInteractions.Occupies
+	.set_owned_by(actor)
 
 func get_viable_targets():
 	pass

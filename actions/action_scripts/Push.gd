@@ -6,11 +6,12 @@ extends GameAction
 # var b = "text"
 var push_effect = preload("res://effects/Push.gd")
 
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_type = ACT.TargetType.TargetObject | ACT.TargetType.TargetActor | ACT.TargetType.TargetItem
 	self.action_type = ACT.Type.Push
 	self.target_area = ACT.TargetArea.TargetSingle
 	self.target_priority = [ACT.TargetType.TargetActor, ACT.TargetType.TargetObject, ACT.TargetType.TargetItem, ACT.TargetType.TargetTile]
+	.set_owned_by(actor)
 
 func get_viable_targets():
 	pass

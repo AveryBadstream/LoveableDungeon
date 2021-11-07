@@ -11,6 +11,7 @@ var local_actions = {}
 var active = false
 var acting_state = ACT.ActingState.Wait
 var fail_count = 0
+export(Array, Script) var test_res_array
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"

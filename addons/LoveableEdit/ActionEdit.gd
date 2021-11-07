@@ -33,6 +33,7 @@ func _ready():
 		print("For some fucking reason it failed...")
 
 func update_action_list():
+	action_list.unselect_all()
 	for item in edited_object.test_res_array:
 		print(str(item))
 		print(str(item.get_path()))
@@ -44,7 +45,7 @@ func save_action_items():
 	var new_action_list = []
 	for i in range(action_scripts.size()):
 		if action_list.is_selected(i):
-			var new_action_object:Resource = action_objects[i].new(edited_object)
+			var new_action_object:Resource = action_objects[i].duplicate(true)
 			new_action_object.resource_local_to_scene = true
 			new_action_list.append(action_objects[i])
 	edited_object.test_res_array = new_action_list

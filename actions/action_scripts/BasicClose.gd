@@ -6,10 +6,11 @@ extends GameAction
 # var b = "text"
 var use_effect = preload("res://effects/Close.gd")
 
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_type = ACT.TargetType.TargetObject
 	self.action_type = ACT.Type.Close
 	self.target_area = ACT.TargetArea.TargetSingle
+	.set_owned_by(actor)
 
 func get_viable_targets():
 	pass

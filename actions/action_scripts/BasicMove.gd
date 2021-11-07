@@ -10,11 +10,12 @@ export var test_thing = 0
 var move_effect = preload("res://effects/Move.gd")
 # Called when the node enters the scene tree for the first time.
 
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_hints |= ACT.TargetHint.WholeCellMustSupport
 	self.target_type = ACT.TargetType.TargetTile
 	self.action_type = ACT.Type.Move
 	self.target_area = ACT.TargetArea.TargetCell
+	.set_owned_by(actor)
 
 func get_viable_targets():
 	pass

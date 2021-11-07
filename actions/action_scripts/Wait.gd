@@ -7,8 +7,9 @@ extends GameAction
 
 
 # Called when the node enters the scene tree for the first time.
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_area = ACT.TargetArea.TargetNone
+	.set_owned_by(actor)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

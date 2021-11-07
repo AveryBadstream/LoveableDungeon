@@ -22,7 +22,7 @@ enum ActionPhase {Supports, Can, Pre, Do, Post}
 
 enum TargetHint {None = 0, WholeCellMustSupport = 1}
 
-enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor = 4, TargetItem = 8, TargetAll = 15}
+enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor = 4, TargetItem = 8}
 
 enum TargetArea {TargetNone, TargetSingle, TargetCell, TargetCone, TargetWideBeam}
 

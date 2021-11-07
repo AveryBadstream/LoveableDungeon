@@ -19,6 +19,7 @@ onready var actions_box_button = $"Actions Box/HBoxContainer/Default Action Butt
 func _ready():
 	cim_kvp = []
 	act_kvp = []
+	cim_list.clear()
 	for key in TIL.CellInteractions.keys():
 		if TIL.CellInteractions[key] == 0:
 			continue

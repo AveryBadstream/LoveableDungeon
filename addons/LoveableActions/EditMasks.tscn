@@ -1,0 +1,134 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/LoveableActions/EditMasks.gd" type="Script" id=1]
+
+[node name="EditMasks" type="GridContainer"]
+margin_top = 672.0
+margin_right = 422.0
+margin_bottom = 672.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TargetType" type="VBoxContainer" parent="."]
+margin_right = 69.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TargetTypeLabel" type="Label" parent="TargetType"]
+margin_right = 69.0
+margin_bottom = 14.0
+text = "target type"
+
+[node name="HSeparator" type="HSeparator" parent="TargetType"]
+margin_top = 18.0
+margin_right = 69.0
+margin_bottom = 22.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TargetType"]
+margin_top = 26.0
+margin_right = 69.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TargetTypeList" type="VBoxContainer" parent="TargetType/ScrollContainer"]
+margin_right = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TargetHintLabel" type="Label" parent="TargetType"]
+margin_top = 30.0
+margin_right = 69.0
+margin_bottom = 44.0
+text = "target hint"
+
+[node name="HSeparator2" type="HSeparator" parent="TargetType"]
+margin_top = 48.0
+margin_right = 69.0
+margin_bottom = 52.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="TargetType"]
+margin_top = 56.0
+margin_right = 69.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TargetHintList" type="VBoxContainer" parent="TargetType/ScrollContainer2"]
+margin_right = 69.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CastCIM" type="VBoxContainer" parent="."]
+margin_left = 73.0
+margin_right = 184.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CastCIMLabel" type="Label" parent="CastCIM"]
+margin_right = 111.0
+margin_bottom = 14.0
+text = "Cast Area Against"
+
+[node name="HSeparator" type="HSeparator" parent="CastCIM"]
+margin_top = 18.0
+margin_right = 111.0
+margin_bottom = 22.0
+
+[node name="CastCIMList" type="VBoxContainer" parent="CastCIM"]
+margin_top = 26.0
+margin_right = 111.0
+margin_bottom = 26.0
+
+[node name="CastTCIM" type="VBoxContainer" parent="."]
+margin_left = 188.0
+margin_right = 333.0
+margin_bottom = 56.0
+
+[node name="CastTCIMLabel" type="Label" parent="CastTCIM"]
+margin_right = 145.0
+margin_bottom = 14.0
+text = "Cast Targetting Against"
+
+[node name="HSeparator" type="HSeparator" parent="CastTCIM"]
+margin_top = 18.0
+margin_right = 145.0
+margin_bottom = 22.0
+
+[node name="CastTCIMList" type="VBoxContainer" parent="CastTCIM"]
+margin_top = 26.0
+margin_right = 145.0
+margin_bottom = 26.0
+
+[node name="CastXCIM" type="VBoxContainer" parent="."]
+margin_left = 337.0
+margin_right = 470.0
+margin_bottom = 56.0
+
+[node name="CastXCIMLabel" type="Label" parent="CastXCIM"]
+margin_right = 133.0
+margin_bottom = 14.0
+text = "Exclude Target Types"
+
+[node name="HSeparator" type="HSeparator" parent="CastXCIM"]
+margin_top = 18.0
+margin_right = 133.0
+margin_bottom = 22.0
+
+[node name="CastXCIMList" type="VBoxContainer" parent="CastXCIM"]
+margin_top = 26.0
+margin_right = 133.0
+margin_bottom = 26.0

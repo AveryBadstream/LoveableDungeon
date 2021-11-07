@@ -1,4 +1,3 @@
-tool
 extends Resource
 
 class_name GameAction
@@ -7,25 +6,28 @@ class_name GameAction
 const is_action = false
 # var b = "text"
 var action_actor
-var action_type = ACT.Type.None
 var action_targets
-var target_hints = ACT.TargetHint.None
-var action_range = 1.5
-var action_area = 0
 var targeted_cell_range = []
 var action_state = ACT.ActionState.Ready
-var target_type = ACT.TargetType.TargetNone
-var target_area = ACT.TargetArea.TargetSingle
-var target_priority = [ACT.TargetType.TargetTile, ACT.TargetType.TargetObject, ACT.TargetType.TargetItem, ACT.TargetType.TargetActor]
-var target_cim = TIL.CellInteractions.Occupies
-var x_cim = TIL.CellInteractions.Occupies
+export(String) var action_name
+export(int) var action_type = ACT.Type.None
+export(int) var target_hints = ACT.TargetHint.None
+export(float) var action_range = 1.5
+export(float) var action_area = 0
+export(int) var target_type = ACT.TargetType.TargetNone
+export(int) var target_area = ACT.TargetArea.TargetSingle
+export(Array, int) var target_priority = [ACT.TargetType.TargetTile, ACT.TargetType.TargetObject, ACT.TargetType.TargetItem, ACT.TargetType.TargetActor]
+export(int) var target_cim = TIL.CellInteractions.Occupies
+export(int) var x_cim = TIL.CellInteractions.Occupies
+export(float) var target_radius = 0.0
+
 
 var running_effects = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
 
-func _init(actor):
+func set_owned_by(actor):
 	self.action_actor = actor
 	
 func set_target_types(target_types: Array) -> void:

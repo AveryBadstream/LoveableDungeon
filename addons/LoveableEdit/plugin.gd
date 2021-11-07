@@ -3,23 +3,18 @@ extends EditorPlugin
 
 const ThingEditor = preload("res://addons/LoveableEdit/ThingEditor.tscn")
 
-
 var thing_editor
 var bottom_button
 var editor_selection
 
 var focused_object
 
-var GameObjectEditor
+var action_manager
 
 func _enter_tree():
 	editor_selection = get_editor_interface().get_selection()
 	editor_selection.connect("selection_changed", self, "_on_EditorSelection_selection_changed")
 	thing_editor = ThingEditor.instance()
-#	GameObjectEditor = preload("res://addons/LoveableEdit/GameObjectInspector.gd").new()
-#	GameObjectEditor.connect("show_thing_dock", self, "show_thing_dock")
-#	GameObjectEditor.connect("hide_thing_dock", self, "hide_thing_dock")
-#	add_inspector_plugin(GameObjectEditor)
 
 func handles(object):
 	if object is GameObject:
@@ -57,6 +52,12 @@ func _on_EditorSelection_selection_changed():
 			set_focused_object(selected_node)
 			return
 	set_focused_object(null)
+
+func has_main_screen():
+	return true
+
+func get_plugin_name():
+	return "LoveableEdit"
 
 func _on_focused_object_changed(new_obj):
 	if new_obj is GameObject:

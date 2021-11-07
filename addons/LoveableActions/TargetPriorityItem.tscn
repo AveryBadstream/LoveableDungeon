@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/LoveableActions/TargetPriorityItem.gd" type="Script" id=1]
+
+[node name="TargetPriority" type="HBoxContainer"]
+margin_right = 43.0
+margin_bottom = 44.0
+size_flags_horizontal = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TargetTypeName" type="Label" parent="."]
+margin_top = 15.0
+margin_right = 27.0
+margin_bottom = 29.0
+size_flags_horizontal = 3
+text = "Test"
+
+[node name="MoveArrows" type="VBoxContainer" parent="."]
+margin_left = 31.0
+margin_right = 43.0
+margin_bottom = 44.0
+size_flags_horizontal = 10
+
+[node name="UpButton" type="Button" parent="MoveArrows"]
+margin_right = 12.0
+margin_bottom = 20.0
+
+[node name="DownButton" type="Button" parent="MoveArrows"]
+margin_top = 24.0
+margin_right = 12.0
+margin_bottom = 44.0
+
+[connection signal="pressed" from="MoveArrows/UpButton" to="." method="_on_UpButton_pressed"]
+[connection signal="pressed" from="MoveArrows/DownButton" to="." method="_on_DownButton_pressed"]

@@ -20,7 +20,6 @@ var blocks_vision setget set_blocks_vision, get_blocks_vision
 var player_remembers setget set_player_remembers, get_player_remembers
 export(int) var cim
 export(int) var sam
-export(Array, Resource) var test_res_array
 var last_game_position = position/16
 var _game_position = last_game_position
 var connects_to = []
