@@ -31,7 +31,7 @@ func _ready():
 		new_checkbox.connect("toggled", self, "recalc_cim_and_update")
 		kvp.append(new_checkbox)
 		cim_kvp.append(kvp)
-		print("Created new checkbox for: "+kvp[0])
+		#print("Created new checkbox for: "+kvp[0])
 	var actions_box = actions_box_button.get_popup()
 	actions_box.clear()
 	var i = 0
@@ -82,7 +82,7 @@ func update_cim_buttons():
 		var cbutton: CheckButton = kvp[2]
 		cbutton.disabled = false
 		cbutton.set_pressed_no_signal(cim & mask > 0)
-		print("cim "+str(kvp[0])+" ("+str(kvp[1])+") is "+ str(cim & mask > 0))
+		#print("cim "+str(kvp[0])+" ("+str(kvp[1])+") is "+ str(cim & mask > 0))
 
 func update_sam_buttons():
 	var sam = edited_object.sam
@@ -94,7 +94,7 @@ func update_sam_buttons():
 		var cbutton: CheckButton = kvp[2]
 		cbutton.disabled = false
 		cbutton.set_pressed_no_signal(sam & mask > 0)
-		print("cim "+str(kvp[0])+" ("+str(kvp[1])+") is "+ str(sam & mask > 0))
+		#print("cim "+str(kvp[0])+" ("+str(kvp[1])+") is "+ str(sam & mask > 0))
 
 func recalc_sam_and_update(_pressed):
 	var new_sam = 0

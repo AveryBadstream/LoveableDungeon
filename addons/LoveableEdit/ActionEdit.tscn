@@ -11,6 +11,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+columns = 7
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false,
@@ -18,14 +19,15 @@ __meta__ = {
 }
 
 [node name="Available Action" type="VBoxContainer" parent="."]
-margin_right = 155.0
-margin_bottom = 24.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Available Action"]
-margin_right = 155.0
-margin_bottom = 20.0
+margin_right = 181.0
+margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Available Action"]
+margin_right = 181.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="Available Action/HBoxContainer"]
 margin_top = 3.0
@@ -41,10 +43,11 @@ text = "Save"
 
 [node name="Action List" type="ItemList" parent="Available Action"]
 margin_top = 24.0
-margin_right = 155.0
-margin_bottom = 24.0
+margin_right = 181.0
+margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+items = [ "RocketteLauncher.gd", null, false, "BasicUse.gd", null, false, "Forcewave.gd", null, false, "Push.gd", null, false, "BasicOpen.gd", null, false, "BasicMove.gd", null, false, "BasicClose.gd", null, false, "Wait.gd", null, false ]
 select_mode = 1
 
 [connection signal="pressed" from="Available Action/HBoxContainer/Button" to="." method="save_action_items"]

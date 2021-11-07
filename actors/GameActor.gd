@@ -55,7 +55,7 @@ func action_impossible(action):
 	else:
 		self.activate()
 
-func action_failed(action):
+func action_failed(_action):
 	self.acting_state = ACT.ActingState.Wait
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
