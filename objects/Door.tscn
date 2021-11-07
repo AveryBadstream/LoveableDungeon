@@ -74,13 +74,10 @@ vframes = 2
 region_enabled = true
 region_rect = Rect2( 64, 32, 16, 32 )
 script = ExtResource( 2 )
-default_action = 4
+default_action = 8
 display_name = "Door"
-is_phaseable = true
-occupies_cell = true
-blocks_vision = true
-player_remembers = true
-supported_actions = [ 2, 3, 4 ]
+cim = 57
+sam = 280
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Close = SubResource( 1 )

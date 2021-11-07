@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/LoveableEdit/ActionEdit.gd" type="Script" id=1]
+
+[node name="ActionEdit" type="GridContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"_tab_name": "Actions"
+}
+
+[node name="Available Action" type="VBoxContainer" parent="."]
+margin_right = 155.0
+margin_bottom = 24.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Available Action"]
+margin_right = 155.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Available Action/HBoxContainer"]
+margin_top = 3.0
+margin_right = 110.0
+margin_bottom = 17.0
+text = "Available Actions"
+
+[node name="Button" type="Button" parent="Available Action/HBoxContainer"]
+margin_left = 114.0
+margin_right = 155.0
+margin_bottom = 20.0
+text = "Save"
+
+[node name="Action List" type="ItemList" parent="Available Action"]
+margin_top = 24.0
+margin_right = 155.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+
+[connection signal="pressed" from="Available Action/HBoxContainer/Button" to="." method="save_action_items"]

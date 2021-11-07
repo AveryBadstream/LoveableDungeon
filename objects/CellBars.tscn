@@ -70,13 +70,14 @@ tracks/1/keys = {
 texture = ExtResource( 2 )
 centered = false
 hframes = 2
+frame = 1
 region_enabled = true
 region_rect = Rect2( 0, 0, 32, 16 )
 script = ExtResource( 1 )
 default_action = 0
 display_name = "Cell Bars"
-is_phaseable = true
-player_remembers = true
+cim = 56
+sam = 4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Close = SubResource( 1 )

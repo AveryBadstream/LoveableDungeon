@@ -73,8 +73,9 @@ hframes = 2
 region_enabled = true
 region_rect = Rect2( 0, 16, 32, 16 )
 script = ExtResource( 1 )
-default_action = 8
-supported_actions = [ 8 ]
+default_action = 128
+cim = 56
+sam = 132
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Off = SubResource( 1 )

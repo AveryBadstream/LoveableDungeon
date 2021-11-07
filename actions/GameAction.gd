@@ -1,4 +1,4 @@
-extends Reference
+extends Resource
 
 class_name GameAction
 # Declare member variables here. Examples:

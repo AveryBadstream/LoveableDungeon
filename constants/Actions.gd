@@ -1,3 +1,4 @@
+tool
 extends Node
 
 
@@ -5,7 +6,8 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {None, Move, Fly, Phase, Open, Close, Push, Pull, Use}
+enum Type {None = 0, Move = 1, Fly = 2, Phase = 4, Open = 8, Close = 16, Push = 32, Pull = 64, Use = 128, Attack = 256}
+var rType = {}
 # Called when the node enters the scene tree for the first time.
 
 enum ActionClass {PositionBased, Atomic, TargetBased}
@@ -28,28 +30,28 @@ enum Actions {BasicMove, BasicOpen, BasicClose, Push, BasicUse, Wait, Forcewave,
 
 
 var PreActionMapping = [
-	[Actions.BasicMove, "res://actions/BasicMove.gd"],
-	[Actions.BasicOpen, "res://actions/BasicOpen.gd"],
-	[Actions.BasicClose, "res://actions/BasicClose.gd"],
-	[Actions.Push, "res://actions/Push.gd"],
-	[Actions.BasicUse, "res://actions/BasicUse.gd"],
-	[Actions.Wait, "res://actions/Wait.gd"],
-	[Actions.Forcewave, "res://actions/Forcewave.gd"],
-	[Actions.RocketteLauncher, "res://actions/RocketteLauncher.gd"]
+	[Actions.BasicMove, "res://actions/action_scripts/BasicMove.gd"],
+	[Actions.BasicOpen, "res://actions/action_scripts/BasicOpen.gd"],
+	[Actions.BasicClose, "res://actions/action_scripts/BasicClose.gd"],
+	[Actions.Push, "res://actions/action_scripts/Push.gd"],
+	[Actions.BasicUse, "res://actions/action_scripts/BasicUse.gd"],
+	[Actions.Wait, "res://actions/action_scripts/Wait.gd"],
+	[Actions.Forcewave, "res://actions/action_scripts/Forcewave.gd"],
+	[Actions.RocketteLauncher, "res://actions/action_scripts/RocketteLauncher.gd"]
 ]
 
 var ActionMapping = {
 	
 }
-var DummyMove
-var DummyFly
-var DummyPhase
 
 func _ready():
 	for mapping in PreActionMapping:
 		ActionMapping[mapping[0]] = load(mapping[1])
-	DummyMove = ActionMapping[Actions.BasicMove].new(null)
+	for key in Type.keys():
+		rType[Type[key]] = key
 
+func TypeKey(val:int):
+	return rType[val]
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

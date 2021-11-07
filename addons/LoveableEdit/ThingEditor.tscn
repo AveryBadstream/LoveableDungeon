@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/LoveableEdit/ThingEditor.gd" type="Script" id=1]
+[ext_resource path="res://addons/LoveableEdit/InteractionEditor.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/LoveableEdit/ActionEdit.tscn" type="PackedScene" id=3]
 
 [node name="TabContainer" type="TabContainer"]
 margin_right = 1280.0
@@ -10,42 +12,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InteractionEditor" type="GridContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-columns = 7
-__meta__ = {
-"_edit_use_anchors_": false,
-"_tab_name": "Interactions"
-}
+[node name="InteractionEditor" parent="." instance=ExtResource( 2 )]
 
-[node name="CIM Box" type="VBoxContainer" parent="InteractionEditor"]
-margin_right = 181.0
-margin_bottom = 684.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="CIM Label" type="Label" parent="InteractionEditor/CIM Box"]
-margin_right = 181.0
-margin_bottom = 14.0
-text = "Cell Interactions"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="InteractionEditor/CIM Box"]
-margin_top = 18.0
-margin_right = 181.0
-margin_bottom = 684.0
-size_flags_vertical = 3
-scroll_horizontal_enabled = false
-
-[node name="CIM List" type="VBoxContainer" parent="InteractionEditor/CIM Box/ScrollContainer"]
-margin_right = 181.0
-margin_bottom = 216.0
-size_flags_horizontal = 3
+[node name="ActionEdit" parent="." instance=ExtResource( 3 )]
+visible = false

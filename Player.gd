@@ -81,7 +81,7 @@ func act_in_direction(dir: Vector2):
 		return
 	if not pending_action:
 		var action_hint = WRLD.get_action_hint(self.get_game_position() + dir)
-		print("Got default action: " + ACT.Type.keys()[action_hint])
+		print("Got default action: " + ACT.TypeKey(action_hint))
 		if local_default_actions.has(action_hint):
 			acting_state = ACT.ActingState.Wait
 			local_default_actions[action_hint].do_action_at(self.get_game_position() + dir)

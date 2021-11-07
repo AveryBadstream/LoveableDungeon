@@ -53,32 +53,32 @@ func _init(name, is_walkable, is_flyable, is_phaseable, blocks_fov, occupies_cel
 		cell_interaction_mask |= TIL.CellInteractions.Occupies
 
 func supports_action(action) -> bool:
-	if self.has_method("_can_support_"+ACT.Type.keys()[action.action_type]):
-		return self.call("_can_support_"+ACT.Type.keys()[action.action_type], action)
+	if self.has_method("_can_support_"+ACT.TypeKey(action.action_type)):
+		return self.call("_can_support_"+ACT.TypeKey(action.action_type), action)
 	elif supported_actions.has(action.action_type):
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func can_do_action(action) -> bool:
-	if self.has_method("_can_do_"+ACT.Type.keys()[action.action_type]):
-		return self.call("_can_do_" + ACT.Type.keys()[action.action_type], action)
+	if self.has_method("_can_do_"+ACT.TypeKey(action.action_type)):
+		return self.call("_can_do_" + ACT.TypeKey(action.action_type), action)
 	elif supported_actions.has(action.action_type):
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func do_action_pre(action) -> int:
-	if self.has_method("_do_action_pre_"+ACT.Type.keys()[action.action_type]):
-		return self.call("_do_action_pre_" + ACT.Type.keys()[action.action_type], action)
+	if self.has_method("_do_action_pre_"+ACT.TypeKey(action.action_type)):
+		return self.call("_do_action_pre_" + ACT.TypeKey(action.action_type), action)
 	elif supported_actions.has(action.action_type):
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func do_action_post(action) -> int:
-	if self.has_method("_do_action_post_"+ACT.Type.keys()[action.action_type]):
-		return self.call("_do_action_post_" + ACT.Type.keys()[action.action_type], action)
+	if self.has_method("_do_action_post_"+ACT.TypeKey(action.action_type)):
+		return self.call("_do_action_post_" + ACT.TypeKey(action.action_type), action)
 	elif supported_actions.has(action.action_type):
 		return ACT.ActionResponse.Proceed
 	else:
@@ -111,15 +111,15 @@ func trigger(trigger_details):
 			call(ext_trigger.trigger_func_ref, trigger_details)
 
 func do_action(action) -> int:
-	if self.has_method("_do_action"+ACT.Type.keys()[action.action_type]):
-		return self.call("_do_action" + ACT.Type.keys()[action.action_type], action)
+	if self.has_method("_do_action"+ACT.TypeKey(action.action_type)):
+		return self.call("_do_action" + ACT.TypeKey(action.action_type), action)
 	elif supported_actions.has(action.action_type):
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func actor_do_action(actor, action_type:int) -> bool:
-	return self.call("_actor_do_" + ACT.Type.keys()[action_type], actor)
+	return self.call("_actor_do_" + ACT.TypeKey(action_type), actor)
 
 func object_entered(object, from_cell):
 	pass

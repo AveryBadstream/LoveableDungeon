@@ -1,3 +1,4 @@
+tool
 extends Sprite
 
 class_name GameObject
@@ -10,28 +11,24 @@ const is_action = false
 
 export(ACT.Type) var default_action := ACT.Type.Move
 export(String) var display_name := "ERROR"
-export(bool) var is_walkable setget set_is_walkable, get_is_walkable
-export(bool) var is_flyable setget set_is_flyable, get_is_flyable
-export(bool) var is_phaseable setget set_is_phaseable, get_is_phaseable
-export(bool) var occupies_cell setget set_occupies_cell, get_occupies_cell
+var is_walkable setget set_is_walkable, get_is_walkable
+var is_flyable setget set_is_flyable, get_is_flyable
+var is_phaseable setget set_is_phaseable, get_is_phaseable
+var occupies_cell setget set_occupies_cell, get_occupies_cell
 var is_player := false
-export(bool) var blocks_vision setget set_blocks_vision, get_blocks_vision
-export var player_remembers := false
+var blocks_vision setget set_blocks_vision, get_blocks_vision
+var player_remembers setget set_player_remembers, get_player_remembers
+export(int) var cim
+export(int) var sam
+export(Array, Resource) var test_res_array
 var last_game_position = position/16
 var _game_position = last_game_position
 var connects_to = []
 var claiming_effects = []
 var cell_interaction_mask setget ,get_cim
-var tentatively_visible = false
 var my_ghost
-var _blocks_vision = false
-var _is_walkable = false
-var _is_flyable = false
-var _is_phaseable = false
-var _occupies_cell = false
 var triggers = []
 var thing_type = ACT.TargetType.TargetObject
-export(Array, ACT.Type) var supported_actions
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -43,10 +40,10 @@ func set_initial_game_position(at_cell:Vector2):
 	last_game_position = at_cell
 
 func supports_action(action) -> bool:
-	var funcname = "_can_support_"+ACT.Type.keys()[action.action_type]
+	var funcname = "_can_support_"+ACT.TypeKey(action.action_type)
 	if self.has_method(funcname):
 		return self.call(funcname, action)
-	elif supported_actions.has(action.action_type):
+	elif sam & action.action_type:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
@@ -64,10 +61,10 @@ func effect_release(effect):
 	claiming_effects.erase(effect)
 
 func can_do_action(action) -> bool:
-	var funcname = "_can_do_"+ACT.Type.keys()[action.action_type]
+	var funcname = "_can_do_"+ACT.TypeKey(action.action_type)
 	if self.has_method(funcname):
 		return self.call(funcname, action)
-	elif supported_actions.has(action.action_type):
+	elif sam & action.action_type:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
@@ -81,51 +78,40 @@ func trigger(trigger_details):
 			call(ext_trigger.trigger_func_ref, trigger_details)
 
 func do_action_pre(action) -> int:
-	var func_name = "_do_action_pre_"+ACT.Type.keys()[action.action_type]
+	var func_name = "_do_action_pre_"+ACT.TypeKey(action.action_type)
 	if self.has_method(func_name):
 		return self.call(func_name, action)
-	elif supported_actions.has(action.action_type):
+	elif sam & action.action_type:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func do_action_post(action) -> int:
-	if self.has_method("_do_action_post_"+ACT.Type.keys()[action.action_type]):
-		return self.call("_do_action_post_" + ACT.Type.keys()[action.action_type], action)
-	elif supported_actions.has(action.action_type):
+	if self.has_method("_do_action_post_"+ACT.TypeKey(action.action_type)):
+		return self.call("_do_action_post_" + ACT.TypeKey(action.action_type), action)
+	elif sam & action.action_type:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func do_action(action) -> int:
-	var funcname = "_do_action_"+ACT.Type.keys()[action.action_type]
+	var funcname = "_do_action_"+ACT.TypeKey(action.action_type)
 	if self.has_method(funcname):
 		return self.call(funcname, action)
-	elif supported_actions.has(action.action_type):
+	elif sam & action.action_type:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
 
 func actor_do_action(actor, action_type:int) -> bool:
-	return self.call("_actor_do_" + ACT.Type.keys()[action_type], actor)
+	return self.call("_actor_do_" + ACT.TypeKey(action_type), actor)
 
 func get_cim():
-	var cim = 0
-	if _blocks_vision:
-		cim |= TIL.CellInteractions.BlocksFOV
-	if _is_walkable:
-		cim |= TIL.CellInteractions.Walkable
-	if _is_flyable:
-		cim |= TIL.CellInteractions.Flyable
-	if _is_phaseable:
-		cim |= TIL.CellInteractions.Phaseable
-	if _occupies_cell:
-		cim |= TIL.CellInteractions.Occupies
 	return cim
 
 
 func hide():
-	if player_remembers and !my_ghost:
+	if get_player_remembers() and !my_ghost:
 		var new_ghost = FOWGhost.new()
 		new_ghost.set_mimic(self)
 		EVNT.emit_signal("create_ghost", new_ghost)
@@ -133,7 +119,7 @@ func hide():
 	.hide()
 
 func show():
-	if player_remembers and my_ghost:
+	if get_player_remembers() and my_ghost:
 		EVNT.emit_signal("end_ghost", my_ghost)
 		my_ghost = null
 	.show()
@@ -151,50 +137,86 @@ func get_game_position() -> Vector2:
 	return last_game_position
 
 func set_is_walkable(should_walk):
+	var _is_walkable = cim & TIL.CellInteractions.Walkable > 0
 	if _is_walkable != should_walk:
-		_is_walkable = should_walk
+		if should_walk:
+			cim |= TIL.CellInteractions.Walkable
+		else:
+			cim &= ~(TIL.CellInteractions.Walkable)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_is_walkable():
-	return _is_walkable
+	return cim & TIL.CellInteractions.Walkable > 0
 	
 func set_is_phaseable(should_phase):
+	var _is_phaseable = cim & TIL.CellInteractions.Phaseable > 0
 	if _is_phaseable != should_phase:
-		_is_phaseable = should_phase
+		if should_phase:
+			cim |= TIL.CellInteractions.Phaseable
+		else:
+			cim &= ~(TIL.CellInteractions.Phaseable)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_is_phaseable():
-	return _is_phaseable
+	return cim & TIL.CellInteractions.Phaseable > 0
 	
 func set_is_flyable(should_fly):
+	var _is_flyable = cim & TIL.CellInteractions.Flyable > 0
 	if _is_flyable != should_fly:
-		_is_flyable = should_fly
+		if should_fly:
+			cim |= TIL.CellInteractions.Flyable
+		else:
+			cim &= ~(TIL.CellInteractions.Flyable)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_is_flyable():
-	return _is_flyable
+	return cim & TIL.CellInteractions.Flyable > 0
 	
 func set_occupies_cell(should_occupy):
-	if _occupies_cell != should_occupy:
-		_occupies_cell = should_occupy
+	var _is_occupying = cim & TIL.CellInteractions.Occupies > 0
+	if _is_occupying != should_occupy:
+		if should_occupy:
+			cim |= TIL.CellInteractions.Occupies
+		else:
+			cim &= ~(TIL.CellInteractions.Occupies)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_occupies_cell():
-	return _occupies_cell
+	return cim & TIL.CellInteractions.Occupies > 0
 
 func set_blocks_vision(should_block):
-	if _blocks_vision != should_block:
-		_blocks_vision = should_block
+	var _is_blocking = cim & TIL.CellInteractions.BlocksFOV > 0
+	if _is_blocking != should_block:
+		if should_block:
+			cim |= TIL.CellInteractions.BlocksFOV
+		else:
+			cim &= ~(TIL.CellInteractions.BlocksFOV)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_blocks_vision():
-	return _blocks_vision
+	return cim & TIL.CellInteractions.BlocksFOV > 0
+
+func set_player_remembers(should_remember):
+	var _is_remembered = cim & TIL.CellInteractions.PlayerRemembers > 0
+	if _is_remembered != should_remember:
+		if should_remember:
+			cim |= TIL.CellInteractions.PlayerRemembers
+		else:
+			if my_ghost:
+				EVNT.emit_signal("end_ghost", my_ghost)
+				my_ghost = null
+			cim &= ~(TIL.CellInteractions.PlayerRemembers)
+		EVNT.emit_signal("update_cimmap", self.get_game_position())
+		
+func get_player_remembers():
+	return cim & TIL.CellInteractions.PlayerRemembers > 0
 
 func connect_to(target_object):
 	self.connects_to.append(target_object)
 
 func _on_toggle(toggled_by):
 	pass
+
 
 func check_adjacent(object):
 	return (self.game_position - object.game_position).length() == 1
