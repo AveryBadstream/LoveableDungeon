@@ -18,6 +18,7 @@ onready var mask_tab = $ActionManagerTabs/EditMasks
 onready var effects_tab = $ActionManagerTabs/Effects
 
 onready var new_button = $OptionsMenubar/NewButton
+onready var save_button = $OptionsMenubar/SaveButton
 
 const game_action_script = GameAction
 
@@ -38,6 +39,8 @@ func _ready():
 func new_action():
 	edited_action = GameAction.new()
 	edit_tab.change_edited_action(edited_action)
+	mask_tab.change_edited_action(edited_action)
+	effects_tab.change_edited_action(edited_action)
 	tabs.set_tab_disabled(1, false)
 	tabs.set_tab_disabled(2, false)
 	tabs.set_tab_disabled(3, false)
@@ -49,10 +52,24 @@ func set_icon_list(editor_icons):
 	mask_tab.set_icon_list(editor_icons)
 	effects_tab.set_icon_list(editor_icons)
 	new_button.icon = editor_icons.new
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	save_button.icon = editor_icons.save
 
 
 func _on_edit_new_resource():
-	new_action() # Replace with function body.
+	new_action() 
+
+
+func _on_save_resource():
+	if not edit_tab.set_tab_data():
+		tabs.set_current_tab(1)
+	elif not mask_tab.set_tab_data():
+		tabs.set_current_tab(2)
+	elif not effects_tab.set_tab_data():
+		tabs.set_current_tab(3)
+	else:
+		$FileDialog.popup_centered()
+
+
+
+func _on_FileDialog_file_selected(path):
+	ResourceSaver.save(path, edited_action) # Replace with function body.

@@ -16,7 +16,7 @@ __meta__ = {
 
 [node name="TargetType" type="VBoxContainer" parent="."]
 margin_right = 69.0
-margin_bottom = 56.0
+margin_bottom = 330.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -36,99 +36,101 @@ margin_bottom = 22.0
 [node name="ScrollContainer" type="ScrollContainer" parent="TargetType"]
 margin_top = 26.0
 margin_right = 69.0
-margin_bottom = 26.0
+margin_bottom = 163.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TargetTypeList" type="VBoxContainer" parent="TargetType/ScrollContainer"]
-margin_right = 69.0
+margin_right = 162.0
+margin_bottom = 172.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TargetHintLabel" type="Label" parent="TargetType"]
-margin_top = 30.0
+margin_top = 167.0
 margin_right = 69.0
-margin_bottom = 44.0
+margin_bottom = 181.0
 text = "target hint"
 
 [node name="HSeparator2" type="HSeparator" parent="TargetType"]
-margin_top = 48.0
+margin_top = 185.0
 margin_right = 69.0
-margin_bottom = 52.0
+margin_bottom = 189.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ScrollContainer2" type="ScrollContainer" parent="TargetType"]
-margin_top = 56.0
+margin_top = 193.0
 margin_right = 69.0
-margin_bottom = 56.0
+margin_bottom = 330.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TargetHintList" type="VBoxContainer" parent="TargetType/ScrollContainer2"]
-margin_right = 69.0
+margin_right = 226.0
+margin_bottom = 125.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CastCIM" type="VBoxContainer" parent="."]
 margin_left = 73.0
-margin_right = 184.0
-margin_bottom = 56.0
+margin_right = 270.0
+margin_bottom = 330.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CastCIMLabel" type="Label" parent="CastCIM"]
-margin_right = 111.0
+margin_right = 197.0
 margin_bottom = 14.0
-text = "Cast Area Against"
+text = "cast area against"
 
 [node name="HSeparator" type="HSeparator" parent="CastCIM"]
 margin_top = 18.0
-margin_right = 111.0
+margin_right = 197.0
 margin_bottom = 22.0
 
 [node name="CastCIMList" type="VBoxContainer" parent="CastCIM"]
 margin_top = 26.0
-margin_right = 111.0
-margin_bottom = 26.0
+margin_right = 197.0
+margin_bottom = 330.0
 
 [node name="CastTCIM" type="VBoxContainer" parent="."]
-margin_left = 188.0
-margin_right = 333.0
-margin_bottom = 56.0
+margin_left = 274.0
+margin_right = 471.0
+margin_bottom = 330.0
 
 [node name="CastTCIMLabel" type="Label" parent="CastTCIM"]
-margin_right = 145.0
+margin_right = 197.0
 margin_bottom = 14.0
-text = "Cast Targetting Against"
+text = "cast targetting against"
 
 [node name="HSeparator" type="HSeparator" parent="CastTCIM"]
 margin_top = 18.0
-margin_right = 145.0
+margin_right = 197.0
 margin_bottom = 22.0
 
 [node name="CastTCIMList" type="VBoxContainer" parent="CastTCIM"]
 margin_top = 26.0
-margin_right = 145.0
-margin_bottom = 26.0
+margin_right = 197.0
+margin_bottom = 330.0
 
 [node name="CastXCIM" type="VBoxContainer" parent="."]
-margin_left = 337.0
-margin_right = 470.0
-margin_bottom = 56.0
+margin_left = 475.0
+margin_right = 672.0
+margin_bottom = 330.0
 
 [node name="CastXCIMLabel" type="Label" parent="CastXCIM"]
-margin_right = 133.0
+margin_right = 197.0
 margin_bottom = 14.0
-text = "Exclude Target Types"
+text = "exclude from area"
 
 [node name="HSeparator" type="HSeparator" parent="CastXCIM"]
 margin_top = 18.0
-margin_right = 133.0
+margin_right = 197.0
 margin_bottom = 22.0
 
 [node name="CastXCIMList" type="VBoxContainer" parent="CastXCIM"]
 margin_top = 26.0
-margin_right = 133.0
-margin_bottom = 26.0
+margin_right = 197.0
+margin_bottom = 330.0

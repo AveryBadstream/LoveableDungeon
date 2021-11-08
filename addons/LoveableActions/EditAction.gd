@@ -10,10 +10,12 @@ onready var type_options = $EditorWindow/ActionSettings/ActionSettingsGrid/Field
 onready var script_list = $EditorWindow/ActionScripts/ScriptsList
 onready var script_reload_button = $EditorWindow/ActionScripts/ScriptsTitle/ReloadScriptsButton
 onready var name_entry = $EditorWindow/ActionSettings/ActionSettingsGrid/Fields/NameEntry
+onready var target_type = $EditorWindow/ActionSettings/ActionSettingsGrid/Fields/TypeOptions
 onready var area_options = $EditorWindow/ActionSettings/ActionSettingsGrid/Fields/AreaOptions
 onready var range_box = $EditorWindow/ActionSettings/ActionSettingsGrid/Fields/TargetRangeBox
 onready var area_box = $EditorWindow/ActionSettings/ActionSettingsGrid/Fields/TargetAreaBox
 onready var priority_list = $EditorWindow/ActionSettings/ScrollContainer/TargetPrioritiesList
+onready var radius_box = $EditorWindow/ActionSettings/ActionSettingsGrid/Fields/TargetRadiusBox
 
 var act_kvp = []
 var hint_kvp = []
@@ -117,3 +119,29 @@ func _on_ScriptsList_item_selected(index):
 								"value": null
 							})
 	emit_signal("update_effect_settings", script_effect_settings)
+
+func set_tab_data():
+	if script_list.get_selected_items().size() == 0:
+		print(str(script_list.get_selected_items()))
+		script_list.grab_focus()
+		return false
+	if name_entry.name == "":
+		name_entry.grab_focus()
+		return false
+	edited_action.action_name = name_entry.text
+	if type_options.selected == -1:
+		type_options.grab_focus()
+		return false
+	edited_action.target_type = act_kvp[type_options.selected][1]
+	if area_options.selected == -1:
+		area_options.grab_focus()
+		return false
+	edited_action.target_area = area_kvp[area_options.selected][1]
+	edited_action.action_area = area_box.value
+	edited_action.action_range = range_box.value
+	edited_action.action_radius = deg2rad(radius_box.value)
+	var priorities = []
+	for child in priority_list.get_children():
+		priorities.append(child.target_key)
+	edited_action.target_priority = priorities
+	return true

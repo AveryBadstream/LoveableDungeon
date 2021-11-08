@@ -20,7 +20,7 @@ export(Array, int) var target_priority = [ACT.TargetType.TargetTile, ACT.TargetT
 export(int) var target_cim = TIL.CellInteractions.Occupies
 export(int) var x_cim = TIL.CellInteractions.Occupies
 export(int) var c_cim = TIL.CellInteractions.BlocksFOV
-export(float) var target_radius = 0.0
+export(float) var action_radius = 0.0
 
 
 var running_effects = []

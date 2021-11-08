@@ -1,5 +1,5 @@
 tool
-extends HBoxContainer
+extends VBoxContainer
 
 
 # Declare member variables here. Examples:
@@ -8,9 +8,11 @@ extends HBoxContainer
 signal move_up(element)
 signal move_down(element)
 
-onready var up_button = $MoveArrows/UpButton
-onready var down_button = $MoveArrows/DownButton
-onready var name_label = $TargetTypeName
+onready var up_button = $HBoxContainer/MoveArrows/UpButton
+onready var down_button = $HBoxContainer/MoveArrows/DownButton
+onready var name_label = $HBoxContainer/TargetTypeName
+onready var top_sep = $TopSep
+onready var bot_sep = $BotSep
 
 var target_key
 var target_value
@@ -38,12 +40,16 @@ func set_list_position(list_pos, max_pos):
 	list_position = list_pos
 	if list_pos == 1:
 		up_button.disabled = true
+		top_sep.hide()
 	else:
 		up_button.disabled = false
+		top_sep.show()
 	if list_pos == max_pos:
 		down_button.disabled = true
+		bot_sep.show()
 	else:
 		down_button.disabled = false
+		bot_sep.hide()
 
 func _on_UpButton_pressed():
 	emit_signal("move_up", self)
