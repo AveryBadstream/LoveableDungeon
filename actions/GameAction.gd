@@ -19,6 +19,7 @@ export(int) var target_area = ACT.TargetArea.TargetSingle
 export(Array, int) var target_priority = [ACT.TargetType.TargetTile, ACT.TargetType.TargetObject, ACT.TargetType.TargetItem, ACT.TargetType.TargetActor]
 export(int) var target_cim = TIL.CellInteractions.Occupies
 export(int) var x_cim = TIL.CellInteractions.Occupies
+export(int) var c_cim = TIL.CellInteractions.BlocksFOV
 export(float) var target_radius = 0.0
 
 

@@ -18,16 +18,9 @@ __meta__ = {
 
 [node name="ListOptions" type="HBoxContainer" parent="."]
 margin_right = 1272.0
-margin_bottom = 20.0
-
-[node name="NewButton" type="Button" parent="ListOptions"]
-margin_right = 12.0
-margin_bottom = 20.0
 
 [node name="ItemList" type="ItemList" parent="."]
-margin_top = 24.0
+margin_top = 4.0
 margin_right = 1272.0
 margin_bottom = 684.0
 size_flags_vertical = 3
-
-[connection signal="pressed" from="ListOptions/NewButton" to="." method="_on_NewButton_pressed"]

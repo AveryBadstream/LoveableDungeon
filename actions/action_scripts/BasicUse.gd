@@ -4,13 +4,14 @@ extends GameAction
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var use_effect = preload("res://effects/Use.gd")
+export(Script) var use_effect = preload("res://effects/Use.gd")
 
-func _init(actor).(actor):
+func set_owned_by(actor):
 	self.target_type = ACT.TargetType.TargetObject | ACT.TargetType.TargetActor
 	self.action_type = ACT.Type.Use
 	self.target_area = ACT.TargetArea.TargetSingle
 	self.target_priority = [ACT.TargetType.TargetObject, ACT.TargetType.TargetActor, ACT.TargetType.TargetItem, ACT.TargetType.TargetTile]
+	.set_owned_by(actor)
 
 func get_viable_targets():
 	pass

@@ -58,7 +58,7 @@ margin_top = 24.0
 margin_right = 634.0
 margin_bottom = 672.0
 size_flags_vertical = 3
-items = [ "BasicClose.gd", null, false, "BasicMove.gd", null, false, "BasicOpen.gd", null, false, "BasicUse.gd", null, false, "Forcewave.gd", null, false, "Push.gd", null, false, "RocketteLauncher.gd", null, false, "Wait.gd", null, false ]
+items = [ "RocketteLauncher.gd", null, false, "BasicUse.gd", null, false, "Forcewave.gd", null, false, "Push.gd", null, false, "BasicOpen.gd", null, false, "BasicMove.gd", null, false, "BasicClose.gd", null, false, "Wait.gd", null, false ]
 
 [node name="ActionSettings" type="VBoxContainer" parent="EditorWindow"]
 margin_left = 638.0
@@ -68,92 +68,115 @@ size_flags_horizontal = 3
 
 [node name="ActionSettingsGrid" type="GridContainer" parent="EditorWindow/ActionSettings"]
 margin_right = 634.0
-margin_bottom = 334.0
+margin_bottom = 321.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
 
 [node name="Labels" type="VBoxContainer" parent="EditorWindow/ActionSettings/ActionSettingsGrid"]
-margin_right = 59.0
-margin_bottom = 104.0
+margin_right = 85.0
+margin_bottom = 156.0
 
 [node name="NameLabel" type="Label" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Labels"]
-margin_right = 59.0
+margin_right = 85.0
 margin_bottom = 14.0
 text = "name"
 
 [node name="TypeLabel" type="Label" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Labels"]
 margin_top = 18.0
-margin_right = 59.0
+margin_right = 85.0
 margin_bottom = 32.0
 text = "type"
 
 [node name="TargetAreaLabel" type="Label" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Labels"]
 margin_top = 36.0
-margin_right = 59.0
+margin_right = 85.0
 margin_bottom = 50.0
 text = "area type"
 
 [node name="TargetRangeLabel" type="Label" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Labels"]
 margin_top = 54.0
-margin_right = 59.0
+margin_right = 85.0
 margin_bottom = 68.0
 text = "range"
 
 [node name="TargetAreaNLabel" type="Label" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Labels"]
 margin_top = 72.0
-margin_right = 59.0
+margin_right = 85.0
 margin_bottom = 86.0
 text = "area"
 
-[node name="Fields" type="VBoxContainer" parent="EditorWindow/ActionSettings/ActionSettingsGrid"]
-margin_left = 63.0
-margin_right = 634.0
+[node name="TargetRadiusLabel" type="Label" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Labels"]
+margin_top = 90.0
+margin_right = 85.0
 margin_bottom = 104.0
+text = "Target Radius"
+
+[node name="Fields" type="VBoxContainer" parent="EditorWindow/ActionSettings/ActionSettingsGrid"]
+margin_left = 89.0
+margin_right = 634.0
+margin_bottom = 156.0
 size_flags_horizontal = 3
 
-[node name="NameEntry" type="TextEdit" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
-margin_right = 571.0
+[node name="NameEntry" type="LineEdit" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
+margin_right = 545.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TypeOptions" type="OptionButton" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
-margin_top = 4.0
-margin_right = 571.0
-margin_bottom = 24.0
+margin_top = 28.0
+margin_right = 545.0
+margin_bottom = 48.0
 size_flags_horizontal = 3
 text = "None"
 items = [ "None", null, false, 0, null, "Move", null, false, 1, null, "Fly", null, false, 2, null, "Phase", null, false, 3, null, "Open", null, false, 4, null, "Close", null, false, 5, null, "Push", null, false, 6, null, "Pull", null, false, 7, null, "Use", null, false, 8, null, "Attack", null, false, 9, null ]
 selected = 0
 
 [node name="AreaOptions" type="OptionButton" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
-margin_top = 28.0
-margin_right = 571.0
-margin_bottom = 48.0
+margin_top = 52.0
+margin_right = 545.0
+margin_bottom = 72.0
 text = "TargetNone"
 items = [ "TargetNone", null, false, 0, null, "TargetSingle", null, false, 1, null, "TargetCell", null, false, 2, null, "TargetCone", null, false, 3, null, "TargetWideBeam", null, false, 4, null ]
 selected = 0
 
 [node name="TargetRangeBox" type="SpinBox" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
-margin_top = 52.0
-margin_right = 571.0
-margin_bottom = 76.0
+margin_top = 76.0
+margin_right = 545.0
+margin_bottom = 100.0
 step = 0.01
 
 [node name="TargetAreaBox" type="SpinBox" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
-margin_top = 80.0
-margin_right = 571.0
-margin_bottom = 104.0
+margin_top = 104.0
+margin_right = 545.0
+margin_bottom = 128.0
+
+[node name="TargetRadiusBox" type="SpinBox" parent="EditorWindow/ActionSettings/ActionSettingsGrid/Fields"]
+margin_top = 132.0
+margin_right = 545.0
+margin_bottom = 156.0
+
+[node name="TargetPriorityLabel" type="Label" parent="EditorWindow/ActionSettings"]
+margin_top = 325.0
+margin_right = 634.0
+margin_bottom = 339.0
+text = "Target Priority"
+
+[node name="HSeparator" type="HSeparator" parent="EditorWindow/ActionSettings"]
+margin_top = 343.0
+margin_right = 634.0
+margin_bottom = 347.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="EditorWindow/ActionSettings"]
-margin_top = 338.0
+margin_top = 351.0
 margin_right = 634.0
 margin_bottom = 672.0
 size_flags_vertical = 3
 
 [node name="TargetPrioritiesList" type="VBoxContainer" parent="EditorWindow/ActionSettings/ScrollContainer"]
 margin_right = 634.0
-margin_bottom = 284.0
+margin_bottom = 188.0
 size_flags_horizontal = 3
 
 [connection signal="pressed" from="EditorWindow/ActionScripts/ScriptsTitle/ReloadScriptsButton" to="." method="reload_action_scripts"]

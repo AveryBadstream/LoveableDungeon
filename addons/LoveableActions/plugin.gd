@@ -14,6 +14,7 @@ func _enter_tree():
 	editor_icons["new"] = gui.get_icon("New", "EditorIcons")
 	editor_icons["arrowup"] = gui.get_icon("ArrowUp", "EditorIcons")
 	editor_icons["arrowdown"] = gui.get_icon("ArrowDown", "EditorIcons")
+	editor_icons["load"] = gui.get_icon("Load", "EditorIcons")
 	action_manager = ActionManager.instance()
 	get_editor_interface().get_editor_viewport().add_child(action_manager)
 	action_manager.set_icon_list(editor_icons)

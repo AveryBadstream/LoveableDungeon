@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/LoveableActions/EffectEntry.gd" type="Script" id=1]
+
+[node name="EffectEntry" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EffectBox" type="HBoxContainer" parent="."]
+margin_right = 1280.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="EffectName" type="Label" parent="EffectBox"]
+margin_top = 5.0
+margin_right = 630.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+
+[node name="EffectPath" type="LineEdit" parent="EffectBox"]
+margin_left = 634.0
+margin_right = 1264.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+editable = false
+
+[node name="Load" type="Button" parent="EffectBox"]
+margin_left = 1268.0
+margin_right = 1280.0
+margin_bottom = 24.0
+
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_top = 28.0
+margin_right = 1280.0
+margin_bottom = 720.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 800, 600 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+window_title = "Open a File"
+resizable = true
+mode = 0
+current_dir = "res://effects"
+current_file = "Close.gd"
+current_path = "res://effects/Close.gd"
+
+[connection signal="pressed" from="EffectBox/Load" to="." method="_on_Load_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

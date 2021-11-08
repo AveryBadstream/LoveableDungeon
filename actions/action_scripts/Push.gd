@@ -4,7 +4,8 @@ extends GameAction
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var push_effect = preload("res://effects/Push.gd")
+export(Script) var push_effect = preload("res://effects/Push.gd")
+export(int) var push_effect_magnitude = 1
 
 func set_owned_by(actor):
 	self.target_type = ACT.TargetType.TargetObject | ACT.TargetType.TargetActor | ACT.TargetType.TargetItem

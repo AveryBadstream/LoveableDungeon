@@ -1,10 +1,7 @@
 tool
 extends VBoxContainer
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+signal update_effect_settings(effect_settings)
 const action_scripts_path = "res://actions/action_scripts/"
 
 const priority_item = preload("res://addons/LoveableActions/TargetPriorityItem.tscn")
@@ -25,6 +22,8 @@ var action_scripts = []
 var area_kvp = []
 
 var script_effect_settings = []
+var script_effect_names = []
+var unassigned_effect_settings = []
 
 var edited_action
 
@@ -91,8 +90,30 @@ func set_icon_list(editor_icons):
 func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
 
-
 func _on_ScriptsList_item_selected(index):
+	script_effect_names = []
+	script_effect_settings = []
+	unassigned_effect_settings = []
 	edited_action.script = load(action_scripts[index])
 	for prop in edited_action.get_property_list():
 		print(str(prop))
+		if "_effect" in prop.name:
+			var prop_parts = prop.name.split("_", true, 2)
+			if prop_parts.size() == 2:
+				script_effect_names.append(prop_parts[1])
+				script_effect_settings.append({"name": prop_parts[1], "script": null, "prop_name": prop.name})
+			elif prop_parts.size() == 3:
+				unassigned_effect_settings.append([prop_parts[1], prop_parts[2], prop])
+	for prop_info in unassigned_effect_settings:
+		var names_i = script_effect_names.find(prop_info[0])
+		if names_i != -1:
+			var script_effect_setting = script_effect_settings[names_i]
+			if not script_effect_setting.keys().has("sub_properties"):
+				script_effect_setting["sub_properties"] = []
+			script_effect_setting["sub_properties"].append({ \
+								"name": prop_info[1],
+								"prop_name": prop_info[2].name,
+								"type": prop_info[2].type,
+								"value": null
+							})
+	emit_signal("update_effect_settings", script_effect_settings)
