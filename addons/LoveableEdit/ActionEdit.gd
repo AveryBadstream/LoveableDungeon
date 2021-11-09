@@ -12,6 +12,7 @@ onready var apply_button = $ApplyContainer/ApplyButton
 
 onready var default_type_option = $ApplyTo/DefaultApply/DefaultTypeOption
 onready var default_script = $ApplyTo/DefaultApply/DefaultScript
+onready var clear_default = $ApplyTo/DefaultApply/ClearDefaultButton
 
 onready var assigned_actions = $ApplyTo/ActionList/VBoxContainer2/ActionsList
 onready var remove_button = $ApplyTo/ActionList/VBoxContainer2/PanelContainer/HBoxContainer/RemoveButton
@@ -64,11 +65,13 @@ func focus_object(new_obj):
 			var fname = action.get_path().get_file()
 			assigned_actions.add_item(fname)
 			assigned_action_l.append(fname)
+		update_default_display()
 
 func set_icon_list(icons):
 	editor_icons = icons
 	apply_button.icon = editor_icons["arrowright"]
 	remove_button.icon = editor_icons["remove"]
+	clear_default.icon = editor_icons["remove"]
 	clear_button.icon = editor_icons["reload"]
 
 func _on_ActionSearch_text_changed(new_text: String):
@@ -88,10 +91,11 @@ func update_apply_buttons():
 		clear_button.disabled = true
 		remove_button.disabled = true
 		default_type_option.disabled = false
-		for i in range(assigned_actions.get_item_count(true)):
+		for i in range(assigned_actions.get_item_count()):
 			assigned_actions.set_item_disabled(i)
-		action_list.select_mode = ItemList.SELECT_SINGLE
 		action_list.unselect_all()
+		action_list.select_mode = ItemList.SELECT_SINGLE
+
 	else:
 		clear_button.disabled = false
 		remove_button.disabled = false
@@ -110,8 +114,40 @@ func _on_UseDefaultButton_toggled(button_pressed):
 	apply_default = button_pressed
 	update_apply_buttons()
 
+func update_default_display():
+	var default_key = default_type_option.get_selected_id()
+	if edited_object.default_actions.has(act_kvp[default_key][1]):
+		default_script.text = edited_object.default_actions[act_kvp[default_key][1]].get_script().get_path()
+	else:
+		default_script.text = ""
 
 func _on_ApplyButton_pressed():
 	if apply_default:
 		var default_key = default_type_option.get_selected_id()
-		edited_object.default_actions[default_key] = 0
+		if default_key != 0:
+			var new_action = action_objects[action_list.get_selected_items()[0]].duplicate()
+			new_action.resource_local_to_scene = true
+			edited_object.default_actions[act_kvp[default_key][1]] = new_action
+			edited_object.property_list_changed_notify()
+			update_default_display()
+	else:
+		if not edited_object.actions:
+			edited_object.actions = []
+		var to_add_actions = []
+		for i in action_list.get_selected_items():
+			var new_action:Resource = action_objects[i].duplicate()
+			new_action.resource_local_to_scene = true
+			to_add_actions.append(new_action)
+		edited_object.actions.append_array(to_add_actions)
+		edited_object.property_list_changed_notify()
+
+
+func _on_DefaultTypeOption_item_selected(index):
+	update_default_display() # Replace with function body.
+
+
+func _on_ClearDefaultButton_pressed():
+	var default_key = default_type_option.get_selected_id()
+	edited_object.default_actions.erase(act_kvp[default_key][1])
+	edited_object.property_list_changed_notify()
+	update_default_display()

@@ -47,7 +47,7 @@ margin_right = 626.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-items = [ "open.tres", null, false, "move.tres", null, false, "close.tres", null, false, "use.tres", null, false, "push.tres", null, false, "forcewave.tres", null, false ]
+items = [ "close.tres", null, false, "forcewave.tres", null, false, "move.tres", null, false, "open.tres", null, false, "push.tres", null, false, "use.tres", null, false ]
 select_mode = 1
 
 [node name="ApplyContainer" type="VBoxContainer" parent="."]
@@ -78,15 +78,24 @@ margin_bottom = 40.0
 
 [node name="DefaultTypeOption" type="OptionButton" parent="ApplyTo/DefaultApply"]
 margin_left = 80.0
-margin_right = 109.0
+margin_right = 144.0
 margin_bottom = 40.0
+disabled = true
+text = "Move"
+items = [ "Move", null, false, 1, null, "Fly", null, false, 2, null, "Phase", null, false, 3, null, "Open", null, false, 4, null, "Close", null, false, 5, null, "Push", null, false, 6, null, "Pull", null, false, 7, null, "Use", null, false, 8, null, "Attack", null, false, 9, null ]
+selected = 0
 
 [node name="DefaultScript" type="LineEdit" parent="ApplyTo/DefaultApply"]
-margin_left = 113.0
-margin_right = 626.0
+margin_left = 148.0
+margin_right = 610.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 editable = false
+
+[node name="ClearDefaultButton" type="Button" parent="ApplyTo/DefaultApply"]
+margin_left = 614.0
+margin_right = 626.0
+margin_bottom = 40.0
 
 [node name="HSeparator" type="HSeparator" parent="ApplyTo"]
 margin_top = 44.0
@@ -107,6 +116,7 @@ margin_bottom = 632.0
 [node name="ActionsButton" type="CheckButton" parent="ApplyTo/ActionList/VBoxContainer"]
 margin_right = 76.0
 margin_bottom = 40.0
+pressed = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="ApplyTo/ActionList"]
 margin_left = 80.0
@@ -145,4 +155,6 @@ margin_bottom = 20.0
 [connection signal="text_changed" from="Available Action/HBoxContainer/ActionSearch" to="." method="_on_ActionSearch_text_changed"]
 [connection signal="pressed" from="ApplyContainer/ApplyButton" to="." method="_on_ApplyButton_pressed"]
 [connection signal="toggled" from="ApplyTo/DefaultApply/UseDefaultButton" to="." method="_on_UseDefaultButton_toggled"]
+[connection signal="item_selected" from="ApplyTo/DefaultApply/DefaultTypeOption" to="." method="_on_DefaultTypeOption_item_selected"]
+[connection signal="pressed" from="ApplyTo/DefaultApply/ClearDefaultButton" to="." method="_on_ClearDefaultButton_pressed"]
 [connection signal="toggled" from="ApplyTo/ActionList/VBoxContainer/ActionsButton" to="." method="_on_ActionsButton_toggled"]
