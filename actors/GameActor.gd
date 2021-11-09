@@ -4,6 +4,7 @@ class_name GameActor
 
 export(Array, AI.AIScript) var mob_ai
 export(Array, ACT.Actions) var actions
+export(Dictionary) var default_actions
 
 
 var local_ai = []

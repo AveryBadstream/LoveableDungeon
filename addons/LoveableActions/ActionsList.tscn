@@ -19,8 +19,10 @@ __meta__ = {
 [node name="ListOptions" type="HBoxContainer" parent="."]
 margin_right = 1272.0
 
-[node name="ItemList" type="ItemList" parent="."]
+[node name="ActionsItemList" type="ItemList" parent="."]
 margin_top = 4.0
 margin_right = 1272.0
 margin_bottom = 684.0
 size_flags_vertical = 3
+
+[connection signal="item_selected" from="ActionsItemList" to="." method="_on_item_selected"]

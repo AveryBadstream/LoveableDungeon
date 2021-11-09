@@ -1,0 +1,28 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=1]
+[ext_resource path="res://effects/Use.gd" type="Script" id=2]
+
+[resource]
+script = ExtResource( 1 )
+action_name = "use"
+action_type = 128
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 11
+target_area = 1
+target_priority = [ 2, 8, 1, 4 ]
+target_cim = 16
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Use what?"
+impossible_message = "You can't use that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = "{subject} tried to use {object} but failed."
+success_log = "{subject} used {object}."
+pertarget_log = ""
+use_effect = ExtResource( 2 )

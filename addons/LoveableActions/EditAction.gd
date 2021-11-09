@@ -1,7 +1,7 @@
 tool
 extends VBoxContainer
 
-signal update_effect_settings(effect_settings)
+signal update_effect_settings(effect_settings, action_object)
 const action_scripts_path = "res://actions/action_scripts/"
 
 const priority_item = preload("res://addons/LoveableActions/TargetPriorityItem.tscn")
@@ -36,7 +36,6 @@ func _ready():
 		act_kvp.append([key, ACT.Type[key]])
 		type_options.add_item(key)
 	var i = 0
-
 	area_options.clear()
 	for key in ACT.TargetArea.keys():
 		area_kvp.append([key, ACT.TargetArea[key]])
@@ -91,12 +90,49 @@ func set_icon_list(editor_icons):
 
 func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
+	var script_i = action_scripts.find(edited_action.get_script().resource_path)
+	if script_i >= 0:
+		script_list.select(script_i)
+		send_property_list()
+	name_entry.text = edited_action.action_name
+	var act_i = -1
+	for i in range(act_kvp.size()):
+		if act_kvp[i][1] == edited_action.action_type:
+			act_i = i
+	if act_i >= 0:
+		type_options.select(act_i)
+	var area_i = -1
+	for i in range(area_kvp.size()):
+		if area_kvp[i][1] == edited_action.target_area:
+			area_i = i
+	if area_i >= 0:
+		area_options.select(area_i)
+	area_box.value = edited_action.action_area
+	range_box.value = edited_action.action_range
+	radius_box.value = rad2deg(edited_action.action_radius)
+	var priority_list_c = []
+	priority_list_c = priority_list.get_children()
+	for child in priority_list_c:
+		priority_list.remove_child(child)
+	for i in range(edited_action.target_priority.size()):
+		for child in priority_list_c:
+			if edited_action.target_priority[i] == child.target_value:
+				priority_list.add_child(child)
+				priority_list_c.erase(child)
+				break
+	for child in priority_list_c:
+		priority_list.add_child(child)
+	update_list_positions()
+
 
 func _on_ScriptsList_item_selected(index):
 	script_effect_names = []
 	script_effect_settings = []
 	unassigned_effect_settings = []
 	edited_action.script = load(action_scripts[index])
+	send_property_list()
+
+func send_property_list():
 	for prop in edited_action.get_property_list():
 		print(str(prop))
 		if "_effect" in prop.name:
@@ -118,7 +154,7 @@ func _on_ScriptsList_item_selected(index):
 								"type": prop_info[2].type,
 								"value": null
 							})
-	emit_signal("update_effect_settings", script_effect_settings)
+	emit_signal("update_effect_settings", script_effect_settings, edited_action)
 
 func set_tab_data():
 	if script_list.get_selected_items().size() == 0:
@@ -132,16 +168,16 @@ func set_tab_data():
 	if type_options.selected == -1:
 		type_options.grab_focus()
 		return false
-	edited_action.target_type = act_kvp[type_options.selected][1]
+	edited_action.action_type = act_kvp[type_options.selected][1]
 	if area_options.selected == -1:
 		area_options.grab_focus()
 		return false
-	edited_action.target_area = area_kvp[area_options.selected][1]
+	edited_action.target_type = area_kvp[area_options.selected][1]
 	edited_action.action_area = area_box.value
 	edited_action.action_range = range_box.value
 	edited_action.action_radius = deg2rad(radius_box.value)
 	var priorities = []
 	for child in priority_list.get_children():
-		priorities.append(child.target_key)
+		priorities.append(child.target_value)
 	edited_action.target_priority = priorities
 	return true

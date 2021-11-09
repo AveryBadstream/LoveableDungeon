@@ -30,7 +30,6 @@ func _on_Load_pressed():
 
 func process_property(prop):
 	property_info = prop
-	effect_name.text = prop.name
 	sub_props = []
 	if prop.keys().has("sub_properties"):
 		for sr in prop.sub_properties:
@@ -46,9 +45,8 @@ func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
 	var i = 0
 	print(str(sub_props.size()))
+	effect_path_line.text = edited_action.get(property_info.prop_name).get_path()
 	for child in sub_props:
-		if i > 50:
-			break
 		print("Changing edited action on: " + str(child.property_info.name))
 		child.change_edited_action(next_edited_action)
 		i += 1

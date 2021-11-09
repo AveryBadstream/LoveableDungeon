@@ -11,10 +11,18 @@ var focused_object
 
 var action_manager
 
+var editor_icons = {}
+
 func _enter_tree():
+	var gui = get_editor_interface().get_base_control()
+	editor_icons["reload"] = gui.get_icon("Reload", "EditorIcons")
+	editor_icons["new"] = gui.get_icon("New", "EditorIcons")
+	editor_icons["remove"] = gui.get_icon("Remove", "EditorIcons")
+	editor_icons["arrowright"] = gui.get_icon("ArrowRight", "EditorIcons")
 	editor_selection = get_editor_interface().get_selection()
 	editor_selection.connect("selection_changed", self, "_on_EditorSelection_selection_changed")
 	thing_editor = ThingEditor.instance()
+	thing_editor.set_icon_list(editor_icons)
 
 func handles(object):
 	if object is GameObject:
@@ -53,12 +61,6 @@ func _on_EditorSelection_selection_changed():
 			return
 	set_focused_object(null)
 
-func has_main_screen():
-	return true
-
-func get_plugin_name():
-	return "LoveableEdit"
-
 func _on_focused_object_changed(new_obj):
 	if new_obj is GameObject:
 		# Must be shown first, otherwise StateMachineEditor can't execute ui action as it is not added to scene tree
@@ -86,4 +88,5 @@ func set_focused_object(obj):
 func _exit_tree():
 #	remove_inspector_plugin(GameObjectEditor)
 	if thing_editor:
+		remove_control_from_bottom_panel(thing_editor)
 		thing_editor.queue_free()

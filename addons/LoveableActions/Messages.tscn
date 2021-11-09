@@ -1,0 +1,133 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/LoveableActions/Messages.gd" type="Script" id=1]
+
+[node name="ActionStrings" type="GridContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = 4.0
+margin_bottom = -604.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Messages" type="VBoxContainer" parent="."]
+margin_right = 638.0
+margin_bottom = 84.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PendingMsgLabel" type="Label" parent="Messages"]
+margin_right = 638.0
+margin_bottom = 14.0
+text = "pending message"
+
+[node name="PendingMsgEdit" type="TextEdit" parent="Messages"]
+margin_top = 18.0
+margin_right = 638.0
+margin_bottom = 18.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ImpossibleMsgLabel" type="Label" parent="Messages"]
+margin_top = 22.0
+margin_right = 638.0
+margin_bottom = 36.0
+text = "impossible message"
+
+[node name="ImpossibleMsgEdit" type="TextEdit" parent="Messages"]
+margin_top = 40.0
+margin_right = 638.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="FailedMsgLabel" type="Label" parent="Messages"]
+margin_top = 44.0
+margin_right = 638.0
+margin_bottom = 58.0
+text = "impossible message"
+
+[node name="FailedMsgEdit" type="TextEdit" parent="Messages"]
+margin_top = 62.0
+margin_right = 638.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SuccessMsgLabel" type="Label" parent="Messages"]
+margin_top = 66.0
+margin_right = 638.0
+margin_bottom = 80.0
+text = "success message"
+
+[node name="SuccessMsgEdit" type="TextEdit" parent="Messages"]
+margin_top = 84.0
+margin_right = 638.0
+margin_bottom = 84.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Logs" type="VBoxContainer" parent="."]
+margin_left = 642.0
+margin_right = 1280.0
+margin_bottom = 84.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ImpossibleLogLabel" type="Label" parent="Logs"]
+margin_right = 638.0
+margin_bottom = 14.0
+text = "impossible log"
+
+[node name="ImpossibleLogEntry" type="TextEdit" parent="Logs"]
+margin_top = 18.0
+margin_right = 638.0
+margin_bottom = 18.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="FailedLogLabel" type="Label" parent="Logs"]
+margin_top = 22.0
+margin_right = 638.0
+margin_bottom = 36.0
+text = "failed  log"
+
+[node name="FailedLogEntry" type="TextEdit" parent="Logs"]
+margin_top = 40.0
+margin_right = 638.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SuccessLogLabel" type="Label" parent="Logs"]
+margin_top = 44.0
+margin_right = 638.0
+margin_bottom = 58.0
+text = "success log"
+
+[node name="SuccessLogEntry" type="TextEdit" parent="Logs"]
+margin_top = 62.0
+margin_right = 638.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PerTargetLogLabel" type="Label" parent="Logs"]
+margin_top = 66.0
+margin_right = 638.0
+margin_bottom = 80.0
+text = "per-target log"
+
+[node name="PerTargetLogEntry" type="TextEdit" parent="Logs"]
+margin_top = 84.0
+margin_right = 638.0
+margin_bottom = 84.0
+size_flags_horizontal = 3
+size_flags_vertical = 3

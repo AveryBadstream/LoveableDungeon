@@ -49,7 +49,7 @@ margin_top = 24.0
 margin_right = 634.0
 margin_bottom = 684.0
 size_flags_vertical = 3
-items = [ "BasicClose.gd", null, false, "BasicMove.gd", null, false, "BasicOpen.gd", null, false, "BasicUse.gd", null, false, "Forcewave.gd", null, false, "Push.gd", null, false, "RocketteLauncher.gd", null, false, "Wait.gd", null, false ]
+items = [ "RocketteLauncher.gd", null, false, "BasicUse.gd", null, false, "Forcewave.gd", null, false, "Push.gd", null, false, "BasicOpen.gd", null, false, "BasicMove.gd", null, false, "BasicClose.gd", null, false, "Wait.gd", null, false ]
 
 [node name="ActionSettings" type="VBoxContainer" parent="EditorWindow"]
 margin_left = 638.0

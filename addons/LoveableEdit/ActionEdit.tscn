@@ -11,7 +11,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 7
+columns = 3
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false,
@@ -19,36 +19,130 @@ __meta__ = {
 }
 
 [node name="Available Action" type="VBoxContainer" parent="."]
-margin_right = 181.0
+margin_right = 626.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Available Action"]
-margin_right = 181.0
-margin_bottom = 20.0
+margin_right = 626.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="Available Action/HBoxContainer"]
-margin_top = 3.0
-margin_right = 136.0
-margin_bottom = 17.0
+margin_top = 5.0
+margin_right = 564.0
+margin_bottom = 19.0
 size_flags_horizontal = 3
 text = "Available Actions"
 
-[node name="Button" type="Button" parent="Available Action/HBoxContainer"]
-margin_left = 140.0
-margin_right = 181.0
-margin_bottom = 20.0
-text = "Save"
+[node name="ActionSearch" type="LineEdit" parent="Available Action/HBoxContainer"]
+margin_left = 568.0
+margin_right = 626.0
+margin_bottom = 24.0
 
 [node name="Action List" type="ItemList" parent="Available Action"]
-margin_top = 24.0
-margin_right = 181.0
+margin_top = 28.0
+margin_right = 626.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-items = [ "BasicClose.gd", null, false, "BasicMove.gd", null, false, "BasicOpen.gd", null, false, "BasicUse.gd", null, false, "Forcewave.gd", null, false, "Push.gd", null, false, "RocketteLauncher.gd", null, false, "Wait.gd", null, false ]
+items = [ "open.tres", null, false, "move.tres", null, false, "close.tres", null, false, "use.tres", null, false, "push.tres", null, false, "forcewave.tres", null, false ]
 select_mode = 1
 
-[connection signal="pressed" from="Available Action/HBoxContainer/Button" to="." method="save_action_items"]
+[node name="ApplyContainer" type="VBoxContainer" parent="."]
+margin_left = 630.0
+margin_right = 642.0
+margin_bottom = 684.0
+
+[node name="ApplyButton" type="Button" parent="ApplyContainer"]
+margin_top = 332.0
+margin_right = 12.0
+margin_bottom = 352.0
+size_flags_horizontal = 4
+size_flags_vertical = 6
+
+[node name="ApplyTo" type="VBoxContainer" parent="."]
+margin_left = 646.0
+margin_right = 1272.0
+margin_bottom = 684.0
+size_flags_horizontal = 3
+
+[node name="DefaultApply" type="HBoxContainer" parent="ApplyTo"]
+margin_right = 626.0
+margin_bottom = 40.0
+
+[node name="UseDefaultButton" type="CheckButton" parent="ApplyTo/DefaultApply"]
+margin_right = 76.0
+margin_bottom = 40.0
+
+[node name="DefaultTypeOption" type="OptionButton" parent="ApplyTo/DefaultApply"]
+margin_left = 80.0
+margin_right = 109.0
+margin_bottom = 40.0
+
+[node name="DefaultScript" type="LineEdit" parent="ApplyTo/DefaultApply"]
+margin_left = 113.0
+margin_right = 626.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+editable = false
+
+[node name="HSeparator" type="HSeparator" parent="ApplyTo"]
+margin_top = 44.0
+margin_right = 626.0
+margin_bottom = 48.0
+
+[node name="ActionList" type="HBoxContainer" parent="ApplyTo"]
+margin_top = 52.0
+margin_right = 626.0
+margin_bottom = 684.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ApplyTo/ActionList"]
+margin_right = 76.0
+margin_bottom = 632.0
+
+[node name="ActionsButton" type="CheckButton" parent="ApplyTo/ActionList/VBoxContainer"]
+margin_right = 76.0
+margin_bottom = 40.0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="ApplyTo/ActionList"]
+margin_left = 80.0
+margin_right = 626.0
+margin_bottom = 632.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ActionsList" type="ItemList" parent="ApplyTo/ActionList/VBoxContainer2"]
+margin_right = 546.0
+margin_bottom = 594.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="ApplyTo/ActionList/VBoxContainer2"]
+margin_top = 598.0
+margin_right = 546.0
+margin_bottom = 632.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ApplyTo/ActionList/VBoxContainer2/PanelContainer"]
+margin_left = 511.0
+margin_top = 7.0
+margin_right = 539.0
+margin_bottom = 27.0
+size_flags_horizontal = 10
+
+[node name="RemoveButton" type="Button" parent="ApplyTo/ActionList/VBoxContainer2/PanelContainer/HBoxContainer"]
+margin_right = 12.0
+margin_bottom = 20.0
+
+[node name="ClearButton" type="Button" parent="ApplyTo/ActionList/VBoxContainer2/PanelContainer/HBoxContainer"]
+margin_left = 16.0
+margin_right = 28.0
+margin_bottom = 20.0
+
+[connection signal="text_changed" from="Available Action/HBoxContainer/ActionSearch" to="." method="_on_ActionSearch_text_changed"]
+[connection signal="pressed" from="ApplyContainer/ApplyButton" to="." method="_on_ApplyButton_pressed"]
+[connection signal="toggled" from="ApplyTo/DefaultApply/UseDefaultButton" to="." method="_on_UseDefaultButton_toggled"]
+[connection signal="toggled" from="ApplyTo/ActionList/VBoxContainer/ActionsButton" to="." method="_on_ActionsButton_toggled"]

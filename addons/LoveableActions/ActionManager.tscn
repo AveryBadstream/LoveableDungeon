@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://addons/LoveableActions/ActionManager.gd" type="Script" id=1]
 [ext_resource path="res://addons/LoveableActions/EditAction.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/LoveableActions/ActionsList.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/LoveableActions/EditMasks.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/LoveableActions/Effects.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/LoveableActions/Messages.tscn" type="PackedScene" id=6]
 
 [node name="ActionManager" type="VBoxContainer"]
 anchor_right = 1.0
@@ -64,6 +65,11 @@ margin_bottom = -4.0
 
 [node name="Effects" parent="ActionManagerTabs" instance=ExtResource( 5 )]
 
+[node name="Messages" parent="ActionManagerTabs" instance=ExtResource( 6 )]
+visible = false
+margin_right = -4.0
+margin_bottom = -4.0
+
 [node name="FileDialog" type="FileDialog" parent="."]
 margin_top = 364.0
 margin_right = 1280.0
@@ -79,5 +85,6 @@ current_path = "res://actions/action_resources/"
 
 [connection signal="pressed" from="OptionsMenubar/NewButton" to="." method="_on_edit_new_resource"]
 [connection signal="pressed" from="OptionsMenubar/SaveButton" to="." method="_on_save_resource"]
+[connection signal="load_new_resource" from="ActionManagerTabs/ActionsList" to="." method="_on_load_new_resource"]
 [connection signal="update_effect_settings" from="ActionManagerTabs/EditAction" to="ActionManagerTabs/Effects" method="_on_update_effect_settings"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

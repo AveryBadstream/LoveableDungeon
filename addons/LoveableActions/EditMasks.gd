@@ -75,6 +75,18 @@ func set_icon_list(editor_icons):
 
 func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
+	print(str(hint_kvp))
+	for kvp in hint_kvp:
+		if kvp.size() >2:
+			kvp[2].set_pressed( edited_action.target_hints & kvp[1] > 0)
+	for kvp in cim_kvp:
+		if kvp.size() >2:
+			kvp[2].set_pressed( edited_action.c_cim & kvp[1] > 0)
+			kvp[3].set_pressed( edited_action.target_cim & kvp[1] > 0)
+			kvp[4].set_pressed( edited_action.x_cim & kvp[1] > 0)
+	for kvp in target_kvp:
+		if kvp.size() >2:
+			kvp[2].set_pressed( edited_action.target_type & kvp[1] > 0)
 
 func set_tab_data():
 	var hint_mask = 0

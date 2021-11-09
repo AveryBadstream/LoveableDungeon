@@ -15,7 +15,7 @@ var is_walkable setget set_is_walkable, get_is_walkable
 var is_flyable setget set_is_flyable, get_is_flyable
 var is_phaseable setget set_is_phaseable, get_is_phaseable
 var occupies_cell setget set_occupies_cell, get_occupies_cell
-var is_player := false
+export var is_player := false
 var blocks_vision setget set_blocks_vision, get_blocks_vision
 var player_remembers setget set_player_remembers, get_player_remembers
 export(int) var cim

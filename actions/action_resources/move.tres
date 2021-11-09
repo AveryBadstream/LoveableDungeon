@@ -1,0 +1,29 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=1]
+[ext_resource path="res://effects/Move.gd" type="Script" id=2]
+
+[resource]
+script = ExtResource( 1 )
+action_name = "move"
+action_type = 1
+target_hints = 1
+action_range = 1.5
+action_area = 0.0
+target_type = 1
+target_area = 1
+target_priority = [ 1, 2, 8, 4 ]
+target_cim = 2
+x_cim = 16
+c_cim = 0
+action_radius = 0.0
+pending_message = "Move where?"
+impossible_message = ""
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
+success_log = ""
+pertarget_log = ""
+test_thing = 0
+move_effect = ExtResource( 2 )

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=1]
+[ext_resource path="res://effects/Use.gd" type="Script" id=2]
+
+[resource]
+script = ExtResource( 1 )
+action_name = "Close"
+action_type = 16
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 2
+target_area = 1
+target_priority = [ 2, 8, 4, 1 ]
+target_cim = 16
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Close what?"
+impossible_message = "You can't close that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = "{subject} tried to close the {object} but failed."
+success_log = "{subject} closed the {object}."
+pertarget_log = ""
+use_effect = ExtResource( 2 )

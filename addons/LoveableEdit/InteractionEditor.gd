@@ -9,6 +9,7 @@ var cim_kvp = []
 var act_kvp = []
 
 var edited_object
+var editor_icons
 
 onready var cim_list = $"CIM Box/ScrollContainer/CIM List"
 onready var sam_list = $"Actions Box/ScrollContainer2/Supported Action List"
@@ -19,7 +20,9 @@ onready var actions_box_button = $"Actions Box/HBoxContainer/Default Action Butt
 func _ready():
 	cim_kvp = []
 	act_kvp = []
-	cim_list.clear()
+	for child in cim_list.get_children():
+		cim_list.remove(child)
+		child.queue_free()
 	for key in TIL.CellInteractions.keys():
 		if TIL.CellInteractions[key] == 0:
 			continue
@@ -32,13 +35,11 @@ func _ready():
 		new_checkbox.connect("toggled", self, "recalc_cim_and_update")
 		kvp.append(new_checkbox)
 		cim_kvp.append(kvp)
-		#print("Created new checkbox for: "+kvp[0])
-	var actions_box = actions_box_button.get_popup()
-	actions_box.clear()
+	actions_box_button.clear()
 	var i = 0
 	for key in ACT.Type.keys():
 		var kvp = [key, ACT.Type[key]]
-		actions_box.add_radio_check_item(key, i)
+		actions_box_button.add_item(key, i)
 		if i > 0:
 			var new_checkbox := CheckButton.new()
 			new_checkbox.show()
@@ -49,13 +50,9 @@ func _ready():
 			kvp.append(new_checkbox)
 		act_kvp.append(kvp)
 		i += 1
-	actions_box.connect("id_pressed", self, "select_default_action")
+	actions_box_button.connect("item_selected", self, "select_default_action")
 
 func select_default_action(action_kvp_id):
-	actions_box_button.text = act_kvp[action_kvp_id][0]
-	var actions_menu = actions_box_button.get_popup()
-	#actions_menu.set_item_checked(action_kvp_id, false)
-	change_default_selection(action_kvp_id)
 	if edited_object:
 		edited_object.default_action = act_kvp[action_kvp_id][1]
 		edited_object.property_list_changed_notify()
@@ -72,8 +69,7 @@ func update_default_action():
 	for i in range(act_kvp.size()):
 		if act_kvp[i][1] == edited_object.default_action:
 			kvp_i = i
-	change_default_selection(kvp_i)
-	actions_box_button.text = ACT.TypeKey(edited_object.default_action)
+	actions_box_button.select(kvp_i)
 
 func update_cim_buttons():
 	var cim = edited_object.cim
@@ -108,11 +104,6 @@ func recalc_sam_and_update(_pressed):
 	edited_object.sam = new_sam
 	edited_object.property_list_changed_notify()
 
-func change_default_selection(i):
-	var action_menu = actions_box_button.get_popup()
-	for i in range(act_kvp.size()):
-		action_menu.set_item_checked(i, false)
-	action_menu.set_item_checked(i, true)
 
 func recalc_cim_and_update(_pressed):
 	var new_cim = 0
@@ -122,6 +113,9 @@ func recalc_cim_and_update(_pressed):
 			new_cim |= kvp[1]
 	edited_object.cim = new_cim
 	edited_object.property_list_changed_notify()
+
+func set_icon_list(icons):
+	editor_icons = icons
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

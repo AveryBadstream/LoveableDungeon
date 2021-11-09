@@ -21,7 +21,14 @@ export(int) var target_cim = TIL.CellInteractions.Occupies
 export(int) var x_cim = TIL.CellInteractions.Occupies
 export(int) var c_cim = TIL.CellInteractions.BlocksFOV
 export(float) var action_radius = 0.0
-
+export(String) var pending_message = ""
+export(String) var impossible_message = ""
+export(String) var failed_message = ""
+export(String) var success_message = ""
+export(String) var impossible_log = ""
+export(String) var failed_log = ""
+export(String) var success_log = ""
+export(String) var pertarget_log = ""
 
 var running_effects = []
 # Called when the node enters the scene tree for the first time.

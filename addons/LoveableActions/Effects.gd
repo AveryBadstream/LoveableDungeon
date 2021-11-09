@@ -7,6 +7,7 @@ onready var effects_list = $Scroll/EffectsList
 var effect_entries = []
 var editor_icons
 var edited_action
+const game_action_path = "res://actions/GameAction.gd"
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -18,7 +19,8 @@ func _ready():
 func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
 
-func _on_update_effect_settings(effect_settings):
+func _on_update_effect_settings(effect_settings, next_edited_action):
+	edited_action = next_edited_action
 	print("New effect settings:" + str(effect_settings))
 	for child in effects_list.get_children():
 		effects_list.remove_child(child)
