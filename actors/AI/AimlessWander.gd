@@ -16,12 +16,9 @@ func _init(actor).(actor):
 	pass
 
 func should_choose():
+	movement_action =  attached_actor.default_actions[ACT.Type.Move]
 	if movement_action:
 		return true
-	else:
-		for action in attached_actor.local_actions[ACT.Type.Move]:
-			movement_action = action
-			return true
 	return false
 
 func run_ai():

@@ -1,9 +1,143 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Player.gd" type="Script" id=1]
+[ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=2]
+[ext_resource path="res://effects/Move.gd" type="Script" id=3]
+[ext_resource path="res://actions/action_scripts/Push.gd" type="Script" id=4]
+[ext_resource path="res://effects/Push.gd" type="Script" id=5]
+[ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=6]
+[ext_resource path="res://effects/Use.gd" type="Script" id=7]
+[ext_resource path="res://effects/Open.gd" type="Script" id=8]
 
 [sub_resource type="StreamTexture" id=3]
 load_path = "res://.import/loveable_rogue.png-a26341772e79e32042028726586e34e4.stex"
+
+[sub_resource type="Resource" id=4]
+resource_local_to_scene = true
+script = ExtResource( 2 )
+action_name = "move"
+action_type = 1
+target_hints = 1
+action_range = 1.5
+action_area = 0.0
+target_type = 1
+target_area = 1
+target_priority = [ 1, 2, 8, 4 ]
+target_cim = 2
+x_cim = 16
+c_cim = 0
+action_radius = 0.0
+pending_message = "Move where?"
+impossible_message = ""
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
+success_log = ""
+pertarget_log = ""
+test_thing = 0
+move_effect = ExtResource( 3 )
+
+[sub_resource type="Resource" id=6]
+resource_local_to_scene = true
+script = ExtResource( 6 )
+action_name = "Close"
+action_type = 16
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 2
+target_area = 1
+target_priority = [ 2, 8, 4, 1 ]
+target_cim = 16
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Close what?"
+impossible_message = "You can't close that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = "{subject} tried to close the {object} but failed."
+success_log = "{subject} closed the {object}."
+pertarget_log = ""
+use_effect = ExtResource( 7 )
+
+[sub_resource type="Resource" id=8]
+resource_local_to_scene = true
+script = ExtResource( 6 )
+action_name = "use"
+action_type = 128
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 11
+target_area = 1
+target_priority = [ 2, 8, 1, 4 ]
+target_cim = 16
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Use what?"
+impossible_message = "You can't use that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = "{subject} tried to use {object} but failed."
+success_log = "{subject} used {object}."
+pertarget_log = ""
+use_effect = ExtResource( 7 )
+
+[sub_resource type="Resource" id=9]
+resource_local_to_scene = true
+script = ExtResource( 6 )
+action_name = "Open"
+action_type = 8
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 2
+target_area = 1
+target_priority = [ 2, 8, 4, 1 ]
+target_cim = 16
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Open what?"
+impossible_message = "You can't open that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = "{subject} tried to open {object} but couldn't."
+success_log = "{subject} opened the {object}."
+pertarget_log = ""
+use_effect = ExtResource( 8 )
+
+[sub_resource type="Resource" id=10]
+resource_local_to_scene = true
+script = ExtResource( 4 )
+action_name = "push"
+action_type = 32
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 14
+target_area = 0
+target_priority = [ 4, 2, 8, 1 ]
+target_cim = 16
+x_cim = 64
+c_cim = 0
+action_radius = 0.0
+pending_message = "Push what?"
+impossible_message = "You can't push that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = "{subject} tried to push {object} but failed."
+success_log = "{subject} pushed {object}!"
+pertarget_log = ""
+push_effect = ExtResource( 5 )
+push_effect_magnitude = 1.0
 
 [node name="Player" type="Sprite"]
 position = Vector2( 1152, 608 )
@@ -13,15 +147,13 @@ region_enabled = true
 region_rect = Rect2( 96, 144, 16, 16 )
 script = ExtResource( 1 )
 default_action = 256
+is_player = true
 cim = 48
 sam = 352
-
-[node name="Camera2D" type="Camera2D" parent="."]
-current = true
-drag_margin_h_enabled = true
-drag_margin_v_enabled = true
-drag_margin_left = 0.0
-drag_margin_top = 0.0
-drag_margin_right = 0.0
-drag_margin_bottom = 0.0
-editor_draw_limits = true
+default_actions = {
+1: SubResource( 4 ),
+8: SubResource( 9 ),
+16: SubResource( 6 ),
+32: SubResource( 10 ),
+128: SubResource( 8 )
+}

@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource( 1 )
 action_name = "push"
-action_type = 0
+action_type = 32
 target_hints = 0
 action_range = 1.5
 action_area = 0.0
@@ -26,4 +26,4 @@ failed_log = "{subject} tried to push {object} but failed."
 success_log = "{subject} pushed {object}!"
 pertarget_log = ""
 push_effect = ExtResource( 2 )
-push_effect_magnitude = 1
+push_effect_magnitude = 1.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://actors/Kestrel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://art/black_tile.tres" type="TileSet" id=2]
@@ -20,10 +20,10 @@
 [ext_resource path="res://art/hit2.wav" type="AudioStream" id=18]
 [ext_resource path="res://FXManager.gd" type="Script" id=19]
 [ext_resource path="res://GameUI.gd" type="Script" id=20]
-[ext_resource path="res://Player.tscn" type="PackedScene" id=21]
 [ext_resource path="res://actions/action_resources/close.tres" type="Resource" id=22]
-[ext_resource path="res://actions/action_resources/use.tres" type="Resource" id=23]
+[ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=23]
 [ext_resource path="res://actions/action_resources/open.tres" type="Resource" id=24]
+[ext_resource path="res://effects/Move.gd" type="Script" id=25]
 
 [sub_resource type="GDScript" id=1]
 script/source = "
@@ -155,10 +155,42 @@ script/source = "
 6/z_index = 0
 script = SubResource( 1 )
 
+[sub_resource type="Resource" id=9]
+resource_local_to_scene = true
+script = ExtResource( 23 )
+action_name = "move"
+action_type = 1
+target_hints = 1
+action_range = 1.5
+action_area = 0.0
+target_type = 1
+target_area = 1
+target_priority = [ 1, 2, 8, 4 ]
+target_cim = 2
+x_cim = 16
+c_cim = 0
+action_radius = 0.0
+pending_message = "Move where?"
+impossible_message = ""
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
+success_log = ""
+pertarget_log = ""
+test_thing = 0
+move_effect = ExtResource( 25 )
+
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
 random_seed = -4554876820186044928
 use_seed = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 1152, 608 )
+current = true
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
 
 [node name="DebugGui" type="CanvasLayer" parent="."]
 script = ExtResource( 6 )
@@ -275,23 +307,12 @@ tile_type_map = [ 1, 0, 2, 4, 3, 4, 5 ]
 
 [node name="LevelActors" type="Node2D" parent="GameWorld"]
 
-[node name="Player" parent="GameWorld/LevelActors" instance=ExtResource( 21 )]
-
 [node name="Kestrel" parent="GameWorld/LevelActors" instance=ExtResource( 1 )]
 default_actions = {
+1: SubResource( 9 ),
 8: ExtResource( 24 ),
 16: ExtResource( 22 ),
-32: ExtResource( 11 ),
-128: ExtResource( 23 )
-}
-
-[node name="Kestrel2" parent="GameWorld/LevelActors" instance=ExtResource( 1 )]
-position = Vector2( 1104, 560 )
-default_actions = {
-8: ExtResource( 24 ),
-16: ExtResource( 22 ),
-32: ExtResource( 11 ),
-128: ExtResource( 23 )
+32: ExtResource( 11 )
 }
 
 [node name="FOWGhosts" type="Node2D" parent="GameWorld"]

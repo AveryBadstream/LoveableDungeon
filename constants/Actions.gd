@@ -28,27 +28,13 @@ enum TargetArea {TargetNone, TargetSingle, TargetCell, TargetCone, TargetWideBea
 
 enum Actions {BasicMove, BasicOpen, BasicClose, Push, BasicUse, Wait, Forcewave, RocketteLauncher}
 
-
-var PreActionMapping = [
-	[Actions.BasicMove, "res://actions/action_scripts/BasicMove.gd"],
-	[Actions.BasicOpen, "res://actions/action_scripts/BasicOpen.gd"],
-	[Actions.BasicClose, "res://actions/action_scripts/BasicClose.gd"],
-	[Actions.Push, "res://actions/action_scripts/Push.gd"],
-	[Actions.BasicUse, "res://actions/action_scripts/BasicUse.gd"],
-	[Actions.Wait, "res://actions/action_scripts/Wait.gd"],
-	[Actions.Forcewave, "res://actions/action_scripts/Forcewave.gd"],
-	[Actions.RocketteLauncher, "res://actions/action_scripts/RocketteLauncher.gd"]
-]
-
-var ActionMapping = {
-	
-}
+var TargetAll = 0
 
 func _ready():
-	for mapping in PreActionMapping:
-		ActionMapping[mapping[0]] = load(mapping[1])
 	for key in Type.keys():
 		rType[Type[key]] = key
+	for key in TargetType.keys():
+		TargetAll |= TargetType[key]
 
 func TypeKey(val:int):
 	return rType[val]

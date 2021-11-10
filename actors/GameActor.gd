@@ -20,19 +20,15 @@ export(Array, Script) var test_res_array
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	self.thing_type = ACT.TargetType.TargetActor
-	for action_type in ACT.Type:
-		local_actions[ACT.Type[action_type]] = []
 	if mob_ai.size() > 0:
 		for ai_script in mob_ai:
 			local_ai.append(AI.AIScriptMapping[ai_script].new(self))
 		local_ai.invert()
 		assert(local_ai.size() > 0)
-	if actions.size() > 0:
-		for action in actions:
-			var new_action = ACT.ActionMapping[action].new(self)
-			local_actions[new_action.action_type].append(new_action)
-		for action_type in ACT.Type:
-			local_actions[ACT.Type[action_type]].invert()
+	for key in default_actions.keys():
+		default_actions[key].set_owned_by(self)
+	for action in actions:
+		action.set_owned_by(self)
 	 # Replace with function body.
 	
 func activate():

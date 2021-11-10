@@ -42,7 +42,7 @@ func _ready():
 				var res_obj = ResourceLoader.load(actions_path+next_action_path)
 				action_objects.append(res_obj)
 				action_scripts.append(next_action_path)
-				action_list.add_item(next_action_path.get_file())
+				action_list.add_item(res_obj.action_name)
 				action_list.set_item_metadata(i, actions_path + next_action_path)
 			next_action_path = action_script_dir.get_next()
 	else:
@@ -62,7 +62,7 @@ func focus_object(new_obj):
 	edited_object = new_obj
 	if new_obj is GameActor:
 		for action in new_obj.actions:
-			var fname = action.get_path().get_file()
+			var fname = action.action_name
 			assigned_actions.add_item(fname)
 			assigned_action_l.append(fname)
 		update_default_display()
@@ -95,7 +95,6 @@ func update_apply_buttons():
 			assigned_actions.set_item_disabled(i)
 		action_list.unselect_all()
 		action_list.select_mode = ItemList.SELECT_SINGLE
-
 	else:
 		clear_button.disabled = false
 		remove_button.disabled = false
@@ -117,7 +116,7 @@ func _on_UseDefaultButton_toggled(button_pressed):
 func update_default_display():
 	var default_key = default_type_option.get_selected_id()
 	if edited_object.default_actions.has(act_kvp[default_key][1]):
-		default_script.text = edited_object.default_actions[act_kvp[default_key][1]].get_script().get_path()
+		default_script.text = edited_object.default_actions[act_kvp[default_key][1]].action_name
 	else:
 		default_script.text = ""
 
@@ -126,8 +125,11 @@ func _on_ApplyButton_pressed():
 		var default_key = default_type_option.get_selected_id()
 		if default_key != 0:
 			var new_action = action_objects[action_list.get_selected_items()[0]].duplicate()
+			var new_dict = edited_object.default_actions
+			new_dict[act_kvp[default_key][1]] = new_action
+			edited_object.default_actions = new_dict
+			new_dict[act_kvp[default_key][1]].resource_local_to_scene = true
 			new_action.resource_local_to_scene = true
-			edited_object.default_actions[act_kvp[default_key][1]] = new_action
 			edited_object.property_list_changed_notify()
 			update_default_display()
 	else:
@@ -136,8 +138,8 @@ func _on_ApplyButton_pressed():
 		var to_add_actions = []
 		for i in action_list.get_selected_items():
 			var new_action:Resource = action_objects[i].duplicate()
-			new_action.resource_local_to_scene = true
 			to_add_actions.append(new_action)
+			new_action.resource_local_to_scene = true
 		edited_object.actions.append_array(to_add_actions)
 		edited_object.property_list_changed_notify()
 

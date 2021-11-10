@@ -48,8 +48,6 @@ func _on_export_generator_config(config_type, config_value):
 func get_action_targets_cell(action, at_cell:Vector2) -> Array:
 	var targets = []
 	var target_things = []
-	if (action.target_type & ACT.TargetType.TargetAll) == ACT.TargetType.TargetAll:
-		target_things = GameWorld.everything_at_cell(at_cell)
 	if action.target_type & ACT.TargetType.TargetActor:
 		target_things.append_array(GameWorld.actors_at_cell(at_cell))
 	if action.target_type & ACT.TargetType.TargetObject:

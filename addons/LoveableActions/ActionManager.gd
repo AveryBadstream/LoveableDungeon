@@ -29,6 +29,10 @@ var editor_icons = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	clear_edited()
+	
+func clear_edited():
+	$ActionManagerTabs/ActionsList/ActionsItemList.unselect_all()
 	tabs.set_tab_title(0, "All Actions")
 	tabs.set_tab_title(1, "Basics")
 	tabs.set_tab_title(2, "Masks")
@@ -81,7 +85,9 @@ func _on_save_resource():
 
 
 func _on_FileDialog_file_selected(path):
-	ResourceSaver.save(path, edited_action) # Replace with function body.
+	ResourceSaver.save(path, edited_action)
+	clear_edited()
+	edited_action = null
 
 
 func _on_load_new_resource(action_resource):

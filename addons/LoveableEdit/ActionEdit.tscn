@@ -47,7 +47,7 @@ margin_right = 626.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-items = [ "close.tres", null, false, "forcewave.tres", null, false, "move.tres", null, false, "open.tres", null, false, "push.tres", null, false, "use.tres", null, false ]
+items = [ "open.tres", null, false, "move.tres", null, false, "close.tres", null, false, "use.tres", null, false, "push.tres", null, false, "forcewave.tres", null, false ]
 select_mode = 1
 
 [node name="ApplyContainer" type="VBoxContainer" parent="."]

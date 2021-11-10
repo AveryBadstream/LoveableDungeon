@@ -3,17 +3,21 @@ extends Node2D
 signal msg_0(type)
 signal log_action(subject, object, action)
 
+const player_scene = preload("res://Player.tscn")
+
 onready var DebugSeed = $DebugGui/Hider/Seed
-onready var Player = $GameWorld/LevelActors/Player
 onready var GameWorld = $GameWorld
 onready var TileHighlight = $GameWorld/TileHighlight
 onready var LineHighlight = $GameUI/LineHighlight
 onready var BlueHighlight = $GameWorld/TileHighlight2
 onready var OnlyTween = $Tweens/Tween
+onready var Camerah = $Camera2D
 export var random_seed: int
 export var use_seed: bool = false
 
-var current_actor = Player
+var Player
+
+var current_actor
 
 var turn_order = []
 
@@ -26,6 +30,9 @@ func _ready():
 		rng.seed=random_seed
 	else:
 		rng.randomize()
+	Player = player_scene.instance()
+	GameWorld.Player = Player
+	current_actor = Player
 	DBG.TileHighlight = TileHighlight
 	DBG.HighlightGroup = LineHighlight
 	DebugSeed.text = "Seed: " + str(rng.seed)
@@ -83,6 +90,9 @@ func _on_world_ready():
 	EVNT.emit_signal("update_fov")
 	turn_order = $GameWorld/LevelActors.get_children()
 	current_actor = Player
+	remove_child(Camerah)
+	Player.add_child(Camerah)
+	Camerah.global_position = Player.global_position
 	Player.activate()
 
 func _on_do_effect(effect):

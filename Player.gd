@@ -1,17 +1,5 @@
 extends GameActor
 
-
-signal message_0(msg)
-signal try_action_at(actor, action, action_position)
-
-export(ACT.Actions) var default_move = ACT.Actions.BasicMove
-export(ACT.Actions) var default_open = ACT.Actions.BasicOpen
-export(ACT.Actions) var default_close = ACT.Actions.BasicClose
-export(ACT.Actions) var default_push = ACT.Actions.Push
-export(ACT.Actions) var default_use = ACT.Actions.BasicUse
-
-var local_default_actions = {}
-
 var opens_doors = true
 var pending_action = ACT.Type.None
 # Declare member variables here. Examples:
@@ -31,26 +19,21 @@ func _input(event):
 	elif event.is_action("move_right"):
 		act_in_direction(Vector2.RIGHT)
 	elif event.is_action("move_up"):
+		print("dafuq?")
 		act_in_direction(Vector2.UP)
 	elif event.is_action("move_down"):
 		act_in_direction(Vector2.DOWN)
 	elif event.is_action("open"):
-		pending_action = local_default_actions[ACT.Type.Open]
+		pending_action = default_actions[ACT.Type.Open]
 		pending_action.mark_pending()
 	elif event.is_action("close"):
-		pending_action = local_default_actions[ACT.Type.Close]
+		pending_action = default_actions[ACT.Type.Close]
 		pending_action.mark_pending()
 	elif event.is_action("push"):
-		pending_action = local_default_actions[ACT.Type.Push]
+		pending_action = default_actions[ACT.Type.Push]
 		pending_action.mark_pending()
 	elif event.is_action("move"):
-		pending_action = local_default_actions[ACT.Type.Move]
-		pending_action.mark_pending()
-	elif event.is_action("forcewave"):
-		pending_action = local_actions[ACT.Type.Push][0]
-		pending_action.mark_pending()
-	elif event.is_action("rock"):
-		pending_action = local_actions[ACT.Type.Push][1]
+		pending_action = default_actions[ACT.Type.Move]
 		pending_action.mark_pending()
 		
 func act_at_location(at_cell: Vector2):
@@ -59,8 +42,8 @@ func act_at_location(at_cell: Vector2):
 	if not pending_action:
 		var distance_to = at_cell.distance_to(get_game_position())
 		for hint in WRLD.get_action_hints(at_cell):
-			if local_default_actions.has(hint):
-				var candidate_action = local_default_actions[hint]
+			if default_actions.has(hint):
+				var candidate_action = default_actions[hint]
 				if distance_to <= candidate_action.action_range:
 					if candidate_action.test_action_at(at_cell):
 						acting_state = ACT.ActingState.Wait
@@ -77,14 +60,15 @@ func act_at_location(at_cell: Vector2):
 	return false
 	
 func act_in_direction(dir: Vector2):
+	print(str(default_actions))
 	if self.acting_state != ACT.ActingState.Act:
 		return
 	if not pending_action:
 		var action_hint = WRLD.get_action_hint(self.get_game_position() + dir)
 		print("Got default action: " + ACT.TypeKey(action_hint))
-		if local_default_actions.has(action_hint):
+		if default_actions.has(action_hint):
 			acting_state = ACT.ActingState.Wait
-			local_default_actions[action_hint].do_action_at(self.get_game_position() + dir)
+			default_actions[action_hint].do_action_at(self.get_game_position() + dir)
 		else:
 			return
 	else:
@@ -92,13 +76,6 @@ func act_in_direction(dir: Vector2):
 		pending_action = ACT.Type.None
 		next_action.do_action_at(self.get_game_position() + dir)
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	is_player = true
-	local_default_actions[ACT.Type.Move] = ACT.ActionMapping[default_move].new(self)
-	local_default_actions[ACT.Type.Open] = ACT.ActionMapping[default_open].new(self)
-	local_default_actions[ACT.Type.Close] = ACT.ActionMapping[default_close].new(self)
-	local_default_actions[ACT.Type.Push] = ACT.ActionMapping[default_push].new(self)
-	local_default_actions[ACT.Type.Use] = ACT.ActionMapping[default_use].new(self)
 	
 
 

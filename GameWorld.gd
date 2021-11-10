@@ -7,10 +7,11 @@ signal world_ready()
 signal message_0(msg)
 signal log_2(msg, subject, object)
 
+
 onready var TMap = $LoveableBasic
 onready var LevelObjects = $LevelObjects
 onready var LevelActors = $LevelActors
-onready var Player = $LevelActors/Player
+var Player
 onready var FogOfWar = $FogOfWar
 onready var Unexplored = $Unexplored
 onready var FOWGhosts = $FOWGhosts
@@ -297,7 +298,7 @@ func tiles_at_cell(at_cell: Vector2) -> Array:
 func tile_at_cell(at_cell: Vector2):
 	return TMap.get_tile_objv(at_cell)
 	
-func everything_at_cell(at_cell: Vector2, target_mask:int = ACT.TargetType.TargetAll):
+func everything_at_cell(at_cell: Vector2, target_mask:int = ~0):
 	var everything = []
 	if target_mask & ACT.TargetType.TargetActor:
 		var actors = actors_at_cell(at_cell)
@@ -321,6 +322,7 @@ func thing_at_position(position, prefer_actor=true):
 	return found_object if found_object else found_actor
 	
 func _on_player_start_position(start_pos):
+	LevelActors.add_child(Player)
 	Player.set_initial_game_position(start_pos) # Replace with function body.
 	
 func _on_tiles_ready():

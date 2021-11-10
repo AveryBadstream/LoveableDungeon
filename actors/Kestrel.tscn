@@ -1,11 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://art/loveable_rogue.png" type="Texture" id=1]
 [ext_resource path="res://actors/GameActor.gd" type="Script" id=2]
 [ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=3]
 [ext_resource path="res://actions/action_resources/push.tres" type="Resource" id=4]
 [ext_resource path="res://actions/action_resources/close.tres" type="Resource" id=5]
-[ext_resource path="res://actions/action_resources/use.tres" type="Resource" id=6]
 [ext_resource path="res://actions/action_resources/open.tres" type="Resource" id=7]
 [ext_resource path="res://effects/Move.gd" type="Script" id=8]
 
@@ -51,7 +50,6 @@ default_actions = {
 1: SubResource( 1 ),
 8: ExtResource( 7 ),
 16: ExtResource( 5 ),
-32: ExtResource( 4 ),
-128: ExtResource( 6 )
+32: ExtResource( 4 )
 }
 test_res_array = [ ExtResource( 3 ) ]
