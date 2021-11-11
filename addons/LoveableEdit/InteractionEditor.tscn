@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 7
+columns = 5
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false,
@@ -21,47 +21,48 @@ __meta__ = {
 }
 
 [node name="CIM Box" type="VBoxContainer" parent="."]
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CIM Label" type="Label" parent="CIM Box"]
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 14.0
 text = "Cell Interactions"
 align = 1
 
 [node name="HSeparator" type="HSeparator" parent="CIM Box"]
 margin_top = 18.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 22.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="CIM Box"]
 margin_top = 26.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 684.0
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
 [node name="CIM List" type="VBoxContainer" parent="CIM Box/ScrollContainer"]
-margin_right = 210.0
+margin_right = 314.0
+margin_bottom = 304.0
 size_flags_horizontal = 3
 
 [node name="VSeparator" type="VSeparator" parent="."]
-margin_left = 214.0
-margin_right = 218.0
+margin_left = 318.0
+margin_right = 322.0
 margin_bottom = 684.0
 
 [node name="Actions Box" type="VBoxContainer" parent="."]
-margin_left = 222.0
-margin_right = 432.0
+margin_left = 326.0
+margin_right = 640.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Actions Label" type="Label" parent="Actions Box"]
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Action Interactions"
@@ -69,12 +70,12 @@ align = 1
 
 [node name="HSeparator" type="HSeparator" parent="Actions Box"]
 margin_top = 18.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 22.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Actions Box"]
 margin_top = 26.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 46.0
 
 [node name="Default Action Label" type="Label" parent="Actions Box/HBoxContainer"]
@@ -93,26 +94,178 @@ selected = 0
 
 [node name="HSeparator2" type="HSeparator" parent="Actions Box"]
 margin_top = 50.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 54.0
 
 [node name="Label" type="Label" parent="Actions Box"]
 margin_top = 58.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 72.0
 text = "Supported Actions"
 align = 1
 
 [node name="ScrollContainer2" type="ScrollContainer" parent="Actions Box"]
 margin_top = 76.0
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
 [node name="Supported Action List" type="VBoxContainer" parent="Actions Box/ScrollContainer2"]
-margin_right = 210.0
+margin_right = 314.0
 margin_bottom = 608.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="OtherStats" type="VBoxContainer" parent="."]
+margin_left = 644.0
+margin_right = 958.0
+margin_bottom = 684.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="OtherStats"]
+margin_right = 314.0
+margin_bottom = 14.0
+text = "Game Stats"
+align = 1
+
+[node name="HSeparator" type="HSeparator" parent="OtherStats"]
+margin_top = 18.0
+margin_right = 314.0
+margin_bottom = 22.0
+
+[node name="GameStats" type="HBoxContainer" parent="OtherStats"]
+margin_top = 26.0
+margin_right = 314.0
+margin_bottom = 162.0
+size_flags_horizontal = 3
+
+[node name="Labels" type="VBoxContainer" parent="OtherStats/GameStats"]
+margin_right = 53.0
+margin_bottom = 136.0
+size_flags_vertical = 3
+
+[node name="MaxHPLabel" type="Label" parent="OtherStats/GameStats/Labels"]
+margin_right = 53.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+text = "Max HP"
+
+[node name="MightLabel" type="Label" parent="OtherStats/GameStats/Labels"]
+margin_top = 28.0
+margin_right = 53.0
+margin_bottom = 52.0
+size_flags_vertical = 7
+text = "Strength"
+
+[node name="AgilityLabel" type="Label" parent="OtherStats/GameStats/Labels"]
+margin_top = 56.0
+margin_right = 53.0
+margin_bottom = 80.0
+size_flags_vertical = 7
+text = "Agility"
+
+[node name="StaminaLabel" type="Label" parent="OtherStats/GameStats/Labels"]
+margin_top = 84.0
+margin_right = 53.0
+margin_bottom = 108.0
+size_flags_vertical = 7
+text = "Stamina"
+
+[node name="ArmorLabel" type="Label" parent="OtherStats/GameStats/Labels"]
+margin_top = 112.0
+margin_right = 53.0
+margin_bottom = 136.0
+size_flags_vertical = 7
+text = "Armor"
+
+[node name="Fields" type="VBoxContainer" parent="OtherStats/GameStats"]
+margin_left = 57.0
+margin_right = 314.0
+margin_bottom = 136.0
+size_flags_horizontal = 3
+
+[node name="MaxHPBox" type="SpinBox" parent="OtherStats/GameStats/Fields"]
+margin_right = 257.0
+margin_bottom = 24.0
+
+[node name="MightBox" type="SpinBox" parent="OtherStats/GameStats/Fields"]
+margin_top = 28.0
+margin_right = 257.0
+margin_bottom = 52.0
+
+[node name="AgilityBox" type="SpinBox" parent="OtherStats/GameStats/Fields"]
+margin_top = 56.0
+margin_right = 257.0
+margin_bottom = 80.0
+
+[node name="StaminaBox" type="SpinBox" parent="OtherStats/GameStats/Fields"]
+margin_top = 84.0
+margin_right = 257.0
+margin_bottom = 108.0
+
+[node name="ArmorBox" type="SpinBox" parent="OtherStats/GameStats/Fields"]
+margin_top = 112.0
+margin_right = 257.0
+margin_bottom = 136.0
+
+[node name="Label2" type="Label" parent="OtherStats"]
+margin_top = 166.0
+margin_right = 314.0
+margin_bottom = 180.0
+text = "Other Information"
+align = 1
+
+[node name="HSeparator2" type="HSeparator" parent="OtherStats"]
+margin_top = 184.0
+margin_right = 314.0
+margin_bottom = 188.0
+
+[node name="OtherInformation" type="HBoxContainer" parent="OtherStats"]
+margin_top = 192.0
+margin_right = 314.0
+margin_bottom = 260.0
+
+[node name="Labels" type="VBoxContainer" parent="OtherStats/OtherInformation"]
+margin_right = 61.0
+margin_bottom = 68.0
+
+[node name="NameLabel" type="Label" parent="OtherStats/OtherInformation/Labels"]
+margin_right = 61.0
+margin_bottom = 32.0
+size_flags_vertical = 7
+text = "Name"
+
+[node name="IsPlayerLabel" type="Label" parent="OtherStats/OtherInformation/Labels"]
+margin_top = 36.0
+margin_right = 61.0
+margin_bottom = 68.0
+size_flags_vertical = 7
+text = "Is Player?"
+
+[node name="Fields" type="VBoxContainer" parent="OtherStats/OtherInformation"]
+margin_left = 65.0
+margin_right = 314.0
+margin_bottom = 68.0
+size_flags_horizontal = 3
+
+[node name="NameEdit" type="LineEdit" parent="OtherStats/OtherInformation/Fields"]
+margin_right = 249.0
+margin_bottom = 24.0
+
+[node name="IsPlayerCheck" type="CheckButton" parent="OtherStats/OtherInformation/Fields"]
+margin_top = 28.0
+margin_right = 76.0
+margin_bottom = 68.0
+size_flags_horizontal = 0
+
+[connection signal="value_changed" from="OtherStats/GameStats/Fields/MaxHPBox" to="." method="_on_MaxHPBox_value_changed"]
+[connection signal="value_changed" from="OtherStats/GameStats/Fields/MightBox" to="." method="_on_MightBox_value_changed"]
+[connection signal="value_changed" from="OtherStats/GameStats/Fields/AgilityBox" to="." method="_on_AgilityBox_value_changed"]
+[connection signal="value_changed" from="OtherStats/GameStats/Fields/StaminaBox" to="." method="_on_StaminaBox_value_changed"]
+[connection signal="value_changed" from="OtherStats/GameStats/Fields/ArmorBox" to="." method="_on_ArmorBox_value_changed"]
+[connection signal="text_changed" from="OtherStats/OtherInformation/Fields/NameEdit" to="." method="_on_NameEdit_text_changed"]
+[connection signal="toggled" from="OtherStats/OtherInformation/Fields/IsPlayerCheck" to="." method="_on_IsPlayerCheck_toggled"]

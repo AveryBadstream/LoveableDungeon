@@ -1,0 +1,28 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://effects/MeleeAttack.gd" type="Script" id=1]
+[ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=2]
+
+[resource]
+script = ExtResource( 2 )
+action_name = "melee attack"
+action_type = 256
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 14
+target_area = 1
+target_priority = [ 4, 2, 8, 1 ]
+target_cim = 0
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Attack what?"
+impossible_message = "You can't attack that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
+success_log = "{subject} attacked {object}."
+pertarget_log = ""
+use_effect = ExtResource( 1 )

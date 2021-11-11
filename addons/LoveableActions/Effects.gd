@@ -19,17 +19,18 @@ func _ready():
 func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
 	if edited_action == null:
-		for child in effects_list.get_children():
-			effects_list.remove_child(child)
-			child.queue_free()
+		clear_effect_entries()
+
+func clear_effect_entries():
+	for child in effects_list.get_children():
+		child.clear_effect_entries()
+		effects_list.remove_child(child)
+		child.queue_free()
 
 func _on_update_effect_settings(effect_settings, next_edited_action):
 	edited_action = next_edited_action
 	print("New effect settings:" + str(effect_settings))
-	for child in effects_list.get_children():
-		effects_list.remove_child(child)
-		print("Removing "+str(child))
-		child.queue_free()
+	clear_effect_entries()
 	var first = true
 	var i = 0
 	for setting in effect_settings:

@@ -133,6 +133,8 @@ func _on_ScriptsList_item_selected(index):
 	send_property_list()
 
 func send_property_list():
+	script_effect_names = []
+	script_effect_settings = []
 	for prop in edited_action.get_property_list():
 		print(str(prop))
 		if "_effect" in prop.name:
@@ -172,7 +174,7 @@ func set_tab_data():
 	if area_options.selected == -1:
 		area_options.grab_focus()
 		return false
-	edited_action.target_type = area_kvp[area_options.selected][1]
+	edited_action.target_area = area_kvp[area_options.selected][1]
 	edited_action.action_area = area_box.value
 	edited_action.action_range = range_box.value
 	edited_action.action_radius = deg2rad(radius_box.value)

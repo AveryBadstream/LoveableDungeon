@@ -25,6 +25,9 @@ func _ready():
 			local_ai.append(AI.AIScriptMapping[ai_script].new(self))
 		local_ai.invert()
 		assert(local_ai.size() > 0)
+	own_fucking_actions()
+
+func own_fucking_actions(): #fuck this dogshit inconsistent game engine to hell
 	for key in default_actions.keys():
 		default_actions[key].set_owned_by(self)
 	for action in actions:
@@ -55,6 +58,25 @@ func action_impossible(action):
 
 func action_failed(_action):
 	self.acting_state = ACT.ActingState.Wait
+
+func attack_roll(target):
+	if not self.game_stats:
+		return false
+	if not target.game_stats:
+		return true
+	var defence = clamp(((50 + (target.game_stats.armor * 5) ) - (self.game_stats.agility * 5)),5,95) 
+	return WRLD.rng.randi()%100 < defence
+
+
+func take_damage(damage):
+	self.game_stats.hp -= damage
+	print(self.game_stats.hp)
+
+func get_damage_dealt(_target):
+	if not self.game_stats:
+		return false
+	var damage = (WRLD.rng.randi() % 4) + self.game_stats.might
+	return damage
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

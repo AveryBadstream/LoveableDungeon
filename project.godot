@@ -49,6 +49,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://objects/GameObject.gd"
 }, {
+"base": "Resource",
+"class": "GameStats",
+"language": "GDScript",
+"path": "res://actors/GameStats.gd"
+}, {
 "base": "Reference",
 "class": "ITile",
 "language": "GDScript",
@@ -68,6 +73,7 @@ _global_script_class_icons={
 "GameAstar": "",
 "GameEffect": "",
 "GameObject": "",
+"GameStats": "",
 "ITile": "",
 "UTile": ""
 }
@@ -97,6 +103,10 @@ FOV="*res://constants/FOVRPAS.gd"
 window/size/width=1280
 window/size/height=720
 window/stretch/mode="viewport"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/LoveableEdit/plugin.cfg" )
 
 [input]
 

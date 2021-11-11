@@ -5,8 +5,8 @@ class_name GameAction
 # var a = 2
 const is_action = false
 # var b = "text"
-var action_actor
-var action_targets
+export(Resource) var action_actor
+var action_targets = []
 var targeted_cell_range = []
 var action_state = ACT.ActionState.Ready
 export(String) var action_name
@@ -36,7 +36,7 @@ func _ready():
 	pass # Replace with function body.
 
 func set_owned_by(actor):
-	self.action_actor = actor
+	action_actor = actor
 	
 func set_target_types(target_types: Array) -> void:
 	for individual_target_type in target_types:
@@ -44,8 +44,8 @@ func set_target_types(target_types: Array) -> void:
 
 func get_target_hints(target_point:Vector2 = action_actor.game_position):
 	if target_area == ACT.TargetArea.TargetCone:
-		var hint_area = FOV.cast_area(action_actor.game_position, action_range, target_cim, x_cim)
-		var effect_area = FOV.cast_psuedo_cone(action_actor.game_position, target_point, action_area, action_range, target_cim, x_cim)
+		var hint_area = FOV.cast_area(action_actor.game_position, action_range, c_cim, x_cim)
+		var effect_area = FOV.cast_psuedo_cone(action_actor.game_position, target_point, action_area, action_range, c_cim, x_cim)
 		var valid_area = []
 		for cell in effect_area:
 			var cell_targets = WRLD.get_action_targets_cell(self, cell)
@@ -187,12 +187,22 @@ func process_action_response(action_phase, action_response, actor):
 		return ACT.ActionResponse.Proceed
 
 func fail():
+	if self.failed_message != "":
+		MSG.action_message(self, self.failed_message)
+	if self.failed_log != "":
+		MSG.action_log(self, self.failed_log)
 	self.action_state = ACT.ActionState.Failed
 
 func mark_pending():
+	if self.pending_message != "":
+		MSG.action_message(self, self.pending_message)
 	EVNT.emit_signal("hint_action", self)
 	
 func impossible():
+	if self.impossible_message != "":
+		MSG.action_message(self, self.impossible_message)
+	if self.impossible_log != "":
+		MSG.action_log(self, self.impossible_log)
 	self.action_state = ACT.ActionState.Impossible
 	EVNT.emit_signal("action_impossible", self)
 
@@ -201,6 +211,10 @@ func do():
 
 func execute():
 	self.do()
+	if self.success_message != "":
+		MSG.action_message(self, self.success_message)
+	if self.success_log != "":
+		MSG.action_log(self, self.success_log)
 	self.finish()
 
 func finish():

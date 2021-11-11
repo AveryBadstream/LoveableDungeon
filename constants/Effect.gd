@@ -150,7 +150,7 @@ func reset_effect_queues():
 	running_effects = 0
 	running = false
 	prepping = false
-	EVNT.events_done()
+	EVNT.call_deferred("events_done")
 
 func _on_effect_done(effect):
 	running_effects -= 1

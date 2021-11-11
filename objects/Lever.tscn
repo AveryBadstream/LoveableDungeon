@@ -74,6 +74,7 @@ region_enabled = true
 region_rect = Rect2( 0, 16, 32, 16 )
 script = ExtResource( 1 )
 default_action = 128
+display_name = "lever"
 cim = 56
 sam = 132
 

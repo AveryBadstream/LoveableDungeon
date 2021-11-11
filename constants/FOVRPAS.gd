@@ -106,9 +106,29 @@ static func cast_lerpish_line(origin:Vector2, target:Vector2, max_length:int, \
 	return _lerpish_line(origin, target, oct, max_length, tiles, [], cell_mask,
 					 xmask, NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
 
+static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, \
+							radius: int, \
+							cell_mask: int = TIL.CellInteractions.BlocksFOV,
+							xmask := TIL.CellInteractions.None, \
+							VISIBLE_ON_EQUAL := VOE, \
+							NOT_VISIBLE_BLOCKS_VISION := NVBV, \
+							RESTRICTIVENESS := R, \
+							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
+	var look_xform = Transform2D(towards.angle_to_point(from), from)
+	var lines = [
+		[look_xform.xform(Vector2(1.5, -1)),look_xform.xform(Vector2(radius, -(width/2)-1))],
+		[look_xform.xform(Vector2(radius, (width/2)+1)), look_xform.xform(Vector2(1.5, 1))]
+	]
+	var cells = []
+	for oct in FOVOctants.values():
+		_cast_convex_polygon(from, lines, oct, radius, tiles, cells, \
+							cell_mask, xmask, \
+							VISIBLE_ON_EQUAL, \
+							NOT_VISIBLE_BLOCKS_VISION, RESTRICTIVENESS)
+	return cells
 #casts a cone more reliably than cast cone, doesn't work for values under 35. 
 #actual width is quite a bit more than advertised
-static func cast_psuedo_cone(from:Vector2, towards:Vector2, width: float, \
+static func cast_psuedo_cone_radius(from:Vector2, towards:Vector2, width: float, \
 							radius: int, \
 							cell_mask: int = TIL.CellInteractions.BlocksFOV,
 							xmask := TIL.CellInteractions.None, \

@@ -28,6 +28,11 @@ func set_icon_list(editor_icons):
 func _on_Load_pressed():
 	open_dialog.popup()
 
+func clear_effect_entries():
+	for child in get_children():
+		remove_child(child)
+		child.queue_free()
+
 func process_property(prop):
 	property_info = prop
 	sub_props = []

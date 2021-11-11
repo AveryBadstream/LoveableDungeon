@@ -35,6 +35,9 @@ func _input(event):
 	elif event.is_action("move"):
 		pending_action = default_actions[ACT.Type.Move]
 		pending_action.mark_pending()
+	elif event.is_action("forcewave"):
+		pending_action = actions[0]
+		pending_action.mark_pending()
 		
 func act_at_location(at_cell: Vector2):
 	if self.acting_state != ACT.ActingState.Act:

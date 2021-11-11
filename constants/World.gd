@@ -11,6 +11,7 @@ var cell_interaction_mask_map = []
 var cell_occupancy_map = []
 
 var object_types
+var actor_types
 
 enum GeneratorSignal {MapDimension, ActorList, ObjectList, TileList}
 # Declare member variables here. Examples:
@@ -44,6 +45,8 @@ func _on_export_generator_config(config_type, config_value):
 		world_dimensions = config_value
 	elif config_type == GeneratorSignal.ObjectList:
 		object_types = config_value
+	elif config_type == GeneratorSignal.ActorList:
+		actor_types = config_value
 
 func get_action_targets_cell(action, at_cell:Vector2) -> Array:
 	var targets = []

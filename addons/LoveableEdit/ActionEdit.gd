@@ -65,6 +65,8 @@ func focus_object(new_obj):
 		update_default_display()
 
 func rebuild_assigned_actions():
+	assigned_action_l = []
+	assigned_actions.clear()
 	for action in edited_object.actions:
 		var fname = action.action_name
 		assigned_actions.add_item(fname)
@@ -146,6 +148,7 @@ func _on_ApplyButton_pressed():
 		for action in to_add_actions:
 			action.resource_local_to_scene = true
 		edited_object.property_list_changed_notify()
+		rebuild_assigned_actions()
 
 
 func _on_DefaultTypeOption_item_selected(index):

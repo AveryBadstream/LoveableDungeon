@@ -194,6 +194,12 @@ func add_thing(thing_type, thing_index, at_cell):
 		new_thing.set_initial_game_position(at_cell)
 		add_to_maps(new_thing)
 		LevelObjects.add_child(new_thing)
+	elif thing_type == ACT.TargetType.TargetActor:
+		new_thing = WRLD.actor_types[thing_index].instance()
+		new_thing.set_initial_game_position(at_cell)
+		add_to_maps(new_thing)
+		LevelActors.add_child(new_thing)
+		new_thing.own_fucking_actions()
 
 func add_to_maps(thing):
 	var at_cell = thing.game_position

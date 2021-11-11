@@ -123,11 +123,15 @@ func _on_action_complete(action):
 		EFCT.run_effects()
 		yield(EVNT, "all_effects_done")
 		GameWorld.step_end()
-	var current_i = turn_order.find(action.action_actor)
-	if current_i + 1 >= turn_order.size():
-		current_actor = turn_order[0]
+	EVNT.emit_signal("turn_over")
+	var current_i = current_actor.get_index()
+	print($GameWorld/LevelActors.get_child_count())
+	print(current_i)
+	if current_i + 1 >= $GameWorld/LevelActors.get_child_count():
+		current_actor = $GameWorld/LevelActors.get_child(0)
 	else:
-		current_actor = turn_order[current_i+1]
+		current_actor = $GameWorld/LevelActors.get_child(current_i+1)
+	print("Next actor: "+current_actor.display_name)
 	current_actor.activate()
 
 

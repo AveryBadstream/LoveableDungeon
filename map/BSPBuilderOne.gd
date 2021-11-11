@@ -16,6 +16,7 @@ const Door = preload("res://objects/Door.tscn")
 const Pushable = preload("res://objects/PushableThing.tscn")
 const Lever = preload("res://objects/Lever.tscn")
 const CellBars = preload("res://objects/CellBars.tscn")
+const Kestrel = preload("res://actors/Kestrel.tscn")
 
 const MapZone = preload("res://map/MapZone.gd")
 # Declare member variables here. Examples:
@@ -63,6 +64,7 @@ func _ready():
 
 func build_map(rng = null):
 	EVNT.emit_signal("export_generator_config", WRLD.GeneratorSignal.ObjectList, [Door, Pushable, Lever, CellBars])
+	EVNT.emit_signal("export_generator_config", WRLD.GeneratorSignal.ActorList, [Kestrel])
 	initialize()
 	var start_rect = Rect2(Vector2(0,0), map_size)
 	var start_zone = MapZone.new(start_rect)
@@ -204,6 +206,11 @@ func build_map(rng = null):
 				max_dist = dist
 				exit_room = zone
 	tiles[build_rng.randi_range(exit_room.rect.position.x + 1, exit_room.rect.end.x - 2)][build_rng.randi_range(exit_room.rect.position.y + 1, exit_room.rect.end.y - 2)] = TIL.Type.Rock
+	for zone in leafs:
+		if not zone.features.size():
+			continue
+		var spawnspot = Vector2(build_rng.randi_range(zone.rect.position.x + 1, zone.rect.end.x - 2), build_rng.randi_range(zone.rect.position.y + 1, zone.rect.end.y - 2))
+		EVNT.emit_signal("place_thing", ACT.TargetType.TargetActor, 0, spawnspot)
 	EVNT.emit_signal("place_thing", ACT.TargetType.TargetObject, 1, Vector2(74, 38))
 	tiles[73][38]= TIL.Type.Ice
 	tiles[72][38]= TIL.Type.Ice

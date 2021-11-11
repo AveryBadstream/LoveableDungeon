@@ -16,6 +16,13 @@ onready var sam_list = $"Actions Box/ScrollContainer2/Supported Action List"
 onready var cim_box = $"CIM Box"
 onready var actions_box_button = $"Actions Box/HBoxContainer/Default Action Button"
 
+onready var max_hp_box = $OtherStats/GameStats/Fields/MaxHPBox
+onready var might_box = $OtherStats/GameStats/Fields/MightBox
+onready var agility_box = $OtherStats/GameStats/Fields/AgilityBox
+onready var stamina_box = $OtherStats/GameStats/Fields/StaminaBox
+onready var armor_box = $OtherStats/GameStats/Fields/ArmorBox
+onready var name_entry = $OtherStats/OtherInformation/Fields/NameEdit
+onready var is_player_check = $OtherStats/OtherInformation/Fields/IsPlayerCheck
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	cim_kvp = []
@@ -63,6 +70,21 @@ func focus_object(new_obj):
 		update_cim_buttons()
 		update_default_action()
 		update_sam_buttons()
+		update_game_stats()
+		update_other_stats()
+
+func update_other_stats():
+	name_entry.text = edited_object.display_name
+	is_player_check.pressed = edited_object.is_player
+
+func update_game_stats():
+	if edited_object.game_stats:
+		var stats = edited_object.game_stats
+		max_hp_box.value = stats.max_hp
+		might_box.value = stats.might
+		agility_box.value = stats.agility
+		stamina_box.value = stats.stamina
+		armor_box.value = stats.armor
 
 func update_default_action():
 	var kvp_i
@@ -119,3 +141,37 @@ func set_icon_list(icons):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+func set_game_stat(stat, value):
+	if edited_object:
+		if not edited_object.game_stats:
+			edited_object.game_stats = GameStats.new()
+			edited_object.game_stats.resource_local_to_scene = true
+		edited_object.game_stats.set(stat, value)
+		edited_object.game_stats.property_list_changed_notify()
+		edited_object.property_list_changed_notify()
+
+func _on_MaxHPBox_value_changed(value):
+	set_game_stat("max_hp", value)
+	set_game_stat("current_hp", value)
+
+func _on_MightBox_value_changed(value):
+	set_game_stat("might", value)
+
+func _on_AgilityBox_value_changed(value):
+	set_game_stat("agility", value)
+
+func _on_StaminaBox_value_changed(value):
+	set_game_stat("stamina", value)
+
+func _on_ArmorBox_value_changed(value):
+	set_game_stat("armor", value)
+	
+func _on_NameEdit_text_changed(new_text):
+	if edited_object:
+		edited_object.display_name = new_text
+		edited_object.property_list_changed_notify()
+
+func _on_IsPlayerCheck_toggled(button_pressed):
+	if edited_object:
+		edited_object.is_player = button_pressed
+		edited_object.property_list_changed_notify()

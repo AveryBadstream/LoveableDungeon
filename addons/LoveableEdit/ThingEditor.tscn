@@ -13,6 +13,7 @@ __meta__ = {
 }
 
 [node name="InteractionEditor" parent="." instance=ExtResource( 2 )]
+columns = 6
 
 [node name="ActionEdit" parent="." instance=ExtResource( 3 )]
 visible = false

@@ -16,7 +16,7 @@ func _on_phase_Can_Impossible(_1,_2,_3):
 
 func do():
 	for target in self.action_targets:
-		EFCT.queue_now(push_effect.new(self.action_actor, self.action_targets[0], 1))
+		EFCT.queue_now(push_effect.new(self.action_actor, target, push_effect_magnitude))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

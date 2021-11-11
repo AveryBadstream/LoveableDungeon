@@ -59,14 +59,45 @@ func _on_log_action(subject, object, action):
 		}
 		add_log(LogActionStr[action].format(format_dict))
 
-func action_message(msg, action, format_info=[]):
+func action_message(action, msg, format_info=[]):
 	for format_part in format_info:
 		pass
-	MessageBox.text = msg
+	var format_dict = {
+			"pt3ps": "" if action.action_actor.is_player else "s",
+			"subject": ("" if action.action_actor.is_player else "the ")+action.action_actor.display_name,
+			"log_color": first_party_log_color if action.action_actor.is_player else third_party_log_color
+	}
+	format_dict["object"] = ("" if action.action_targets[0].is_player else "the ")+action.action_targets[0].display_name if action.action_targets.size() > 0 else ""
+	MessageBox.text = msg.format(format_dict)
+
+func action_log(action, msg, format_info=[]):
+	for format_part in format_info:
+		pass
+	msg = "[color={log_color}]"+msg+"[/color]"
+	var format_dict = {
+			"pt3ps": "" if action.action_actor.is_player else "s",
+			"subject": ("" if action.action_actor.is_player else "the ")+action.action_actor.display_name,
+			"log_color": first_party_log_color if action.action_actor.is_player else third_party_log_color
+	}
+	format_dict["object"] = ("" if action.action_targets[0].is_player else "the ")+action.action_targets[0].display_name if action.action_targets.size() >0 else ""
+	add_log(msg.format(format_dict))
+
+func effect_log(effect, msg):
+	msg = "[color={log_color}]"+msg+"[/color]"
+	var format_dict = {
+			"pt3ps": "" if effect.effect_actor.is_player else "s",
+			"spos": "r" if effect.effect_actor.is_player else "'s",
+			"opos": "r" if effect.effect_actor.is_player else "'s",
+			"subject": ("" if effect.effect_actor.is_player else "the ")+effect.effect_actor.display_name,
+			"object": ("" if effect.effect_target.is_player else "the ")+effect.effect_target.display_name,
+			"log_color": first_party_log_color if effect.effect_actor.is_player else third_party_log_color
+	}
+	add_log(msg.format(format_dict))
 
 func add_log(msg):
 	full_log.append(msg)
 	LogBox.clear()
+	print(msg)
 	for log_message in full_log.slice(max(full_log.size() - 7, 0), full_log.size() - 1):
 		LogBox.append_bbcode(log_message)
 		LogBox.newline()
