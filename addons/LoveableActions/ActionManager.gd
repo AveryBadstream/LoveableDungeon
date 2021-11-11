@@ -48,15 +48,22 @@ func new_action():
 	
 func change_edited_action(next_action):
 	edited_action = next_action
-	effects_tab.change_edited_action(edited_action)
-	edit_tab.change_edited_action(edited_action)
-	mask_tab.change_edited_action(edited_action)
-	message_tab.change_edited_action(edited_action)
-	tabs.set_tab_disabled(1, false)
-	tabs.set_tab_disabled(2, false)
-	tabs.set_tab_disabled(3, false)
-	tabs.set_tab_disabled(4, false)
-	tabs.set_current_tab(1)
+	#effects_tab.change_edited_action(edited_action)
+	if edited_action:
+		edit_tab.change_edited_action(edited_action)
+		mask_tab.change_edited_action(edited_action)
+		message_tab.change_edited_action(edited_action)
+		tabs.set_tab_disabled(1, false)
+		tabs.set_tab_disabled(2, false)
+		tabs.set_tab_disabled(3, false)
+		tabs.set_tab_disabled(4, false)
+		tabs.set_current_tab(1)
+	else:
+		tabs.set_tab_disabled(1, true)
+		tabs.set_tab_disabled(2, true)
+		tabs.set_tab_disabled(3, true)
+		tabs.set_tab_disabled(4, true)
+		tabs.set_current_tab(0)
 
 func set_icon_list(editor_icons):
 	list_tab.set_icon_list(editor_icons)
@@ -80,6 +87,7 @@ func _on_save_resource():
 		tabs.set_current_tab(3)
 	else:
 		message_tab.set_tab_data() #Messages are optional
+		edited_action.emit_changed()
 		$FileDialog.popup_centered()
 
 
@@ -87,7 +95,7 @@ func _on_save_resource():
 func _on_FileDialog_file_selected(path):
 	ResourceSaver.save(path, edited_action)
 	clear_edited()
-	edited_action = null
+	change_edited_action(null)
 
 
 func _on_load_new_resource(action_resource):

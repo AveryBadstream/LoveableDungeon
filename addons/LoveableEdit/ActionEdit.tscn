@@ -47,7 +47,7 @@ margin_right = 626.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-items = [ "open.tres", null, false, "move.tres", null, false, "close.tres", null, false, "use.tres", null, false, "push.tres", null, false, "forcewave.tres", null, false ]
+items = [ "Close", null, false, "force wave", null, false, "move", null, false, "", null, false, "push", null, false, "use", null, false ]
 select_mode = 1
 
 [node name="ApplyContainer" type="VBoxContainer" parent="."]
@@ -158,3 +158,5 @@ margin_bottom = 20.0
 [connection signal="item_selected" from="ApplyTo/DefaultApply/DefaultTypeOption" to="." method="_on_DefaultTypeOption_item_selected"]
 [connection signal="pressed" from="ApplyTo/DefaultApply/ClearDefaultButton" to="." method="_on_ClearDefaultButton_pressed"]
 [connection signal="toggled" from="ApplyTo/ActionList/VBoxContainer/ActionsButton" to="." method="_on_ActionsButton_toggled"]
+[connection signal="pressed" from="ApplyTo/ActionList/VBoxContainer2/PanelContainer/HBoxContainer/RemoveButton" to="." method="_on_RemoveButton_pressed"]
+[connection signal="pressed" from="ApplyTo/ActionList/VBoxContainer2/PanelContainer/HBoxContainer/ClearButton" to="." method="_on_ClearButton_pressed"]

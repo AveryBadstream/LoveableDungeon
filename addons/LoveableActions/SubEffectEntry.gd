@@ -33,10 +33,11 @@ func process_property(prop):
 	
 func change_edited_action(next_edited_action):
 	edited_action = next_edited_action
-	if property_info.type == TYPE_STRING:
-		edit_node.text = edited_action.get(property_info.prop_name)
-	elif property_info.type == TYPE_INT or property_info.type == TYPE_REAL:
-		edit_node.value = edited_action.get(property_info.prop_name)
+	var new_prop_val = edited_action.get(property_info.prop_name)
+	if property_info.type == TYPE_STRING and new_prop_val:
+		edit_node.text = new_prop_val
+	elif (property_info.type == TYPE_INT or property_info.type == TYPE_REAL) and new_prop_val:
+		edit_node.value = new_prop_val
 
 func set_sub_effect_data():
 	var sub_effect_payload
@@ -48,7 +49,7 @@ func set_sub_effect_data():
 	elif property_info.type == TYPE_INT or property_info.type == TYPE_REAL:
 		sub_effect_payload = edit_node.value
 		if not sub_effect_payload:
-			edit_node.grab_focus
+			edit_node.grab_focus()
 			return false
 	edited_action.set(property_info.prop_name, sub_effect_payload)
 	return true

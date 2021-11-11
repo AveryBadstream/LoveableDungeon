@@ -61,11 +61,14 @@ func _ready():
 func focus_object(new_obj):
 	edited_object = new_obj
 	if new_obj is GameActor:
-		for action in new_obj.actions:
-			var fname = action.action_name
-			assigned_actions.add_item(fname)
-			assigned_action_l.append(fname)
+		rebuild_assigned_actions()
 		update_default_display()
+
+func rebuild_assigned_actions():
+	for action in edited_object.actions:
+		var fname = action.action_name
+		assigned_actions.add_item(fname)
+		assigned_action_l.append(fname)
 
 func set_icon_list(icons):
 	editor_icons = icons
@@ -128,7 +131,6 @@ func _on_ApplyButton_pressed():
 			var new_dict = edited_object.default_actions
 			new_dict[act_kvp[default_key][1]] = new_action
 			edited_object.default_actions = new_dict
-			new_dict[act_kvp[default_key][1]].resource_local_to_scene = true
 			new_action.resource_local_to_scene = true
 			edited_object.property_list_changed_notify()
 			update_default_display()
@@ -139,8 +141,10 @@ func _on_ApplyButton_pressed():
 		for i in action_list.get_selected_items():
 			var new_action:Resource = action_objects[i].duplicate()
 			to_add_actions.append(new_action)
-			new_action.resource_local_to_scene = true
+			print("Appending " + new_action.action_name)
 		edited_object.actions.append_array(to_add_actions)
+		for action in to_add_actions:
+			action.resource_local_to_scene = true
 		edited_object.property_list_changed_notify()
 
 
@@ -153,3 +157,21 @@ func _on_ClearDefaultButton_pressed():
 	edited_object.default_actions.erase(act_kvp[default_key][1])
 	edited_object.property_list_changed_notify()
 	update_default_display()
+
+
+func _on_RemoveButton_pressed():
+	var sel_i = assigned_actions.get_selected_items()
+	var queue_delete_obj = []
+	for i in range(sel_i.size()):
+		for action in edited_object.actions:
+			if action.action_name == assigned_action_l[i]:
+				queue_delete_obj.append(action)
+	for to_delete in queue_delete_obj:
+		edited_object.actions.erase(to_delete)
+	edited_object.property_list_changed_notify()
+	rebuild_assigned_actions()
+
+func _on_ClearButton_pressed():
+	edited_object.actions = []
+	edited_object.property_list_changed_notify()
+	rebuild_assigned_actions()

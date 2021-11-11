@@ -26,4 +26,4 @@ failed_log = ""
 success_log = "FUS RO DAH!"
 pertarget_log = ""
 push_effect = ExtResource( 2 )
-push_effect_magnitude = 1
+push_effect_magnitude = 5.0
