@@ -72,25 +72,6 @@ func _ready():
 	EVNT.subscribe("update_cimmap", self, "_on_update_cimmap")
 	EVNT.subscribe("slammed", self, "_on_slammed")
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-func _on_do_action(action):
-	for target in action.action_target:
-		if action.target_hints.has(ACT.ActionTargetHint.WholeCellMustSupport):
-			for thing in everything_at_cell(target.game_position):
-				var response = thing.can_do_action(action)
-				if response == ACT.ActionResponse.Stop:
-					action.fail()
-					EVNT.emit_signal("action_failed", action)
-					return
-		else:
-			var response = target.can_do_action(action)
-			if response == ACT.ActionResponse.Stop:
-				action.fail()
-				EVNT.emit_signal("action_failed", action)
-
 func _on_object_moved(thing, from_cell, to_cell):
 	move_in_maps(thing, from_cell, to_cell)
 	for triggered_thing in cell_occupancy_map[to_cell.x][to_cell.y]:
@@ -342,20 +323,6 @@ func _on_tiles_ready():
 			cell_occupancy_map[x].append([utile])
 			cell_interaction_mask_map[x].append(utile.cell_interaction_mask)
 	var total_time = OS.get_system_time_msecs() - world_gen_timer
-#	var door_list = []
-#	for object in LevelObjects.get_children():
-#		if object.get_filename() == Door.get_path():
-#			door_list.append(object.game_position)
-#	for x in WRLD.world_dimensions.x:
-#		for y in WRLD.world_dimensions.y:
-#			var tile_pos = Vector2(x,y)
-#			var tile_type = TMap.get_tilev(tile_pos)
-#			update_path(walk_pathf, tile_pos, TIL.TILE_WALKABLE[tile_type], TIL.TILE_WALKABLE, door_list, true, false, true) #update non door walkable path
-#			update_path(walk_door_pathf, tile_pos, TIL.TILE_WALKABLE[tile_type], TIL.TILE_WALKABLE, [], true, false, true) #update door walkable path
-#			update_path(fly_pathf, tile_pos, TIL.TILE_FLYABLE[tile_type], TIL.TILE_FLYABLE, door_list, true, false, true) #update non-door flyable path
-#			update_path(fly_door_pathf, tile_pos, TIL.TILE_FLYABLE[tile_type], TIL.TILE_FLYABLE, [], true, false, true) #update door flyable path
-#			update_path(phase_pathf, tile_pos, TIL.TILE_PHASEABLE[tile_type], TIL.TILE_PHASEABLE, [], true, false, true)
-#	pending_block_map_updates = []
 	process_add_queue()
 	process_remove_queue()
 	print("Worldgen Took: " + str(total_time))

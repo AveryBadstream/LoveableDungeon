@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://actors/GameStats.gd" type="Script" id=1]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends GameActor
@@ -19,5 +21,16 @@ func _ready():
 #	pass
 "
 
+[sub_resource type="Resource" id=2]
+resource_local_to_scene = true
+script = ExtResource( 1 )
+max_hp = 3
+hp = 0
+might = 0
+agility = 2
+stamina = 0
+armor = 0
+
 [node name="Kestrel" type="Sprite"]
 script = SubResource( 1 )
+game_stats = SubResource( 2 )

@@ -64,12 +64,6 @@ func _on_world_ready():
 	Camerah.global_position = Player.global_position
 	Player.activate()
 
-func _on_do_effect(effect):
-	effect.setup()
-	effect.pre_notify()
-	effect.do_effect()
-	effect.post_notify()
-
 func _on_do_action(action):
 	if action.target_type == ACT.TargetType.TargetNone:
 		action.finish()

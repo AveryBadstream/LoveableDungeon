@@ -110,10 +110,6 @@ window/size/width=1280
 window/size/height=720
 window/stretch/mode="viewport"
 
-[editor_plugins]
-
-enabled=PoolStringArray( "res://addons/LoveableActions/plugin.cfg", "res://addons/LoveableEdit/plugin.cfg" )
-
 [input]
 
 menu_toggle={
