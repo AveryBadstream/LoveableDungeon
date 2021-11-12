@@ -42,6 +42,7 @@ signal queue_complete()
 
 #Game effect signals
 signal slammed(thing, into, from, to)
+signal died(thing)
 
 #Map management signals
 signal update_fov()

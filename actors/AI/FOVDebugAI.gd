@@ -10,9 +10,6 @@ extends GameAI
 func _ready():
 	pass # Replace with function body.
 
-func _init(actor).(actor):
-	pass
-
 func should_choose():
 	return true
 

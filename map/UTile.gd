@@ -43,12 +43,12 @@ func _init(name, is_walkable, is_flyable, is_phaseable, blocks_fov, occupies_cel
 		self.occupies_cell = true
 	if blocks_fov:
 		cell_interaction_mask |= TIL.CellInteractions.BlocksFOV
-	if is_walkable:
-		cell_interaction_mask |= TIL.CellInteractions.Walkable
-	if is_flyable:
-		cell_interaction_mask |= TIL.CellInteractions.Flyable
-	if is_phaseable:
-		cell_interaction_mask |= TIL.CellInteractions.Phaseable
+	if not is_walkable:
+		cell_interaction_mask |= TIL.CellInteractions.BlocksWalk
+	if not is_flyable:
+		cell_interaction_mask |= TIL.CellInteractions.BlocksWalk
+	if not is_phaseable:
+		cell_interaction_mask |= TIL.CellInteractions.BlocksWalk
 	if occupies_cell:
 		cell_interaction_mask |= TIL.CellInteractions.Occupies
 

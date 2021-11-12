@@ -6,7 +6,7 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {None = 0, Move = 1, Fly = 2, Phase = 4, Open = 8, Close = 16, Push = 32, Pull = 64, Use = 128, Attack = 256}
+enum Type {None = 0, Move = 1, Fly = 2, Phase = 4, Open = 8, Close = 16, Push = 32, Take = 64, Use = 128, Attack = 256}
 const TYPE_FLAGS = "Move,Fly,Phase,Open,Close,Push,Pull,Use,Attack"
 var rType = {}
 # Called when the node enters the scene tree for the first time.

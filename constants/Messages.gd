@@ -94,13 +94,18 @@ func effect_log(effect, msg):
 	}
 	add_log(msg.format(format_dict))
 
+func game_log(msg):
+	add_log(msg)
+
 func add_log(msg):
 	full_log.append(msg)
 	LogBox.clear()
 	print(msg)
-	for log_message in full_log.slice(max(full_log.size() - 7, 0), full_log.size() - 1):
-		LogBox.append_bbcode(log_message)
+	for log_message in full_log.slice(max(full_log.size() - 30, 0), full_log.size() - 1):
 		LogBox.newline()
+		LogBox.append_bbcode(log_message)
+		LogBox.scroll_to_line(LogBox.get_line_count()-1)
+
 
 func direction_to_string(direction: Vector2):
 	if direction == Vector2.UP:

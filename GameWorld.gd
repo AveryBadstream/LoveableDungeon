@@ -24,9 +24,6 @@ var walk_pathf = AStar2D.new()
 var fly_pathf = AStar2D.new()
 var phase_pathf = AStar2D.new()
 
-var walk_door_pathf = AStar2D.new()
-var fly_door_pathf = AStar2D.new()
-
 var world_gen_timer
 var queued_things = []
 var queued_connections = []
@@ -71,6 +68,13 @@ func _ready():
 	EVNT.subscribe("try_action_at", self, "_on_actor_try_action_at")
 	EVNT.subscribe("update_cimmap", self, "_on_update_cimmap")
 	EVNT.subscribe("slammed", self, "_on_slammed")
+	EVNT.subscribe("died", self, "_on_died")
+	
+func _on_died(thing):
+	MSG.game_log(thing.display_name + " died!")
+	remove_from_maps(thing)
+	LevelActors.remove_child(thing)
+	thing.queue_free()
 
 func _on_object_moved(thing, from_cell, to_cell):
 	move_in_maps(thing, from_cell, to_cell)
@@ -246,6 +250,7 @@ func update_cim(at_cell):
 	cell_interaction_mask_map[at_cell.x][at_cell.y] = new_cim
 	if old_cim & TIL.CellInteractions.BlocksFOV != new_cim & TIL.CellInteractions.BlocksFOV:
 		EVNT.emit_signal("update_fov")
+	walk_pathf.set_point_disabled(walk_pathf.get_closest_point(at_cell), new_cim & TIL.CellInteractions.BlocksWalk)
 
 func find_thing_by_type_index_cell(thing_type, thing_index, at_cell):
 	for thing in everything_at_cell(at_cell, thing_type):
@@ -322,6 +327,8 @@ func _on_tiles_ready():
 			var utile = TMap.get_utile(x, y)
 			cell_occupancy_map[x].append([utile])
 			cell_interaction_mask_map[x].append(utile.cell_interaction_mask)
+	rebuild_pathfinding(walk_pathf, TIL.CellInteractions.BlocksWalk)
+	WRLD.path_map = walk_pathf
 	var total_time = OS.get_system_time_msecs() - world_gen_timer
 	process_add_queue()
 	process_remove_queue()
@@ -331,7 +338,31 @@ func _on_tiles_ready():
 	process_remove_queue()
 	process_connection_queue()
 	process_cimmap_updates()
-	
+
+func rebuild_pathfinding(astar: AStar2D, block_mask):
+	var point_map = []
+	for x in range(WRLD.world_dimensions.x):
+		point_map.append([])
+		for y in range(WRLD.world_dimensions.y):
+			var new_point_id = astar.get_available_point_id()
+			astar.add_point(new_point_id, Vector2(x,y))
+			point_map[x].append(new_point_id)
+	for x in range(WRLD.world_dimensions.x):
+		for y in range(WRLD.world_dimensions.y):
+			var cur_p = point_map[x][y]
+			if y > 0:
+				if ~(cell_interaction_mask_map[x][y-1] & block_mask):
+					astar.connect_points(cur_p, point_map[x][y-1])
+			if x > 0:
+				if ~(cell_interaction_mask_map[x-1][y] & block_mask):
+					astar.connect_points(cur_p, point_map[x-1][y])
+			if x >0 and y > 0:
+				if ~(cell_interaction_mask_map[x-1][y-1] & block_mask):
+					astar.connect_points(cur_p, point_map[x-1][y-1])
+			if x > 0 and y+1 < WRLD.world_dimensions.y:
+				if ~(cell_interaction_mask_map[x-1][y+1] & block_mask):
+					astar.connect_points(cur_p, point_map[x-1][y+1])
+
 func process_cimmap_updates():
 	for thing in pending_cimmap_updates:
 		update_cim(thing.game_position)

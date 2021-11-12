@@ -133,7 +133,6 @@ func _on_ApplyButton_pressed():
 			var new_dict = edited_object.default_actions
 			new_dict[act_kvp[default_key][1]] = new_action
 			edited_object.default_actions = new_dict
-			new_action.resource_local_to_scene = true
 			edited_object.property_list_changed_notify()
 			update_default_display()
 	else:
@@ -145,8 +144,6 @@ func _on_ApplyButton_pressed():
 			to_add_actions.append(new_action)
 			print("Appending " + new_action.action_name)
 		edited_object.actions.append_array(to_add_actions)
-		for action in to_add_actions:
-			action.resource_local_to_scene = true
 		edited_object.property_list_changed_notify()
 		rebuild_assigned_actions()
 

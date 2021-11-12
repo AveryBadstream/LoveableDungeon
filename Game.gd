@@ -47,7 +47,7 @@ func _ready():
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
 	EVNT.subscribe("turn_over", self, "_on_turn_over")
-
+	EVNT.subscribe("died", self, "_on_died")
 
 func _on_world_ready():
 	MSG.MessageBox = $CanvasLayer/VBoxContainer/MessageBox
@@ -90,13 +90,10 @@ func _on_action_complete(action):
 
 func _on_turn_over():
 	var current_i = current_actor.get_index()
-	print($GameWorld/LevelActors.get_child_count())
-	print(current_i)
 	if current_i + 1 >= $GameWorld/LevelActors.get_child_count():
 		current_actor = $GameWorld/LevelActors.get_child(0)
 	else:
 		current_actor = $GameWorld/LevelActors.get_child(current_i+1)
-	print("Next actor: "+current_actor.display_name)
 	current_actor.call_deferred("activate")
 
 

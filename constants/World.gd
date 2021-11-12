@@ -6,6 +6,7 @@ var world_dimensions = Vector2(0,0)
 var is_ready = false
 var tween
 var rng
+var path_map: AStar2D
 
 var cell_interaction_mask_map = []
 var cell_occupancy_map = []
@@ -40,6 +41,14 @@ func is_tile_walkable(at_cell):
 func can_see_player(actor):
 	return FOV.can_see_point(actor.game_position, GameWorld.Player.game_position, SIGHT_RANGE)
 
+func path_to_player(actor):
+	return path_to_point(actor, GameWorld.Player.game_position)
+
+func path_to_point(actor, point):
+	var start = path_map.get_closest_point(actor.game_position)
+	var finish = path_map.get_closest_point(point)
+	return path_map.get_point_path(start, finish)
+
 func _on_export_generator_config(config_type, config_value):
 	if config_type == GeneratorSignal.MapDimension:
 		world_dimensions = config_value
@@ -47,6 +56,9 @@ func _on_export_generator_config(config_type, config_value):
 		object_types = config_value
 	elif config_type == GeneratorSignal.ActorList:
 		actor_types = config_value
+
+func get_player_position():
+	return GameWorld.Player.game_position
 
 func get_action_targets_cell(action, at_cell:Vector2) -> Array:
 	var targets = []

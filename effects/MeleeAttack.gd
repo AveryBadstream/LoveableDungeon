@@ -29,7 +29,9 @@ func run():
 		tween.interpolate_property(effect_target, "position", target_l, target_rest, 0.025, Tween.TRANS_LINEAR, Tween.EASE_OUT, 0.05)
 		tween.start()
 		yield(tween, "tween_all_completed")
-	effect_target.take_damage(effect_actor.get_damage_dealt(effect_target))
+	var damage = effect_actor.get_damage_dealt(effect_target)
+	MSG.effect_log(self, "{subject} hit {object} for "+str(damage)+" points!")
+	effect_target.take_damage(damage)
 	EVNT.emit_signal("effect_done", self)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

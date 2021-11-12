@@ -1,5 +1,7 @@
 extends GameAI
 
+class_name AimlessWander
+
 export(float, 0.0, 1.0) var sleep_chance = 0.0
 # Declare member variables here. Examples:
 # var a = 2
@@ -8,15 +10,8 @@ export(float, 0.0, 1.0) var sleep_chance = 0.0
 var move_count = 0
 var movement_action = null
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-func _init(actor).(actor):
-	pass
-
 func should_choose():
-	movement_action =  attached_actor.default_actions[ACT.Type.Move]
+	movement_action =  attached_actor.local_default_actions[ACT.Type.Move]
 	if movement_action:
 		return true
 	return false

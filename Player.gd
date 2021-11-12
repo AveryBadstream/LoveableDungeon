@@ -24,16 +24,16 @@ func _input(event):
 	elif event.is_action("move_down"):
 		act_in_direction(Vector2.DOWN)
 	elif event.is_action("open"):
-		pending_action = default_actions[ACT.Type.Open]
+		pending_action = local_default_actions[ACT.Type.Open]
 		pending_action.mark_pending()
 	elif event.is_action("close"):
-		pending_action = default_actions[ACT.Type.Close]
+		pending_action = local_default_actions[ACT.Type.Close]
 		pending_action.mark_pending()
 	elif event.is_action("push"):
-		pending_action = default_actions[ACT.Type.Push]
+		pending_action = local_default_actions[ACT.Type.Push]
 		pending_action.mark_pending()
 	elif event.is_action("move"):
-		pending_action = default_actions[ACT.Type.Move]
+		pending_action = local_default_actions[ACT.Type.Move]
 		pending_action.mark_pending()
 	elif event.is_action("forcewave"):
 		pending_action = actions[0]
@@ -45,8 +45,8 @@ func act_at_location(at_cell: Vector2):
 	if not pending_action:
 		var distance_to = at_cell.distance_to(get_game_position())
 		for hint in WRLD.get_action_hints(at_cell):
-			if default_actions.has(hint):
-				var candidate_action = default_actions[hint]
+			if local_default_actions.has(hint):
+				var candidate_action = local_default_actions[hint]
 				if distance_to <= candidate_action.action_range:
 					if candidate_action.test_action_at(at_cell):
 						acting_state = ACT.ActingState.Wait
@@ -63,7 +63,7 @@ func act_at_location(at_cell: Vector2):
 	return false
 	
 func act_in_direction(dir: Vector2):
-	print(str(default_actions))
+	print(str(local_default_actions))
 	if self.acting_state != ACT.ActingState.Act:
 		return
 	if not pending_action:
@@ -71,7 +71,7 @@ func act_in_direction(dir: Vector2):
 		print("Got default action: " + ACT.TypeKey(action_hint))
 		if default_actions.has(action_hint):
 			acting_state = ACT.ActingState.Wait
-			default_actions[action_hint].do_action_at(self.get_game_position() + dir)
+			local_default_actions[action_hint].do_action_at(self.get_game_position() + dir)
 		else:
 			return
 	else:

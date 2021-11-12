@@ -1,4 +1,3 @@
-tool
 extends Sprite
 
 class_name GameObject
@@ -38,6 +37,7 @@ var game_position: Vector2 setget set_game_position, get_game_position
 func set_initial_game_position(at_cell:Vector2):
 	position = at_cell * 16
 	last_game_position = at_cell
+	EVNT.emit_signal("update_cimmap", at_cell)
 
 func supports_action(action) -> bool:
 	var funcname = "_can_support_"+ACT.TypeKey(action.action_type)
@@ -137,40 +137,40 @@ func get_game_position() -> Vector2:
 	return last_game_position
 
 func set_is_walkable(should_walk):
-	var _is_walkable = cim & TIL.CellInteractions.Walkable > 0
+	var _is_walkable = cim & TIL.CellInteractions.BlocksWalk == 1
 	if _is_walkable != should_walk:
 		if should_walk:
-			cim |= TIL.CellInteractions.Walkable
+			cim &= ~(TIL.CellInteractions.BlocksWalk)
 		else:
-			cim &= ~(TIL.CellInteractions.Walkable)
+			cim |= TIL.CellInteractions.BlocksWalk
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_is_walkable():
-	return cim & TIL.CellInteractions.Walkable > 0
+	return ~(cim & TIL.CellInteractions.BlocksWalk) > 0
 	
 func set_is_phaseable(should_phase):
-	var _is_phaseable = cim & TIL.CellInteractions.Phaseable > 0
+	var _is_phaseable = cim & TIL.CellInteractions.BlocksPhase == 0
 	if _is_phaseable != should_phase:
-		if should_phase:
-			cim |= TIL.CellInteractions.Phaseable
+		if not should_phase:
+			cim |= TIL.CellInteractions.BlocksPhase
 		else:
-			cim &= ~(TIL.CellInteractions.Phaseable)
+			cim &= ~(TIL.CellInteractions.BlocksPhase)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_is_phaseable():
-	return cim & TIL.CellInteractions.Phaseable > 0
+	return ~(cim & TIL.CellInteractions.BlocksPhase) > 0
 	
 func set_is_flyable(should_fly):
-	var _is_flyable = cim & TIL.CellInteractions.Flyable > 0
+	var _is_flyable = cim & TIL.CellInteractions.BlocksFly == 1
 	if _is_flyable != should_fly:
-		if should_fly:
-			cim |= TIL.CellInteractions.Flyable
+		if not should_fly:
+			cim |= TIL.CellInteractions.BlocksFly
 		else:
-			cim &= ~(TIL.CellInteractions.Flyable)
+			cim &= ~(TIL.CellInteractions.BlocksFly)
 		EVNT.emit_signal("update_cimmap", self.get_game_position())
 		
 func get_is_flyable():
-	return cim & TIL.CellInteractions.Flyable > 0
+	return cim & TIL.CellInteractions.BlocksFly == 1
 	
 func set_occupies_cell(should_occupy):
 	var _is_occupying = cim & TIL.CellInteractions.Occupies > 0

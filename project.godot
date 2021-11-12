@@ -9,17 +9,27 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "GameAI",
+"class": "AimlessWander",
+"language": "GDScript",
+"path": "res://actors/AI/AimlessWander.gd"
+}, {
 "base": "Resource",
 "class": "BSP_Builder_One",
 "language": "GDScript",
 "path": "res://map/BSPBuilderOne.gd"
+}, {
+"base": "GameObject",
+"class": "DroppedItem",
+"language": "GDScript",
+"path": "res://objects/DroppedItem.gd"
 }, {
 "base": "Sprite",
 "class": "FOWGhost",
 "language": "GDScript",
 "path": "res://objects/FOWGhost.gd"
 }, {
-"base": "Reference",
+"base": "Resource",
 "class": "GameAI",
 "language": "GDScript",
 "path": "res://actors/AI/GameAI.gd"
@@ -44,6 +54,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://effects/GameEffect.gd"
 }, {
+"base": "Resource",
+"class": "GameItem",
+"language": "GDScript",
+"path": "res://items/GameItem.gd"
+}, {
 "base": "Sprite",
 "class": "GameObject",
 "language": "GDScript",
@@ -64,23 +79,38 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://map/MapDefinition.gd"
 }, {
+"base": "GameAI",
+"class": "PlayerChaser",
+"language": "GDScript",
+"path": "res://actors/AI/PlayerChaser.gd"
+}, {
+"base": "GameItem",
+"class": "Potion",
+"language": "GDScript",
+"path": "res://items/Potion.gd"
+}, {
 "base": "Reference",
 "class": "UTile",
 "language": "GDScript",
 "path": "res://map/UTile.gd"
 } ]
 _global_script_class_icons={
+"AimlessWander": "",
 "BSP_Builder_One": "",
+"DroppedItem": "",
 "FOWGhost": "",
 "GameAI": "",
 "GameAction": "",
 "GameActor": "",
 "GameAstar": "",
 "GameEffect": "",
+"GameItem": "",
 "GameObject": "",
 "GameStats": "",
 "ITile": "",
 "MapDefinition": "",
+"PlayerChaser": "",
+"Potion": "",
 "UTile": ""
 }
 

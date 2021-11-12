@@ -1,0 +1,91 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://actors/GameActor.gd" type="Script" id=1]
+[ext_resource path="res://actors/GameStats.gd" type="Script" id=2]
+[ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=3]
+[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=4]
+[ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=5]
+[ext_resource path="res://effects/MeleeAttack.gd" type="Script" id=6]
+[ext_resource path="res://effects/Move.gd" type="Script" id=7]
+[ext_resource path="res://actors/AI/AimlessWander.gd" type="Script" id=8]
+[ext_resource path="res://actors/AI/PlayerChaser.tres" type="Resource" id=9]
+
+[sub_resource type="Resource" id=1]
+resource_local_to_scene = true
+script = ExtResource( 2 )
+max_hp = 3.0
+hp = 0
+might = 0
+agility = 2.0
+stamina = 0
+armor = 0
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 8 )
+sleep_chance = 0.098
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 5 )
+action_name = "melee attack"
+action_type = 256
+target_hints = 0
+action_range = 1.5
+action_area = 0.0
+target_type = 14
+target_area = 1
+target_priority = [ 4, 2, 8, 1 ]
+target_cim = 0
+x_cim = 0
+c_cim = 0
+action_radius = 0.0
+pending_message = "Attack what?"
+impossible_message = "You can't attack that."
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
+success_log = "{subject} attacked {object}."
+pertarget_log = ""
+use_effect = ExtResource( 6 )
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 3 )
+action_name = "move"
+action_type = 1
+target_hints = 1
+action_range = 1.5
+action_area = 0.0
+target_type = 1
+target_area = 1
+target_priority = [ 1, 2, 8, 4 ]
+target_cim = 2
+x_cim = 16
+c_cim = 0
+action_radius = 0.0
+pending_message = "Move where?"
+impossible_message = ""
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
+success_log = ""
+pertarget_log = ""
+test_thing = 0
+move_effect = ExtResource( 7 )
+
+[node name="Bird" type="Sprite"]
+texture = ExtResource( 4 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 160, 208, 16, 16 )
+script = ExtResource( 1 )
+default_action = 256
+display_name = "Bird"
+cim = 16
+sam = 288
+game_stats = SubResource( 1 )
+mob_ai = [ ExtResource( 9 ), SubResource( 4 ) ]
+default_actions = {
+1: SubResource( 3 ),
+256: SubResource( 2 )
+}

@@ -16,7 +16,7 @@ const Door = preload("res://objects/Door.tscn")
 const Pushable = preload("res://objects/PushableThing.tscn")
 const Lever = preload("res://objects/Lever.tscn")
 const CellBars = preload("res://objects/CellBars.tscn")
-const Kestrel = preload("res://actors/Kestrel.tscn")
+const Kestrel = preload("res://actors/Bird.tscn")
 
 const MapZone = preload("res://map/MapZone.gd")
 # Declare member variables here. Examples:

@@ -17,7 +17,7 @@ var utiles = {}
 
 const IceTile = preload("res://map/Ice.gd")
 
-enum CellInteractions {None = 0, BlocksFOV = 1, Walkable = 2, Flyable = 4, Phaseable = 8, Occupies = 16, PlayerRemembers = 32, Immovable = 64}
+enum CellInteractions {None = 0, BlocksFOV = 1, BlocksWalk = 2, BlocksFly = 4, BlocksPhase = 8, Occupies = 16, PlayerRemembers = 32, Immovable = 64}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
