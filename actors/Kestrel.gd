@@ -1,12 +1,9 @@
-[gd_scene load_steps=2 format=2]
-
-[sub_resource type="GDScript" id=1]
-script/source = "extends GameActor
+extends GameActor
 
 
 # Declare member variables here. Examples:
 # var a = 2
-# var b = \"text\"
+# var b = "text"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -17,7 +14,3 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-"
-
-[node name="Kestrel" type="Sprite"]
-script = SubResource( 1 )

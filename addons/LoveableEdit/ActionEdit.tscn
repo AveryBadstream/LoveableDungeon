@@ -47,7 +47,7 @@ margin_right = 626.0
 margin_bottom = 684.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-items = [ "Open", null, false, "move", null, false, "Close", null, false, "use", null, false, "push", null, false, "force wave", null, false ]
+items = [ "melee attack", null, false, "", null, false, "force wave", null, false, "move", null, false, "Open", null, false, "push", null, false, "use", null, false ]
 select_mode = 1
 
 [node name="ApplyContainer" type="VBoxContainer" parent="."]

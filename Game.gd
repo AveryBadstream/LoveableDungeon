@@ -46,39 +46,8 @@ func _ready():
 	EVNT.subscribe("action_complete", self, "_on_action_complete")
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	EVNT.subscribe("turn_over", self, "_on_turn_over")
 
-#func _input(event):
-#	if event is InputEventMouseButton:
-#		if event.button_index == BUTTON_LEFT and event.pressed:
-#			var tilepos = GameWorld.TMap.world_to_map(get_global_mouse_position())
-#			if WRLD.world_dimensions and (
-#					tilepos.x  < 0 or tilepos.x > WRLD.world_dimensions.x
-#					or tilepos.y < 0 or tilepos.y > WRLD.world_dimensions.y):
-#						return
-#			DBG.clear_highlight()
-#			var highlight = highlight_lines.pop_back()
-#			while highlight:
-#				LineHighlight.remove_child(highlight)
-#				highlight.queue_free()
-#				highlight = highlight_lines.pop_back()
-#			var angle = tilepos.angle_to_point(Player.game_position)
-#			for cell in FOV.cast_cone_at(Player.game_position, tilepos, deg2rad(45), 10, GameWorld.fov_block_map):
-#				DBG.highlight_cell(cell)
-			
-#			var oct = FOV.get_octant(Player.game_position, tilepos)
-#			for cell in FOV.cast_lerp_line(Player.game_position, tilepos, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
-#				DBG.highlight_cell(cell)
-#			for cell in FOV.calc_visible_cells_from(tilepos.x, tilepos.y, WRLD.SIGHT_RANGE, GameWorld.fov_block_map):
-#				DBG.highlight_cell(cell)
-#			for pos in TIL.interpolated_line(Player.game_position, tilepos):
-#				var new_tile = BlueHighlight.duplicate()
-#				new_tile.rect_position = pos * 16
-#				LineHighlight.add_child(new_tile)
-#				highlight_lines.append(new_tile)
-			
 
 func _on_world_ready():
 	MSG.MessageBox = $CanvasLayer/VBoxContainer/MessageBox
@@ -124,6 +93,8 @@ func _on_action_complete(action):
 		yield(EVNT, "all_effects_done")
 		GameWorld.step_end()
 	EVNT.emit_signal("turn_over")
+
+func _on_turn_over():
 	var current_i = current_actor.get_index()
 	print($GameWorld/LevelActors.get_child_count())
 	print(current_i)
@@ -132,7 +103,7 @@ func _on_action_complete(action):
 	else:
 		current_actor = $GameWorld/LevelActors.get_child(current_i+1)
 	print("Next actor: "+current_actor.display_name)
-	current_actor.activate()
+	current_actor.call_deferred("activate")
 
 
 func _on_action_failed(action):

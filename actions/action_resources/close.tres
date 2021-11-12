@@ -1,30 +1,29 @@
 [gd_resource type="Resource" load_steps=3 format=2]
 
-[ext_resource path="res://effects/Push.gd" type="Script" id=1]
-[ext_resource path="res://actions/action_scripts/Push.gd" type="Script" id=2]
+[ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=1]
+[ext_resource path="res://effects/Close.gd" type="Script" id=2]
 
 [resource]
 resource_local_to_scene = true
-script = ExtResource( 2 )
-action_name = ""
+script = ExtResource( 1 )
+action_name = "close"
 action_type = 0
 target_hints = 0
 action_range = 1.5
 action_area = 0.0
-target_type = 0
+target_type = 10
 target_area = 1
 target_priority = [ 1, 2, 8, 4 ]
 target_cim = 16
 x_cim = 16
-c_cim = 1
+c_cim = 0
 action_radius = 0.0
-pending_message = ""
-impossible_message = ""
+pending_message = "Close what?"
+impossible_message = "You can't close that."
 failed_message = ""
 success_message = ""
 impossible_log = ""
 failed_log = ""
 success_log = ""
 pertarget_log = ""
-push_effect = ExtResource( 1 )
-push_effect_magnitude = 1
+use_effect = ExtResource( 2 )

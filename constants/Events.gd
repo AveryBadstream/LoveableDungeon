@@ -24,7 +24,7 @@ signal end_ghost(ghost)
 
 #Round and turn information
 signal round_over()
-signal turn_over(actor)
+signal turn_over()
 
 #Action signals
 signal try_action_at(action_type, actor, position)

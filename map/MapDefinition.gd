@@ -1,14 +1,11 @@
-[gd_scene load_steps=2 format=2]
-
-[sub_resource type="GDScript" id=1]
-script/source = "extends GameActor
-
+extends Resource
+class_name MapDefinition
 
 # Declare member variables here. Examples:
 # var a = 2
-# var b = \"text\"
+# var b = "text"
 
-
+export(int, FLAGS, ACT.TYPE_FLAGS) var test
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -17,7 +14,3 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-"
-
-[node name="Kestrel" type="Sprite"]
-script = SubResource( 1 )

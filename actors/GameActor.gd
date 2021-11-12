@@ -29,9 +29,9 @@ func _ready():
 
 func own_fucking_actions(): #fuck this dogshit inconsistent game engine to hell
 	for key in default_actions.keys():
-		default_actions[key].set_owned_by(self)
+		self.default_actions[key].set_owned_by(self)
 	for action in actions:
-		action.set_owned_by(self)
+		self.action.set_owned_by(self)
 	 # Replace with function body.
 	
 func activate():
@@ -39,6 +39,7 @@ func activate():
 	if is_player:
 		return
 	var chosen_ai_script = null
+	own_fucking_actions()
 	if local_ai.size() > 0:
 		for ai_script in local_ai:
 			if ai_script.should_choose():
@@ -47,7 +48,7 @@ func activate():
 		chosen_ai_script.run_ai()
 	else:
 		self.acting_state = ACT.ActingState.Wait
-		EVNT.emit_signal("turn_over", self)
+		EVNT.emit_signal("turn_over")
 
 func action_impossible(action):
 	fail_count += 1
