@@ -15,6 +15,10 @@ var Player
 onready var FogOfWar = $FogOfWar
 onready var Unexplored = $Unexplored
 onready var FOWGhosts = $FOWGhosts
+
+onready var WorldTiles = $WorldView/WorldTiles
+onready var ShadowWorldTiles = $ShadowWorldView/ShadowWorldTiles
+
 var LevelGenerator = load("res://map/Generators/basic_levelgen.tres")
 
 var last_visiblilty_rect = Rect2(0,0,0,0)
@@ -57,6 +61,7 @@ func _ready():
 	EVNT.subscribe("remove_thing", self, "_on_remove_thing")
 	EVNT.subscribe("connect_things", self, "_on_connect_things")
 	LevelGenerator.connect("build_finished", TMap, "_on_build_finished")
+	LevelGenerator.connect("build_finished", self, "_on_build_finished")
 	LevelGenerator.connect("place_door", self, "_on_place_door")
 	LevelGenerator.connect("player_start_position", self, "_on_player_start_position")
 	LevelGenerator.connect("export_generator_config", WRLD, "_on_export_generator_config")
@@ -69,7 +74,16 @@ func _ready():
 	EVNT.subscribe("update_cimmap", self, "_on_update_cimmap")
 	EVNT.subscribe("slammed", self, "_on_slammed")
 	EVNT.subscribe("died", self, "_on_died")
-	
+
+func _on_build_finished(tiles):
+	var fov_block_tiles = []
+	for x in range(tiles.size()):
+		fov_block_tiles.append([])
+		for y in range(tiles[x].size()):
+			var tile_type = tiles[x][y]
+			set_tile(x, y, tile_type)
+	update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
+
 func _on_died(thing):
 	MSG.game_log(thing.display_name + " died!")
 	remove_from_maps(thing)
