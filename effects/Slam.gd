@@ -24,8 +24,8 @@ func prep():
 
 func run():
 	if (WRLD.cell_is_visible(effect_actor.game_position) or WRLD.cell_is_visible(effect_target.game_position)):
-		var tween:Tween = WRLD.get_free_tween()
-		var slam_point = ((towards * 1/8)+from) * 16 
+		var tween:Tween = FX.get_free_tween()
+		var slam_point = ((towards * 1/3)+from) * 16 
 		tween.interpolate_property(effect_target, "position", from * 16, slam_point, 0.03, Tween.TRANS_QUAD, Tween.EASE_OUT)
 		tween.interpolate_property(effect_target, "position", slam_point, from * 16, 0.03, Tween.TRANS_QUAD, Tween.EASE_IN, 0.03)
 		tween.start()

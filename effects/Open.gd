@@ -4,6 +4,8 @@ extends GameEffect
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
+var from
+var to
 
 func _init(actor, target).(actor, target):
 	pass

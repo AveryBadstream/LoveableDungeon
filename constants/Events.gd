@@ -58,7 +58,7 @@ signal ai_request_info(actor, ai_info_type, extra_info)
 
 #FX Signals
 signal FX_done(FX)
-
+signal FX_complete()
 #UI Targetting Hint Signals
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()

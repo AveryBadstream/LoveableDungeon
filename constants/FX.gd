@@ -8,21 +8,73 @@ var puff = preload("res://fx/Puff.tscn")
 
 var in_priority = false
 
+var free_tweens = []
+var tweens = []
+
+var managed_tweens = []
+
+var fx_count = 0
+
+var running_count = 0
+
 var FXManager
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	EVNT.subscribe("queue_complete", self, "_on_queue_complete") # Replace with function body.
+
+func _on_queue_complete():
+	free_tweens = tweens.duplicate()
 
 func spawn_puff(game_position):
 	var new_puff = puff.instance()
 	new_puff.position = game_position * 16
 	FXManager.add_child(new_puff)
 
+func bump_into(bumper, bumpee):
+	var tween:Tween = get_free_tween()
+	managed_tweens.append(tween)
+	tween.connect("tween_all_completed", self, "_on_tween_all_completed")
+	fx_count += 1
+	var from = bumper.position
+	var to = from + ((bumpee.position - from) * 1/2)
+	tween.interpolate_property(bumper, "position", from, to, 0.025,Tween.TRANS_CUBIC, Tween.EASE_IN)
+	tween.interpolate_property(bumper, "position", to, from, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, 0.25)
+
+func ready(count):
+	fx_count -= count
+	if fx_count <= 0:
+		start_fx()
+
+func start_fx():
+	for tween in managed_tweens:
+		running_count += 1
+		tween.call_deferred("start")
+
+func _on_tween_all_completed():
+	running_count -= 1
+	if running_count <= 0:
+		for tween in managed_tweens:
+			tween.disconnect("tween_all_completed", self, "_on_tween_all_complete")
+		managed_tweens = []
+		EVNT.emit_signal("FX_complete")
+
 func start_priority_animation(anim):
 	in_priority = true
 	yield(anim, "animation_finished")
 	in_priority = false
 	emit_signal("priority_over")
+
+func get_free_tween():
+	var next_tween = null
+	if free_tweens.size() == 0:
+		next_tween = Tween.new()
+		tweens.append(next_tween)
+		FXManager.add_child(next_tween)
+	else:
+		next_tween = free_tweens.pop_back()
+	return next_tween
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

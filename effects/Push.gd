@@ -37,7 +37,7 @@ func prep():
 func run():
 	if WRLD.cell_is_visible(from) or WRLD.cell_is_visible(to):
 		effect_target.set_game_position(to, false)
-		var tween:Tween = WRLD.get_free_tween()
+		var tween:Tween = FX.get_free_tween()
 		tween.interpolate_property(effect_target, "position", from * 16, to * 16, .1, Tween.TRANS_CUBIC, Tween.EASE_IN)
 		FX.spawn_puff(from)
 		AUD.play_sound(AUD.SFX.JailBars)

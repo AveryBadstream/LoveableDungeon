@@ -5,11 +5,15 @@ var TMap = null
 var world_dimensions = Vector2(0,0)
 var is_ready = false
 var tween
+var tween_stash
 var rng
 var path_map: AStar2D
 
 var cell_interaction_mask_map = []
 var cell_occupancy_map = []
+
+var tweens = []
+var free_tweens = []
 
 var object_types
 var actor_types
@@ -30,7 +34,20 @@ func set_game_world(new_game_world):
 	cell_occupancy_map = GameWorld.cell_occupancy_map
 
 func get_free_tween():
-	return tween
+	return Tween.new()
+	var next_tween = null
+	if len(free_tweens) == 0:
+		next_tween = Tween.new()
+		tweens.append(next_tween)
+		tween_stash.add_child(next_tween)
+	else:
+		next_tween = free_tweens.pop_back()
+	return next_tween
+
+func set_tween_stash(stash):
+	tween_stash = stash
+	tweens = tween_stash.get_children()
+	free_tweens = tweens.duplicate()
 
 func is_tile_walkable(at_cell):
 	for thing in GameWorld.everything_at_cell(at_cell):

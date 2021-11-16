@@ -19,7 +19,6 @@ func _input(event):
 	elif event.is_action("move_right"):
 		act_in_direction(Vector2.RIGHT)
 	elif event.is_action("move_up"):
-		print("dafuq?")
 		act_in_direction(Vector2.UP)
 	elif event.is_action("move_down"):
 		act_in_direction(Vector2.DOWN)
@@ -63,7 +62,6 @@ func act_at_location(at_cell: Vector2):
 	return false
 	
 func act_in_direction(dir: Vector2):
-	print(str(local_default_actions))
 	if self.acting_state != ACT.ActingState.Act:
 		return
 	if not pending_action:
