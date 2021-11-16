@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://art/black_tile.tres" type="TileSet" id=2]
 [ext_resource path="res://Game.gd" type="Script" id=3]
@@ -150,6 +150,17 @@ script/source = "
 script = SubResource( 1 )
 
 [sub_resource type="Theme" id=3]
+
+[sub_resource type="Shader" id=4]
+code = "shader_type canvas_item;
+uniform sampler2D viewport1;
+
+void fragment() {
+    COLOR = vec4(UV.x, UV.y, 0.5, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = SubResource( 4 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
@@ -332,9 +343,17 @@ __meta__ = {
 [node name="FXManager" type="Node2D" parent="."]
 script = ExtResource( 19 )
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="GameUI" type="Node2D" parent="."]
+script = ExtResource( 20 )
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+[node name="Line2D" type="Line2D" parent="GameUI"]
+width = 4.0
+
+[node name="AreaHighlight" type="Node2D" parent="GameUI"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="GameUI"]
+
+[node name="ColorRect" type="ColorRect" parent="GameUI/CanvasLayer"]
 visible = false
 margin_right = 256.0
 margin_bottom = 512.0
@@ -343,7 +362,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect2" type="ColorRect" parent="CanvasLayer"]
+[node name="ColorRect2" type="ColorRect" parent="GameUI/CanvasLayer"]
 margin_left = 528.0
 margin_top = 512.0
 margin_right = 1280.0
@@ -353,7 +372,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer"]
 margin_left = 544.0
 margin_top = 528.0
 margin_right = 1280.0
@@ -363,7 +382,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="GameUI/CanvasLayer/VBoxContainer"]
 margin_right = 736.0
 margin_bottom = 158.0
 grow_horizontal = 0
@@ -375,7 +394,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LogBox" type="RichTextLabel" parent="CanvasLayer/VBoxContainer/ScrollContainer"]
+[node name="LogBox" type="RichTextLabel" parent="GameUI/CanvasLayer/VBoxContainer/ScrollContainer"]
 margin_right = 736.0
 margin_bottom = 158.0
 grow_vertical = 0
@@ -385,18 +404,20 @@ custom_colors/default_color = Color( 1, 1, 1, 1 )
 bbcode_enabled = true
 scroll_following = true
 
-[node name="MessageBox" type="Label" parent="CanvasLayer/VBoxContainer"]
+[node name="MessageBox" type="Label" parent="GameUI/CanvasLayer/VBoxContainer"]
 margin_top = 162.0
 margin_right = 736.0
 margin_bottom = 176.0
 
-[node name="GameUI" type="Node2D" parent="."]
-script = ExtResource( 20 )
-
-[node name="Line2D" type="Line2D" parent="GameUI"]
-width = 4.0
-
-[node name="AreaHighlight" type="Node2D" parent="GameUI"]
+[node name="ColorRect3" type="ColorRect" parent="GameUI/CanvasLayer"]
+material = SubResource( 5 )
+margin_top = 512.0
+margin_right = 208.0
+margin_bottom = 720.0
+color = Color( 0.121569, 0.121569, 0.121569, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Tweens" type="Node" parent="."]
 

@@ -8,12 +8,11 @@ export(Dictionary) var default_actions
 
 
 var local_ai = []
-var local_actions = {}
+var local_actions = []
 var local_default_actions = {}
 var active = false
 var acting_state = ACT.ActingState.Wait
 var fail_count = 0
-var inventory = []
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -35,7 +34,9 @@ func own_fucking_actions(): #fuck this dogshit inconsistent game engine to hell
 		self.local_default_actions[key] = self.default_actions[key].duplicate(true)
 		self.local_default_actions[key].set_owned_by(self)
 	for action in actions:
-		self.action.set_owned_by(self)
+		var new_local = action.duplicate(true)
+		self.local_actions.append(new_local)
+		new_local.set_owned_by(self)
 	 # Replace with function body.
 	
 func activate():

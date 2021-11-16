@@ -50,8 +50,8 @@ func _ready():
 	EVNT.subscribe("died", self, "_on_died")
 
 func _on_world_ready():
-	MSG.MessageBox = $CanvasLayer/VBoxContainer/MessageBox
-	MSG.LogBox = $CanvasLayer/VBoxContainer/ScrollContainer/LogBox
+	MSG.MessageBox = $GameUI/CanvasLayer/VBoxContainer/MessageBox
+	MSG.LogBox = $GameUI/CanvasLayer/VBoxContainer/ScrollContainer/LogBox
 	WRLD.set_game_world($GameWorld)
 	WRLD.GameWorld = $GameWorld
 	WRLD.TMap = $GameWorld/LoveableBasic

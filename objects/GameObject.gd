@@ -28,6 +28,7 @@ var cell_interaction_mask setget ,get_cim
 var my_ghost
 var triggers = []
 var thing_type = ACT.TargetType.TargetObject
+var inventory = []
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
