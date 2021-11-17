@@ -9,20 +9,27 @@ signal log_2(msg, subject, object)
 
 
 onready var TMap = $LoveableBasic
-onready var LevelObjects = $LevelObjects
-onready var LevelActors = $LevelActors
-var Player
+#onready var LevelObjects = $LevelObjects
+onready var LevelObjects = $WorldView/LevelObjects
+#onready var LevelActors = $LevelActors
+onready var LevelActors = $WorldView/LevelActors
+var Player: Sprite
 onready var FogOfWar = $FogOfWar
 onready var Unexplored = $Unexplored
-onready var FOWGhosts = $FOWGhosts
+#onready var FOWGhosts = $FOWGhosts
+onready var FOWGhosts = $ShadowWorldView/FOWGhosts
+onready var WorldView = $WorldView
 
 onready var WorldTiles = $WorldView/WorldTiles
 onready var ShadowWorldTiles = $ShadowWorldView/ShadowWorldTiles
+onready var MaskTiles = $MaskWorld/MaskTiles
 
 var LevelGenerator = load("res://map/Generators/basic_levelgen.tres")
 
 var last_visiblilty_rect = Rect2(0,0,0,0)
 var last_visible_set = []
+
+var tile_type_map = [TIL.Type.Wall, TIL.Type.Floor,TIL.Type.Ground, TIL.Type.None, TIL.Type.Rock, TIL.Type.None, TIL.Type.Ice]
 
 var walk_pathf = AStar2D.new()
 var fly_pathf = AStar2D.new()
@@ -81,8 +88,11 @@ func _on_build_finished(tiles):
 		fov_block_tiles.append([])
 		for y in range(tiles[x].size()):
 			var tile_type = tiles[x][y]
-			set_tile(x, y, tile_type)
-	update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
+			var til_i = tile_type_map.find(tile_type)
+			WorldTiles.set_cell(x,y,til_i)
+			ShadowWorldTiles.set_cell(x,y,til_i)
+	WorldTiles.update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
+	ShadowWorldTiles.update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
 
 func _on_died(thing):
 	MSG.game_log(thing.display_name + " died!")
@@ -99,6 +109,7 @@ func _on_object_moved(thing, from_cell, to_cell):
 	recently_moved[thing.name].append([thing, from_cell, to_cell])
 	if thing.is_player:
 		EVNT.emit_signal("update_fov")
+		EVNT.emit_signal("player_position", Player.global_position)
 
 func _on_slammed(thing, into, from, to):
 	EVNT.trigger_SlammedInto(into, thing, from, to)
@@ -329,7 +340,8 @@ func thing_at_position(position, prefer_actor=true):
 	
 func _on_player_start_position(start_pos):
 	LevelActors.add_child(Player)
-	Player.set_initial_game_position(start_pos) # Replace with function body.
+	Player.set_initial_game_position(start_pos)
+	EVNT.emit_signal("player_position", Player.global_position)
 	
 func _on_tiles_ready():
 	for x in range(WRLD.world_dimensions.x):
@@ -455,10 +467,12 @@ func update_fov_by_location(from_cell, hide_old_fov = true):
 func hide_cell(at_cell):
 	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:
 		occupant.hide()
+	MaskTiles.set_cellv(at_cell, 0)
 	FogOfWar.set_cellv(at_cell, 0)
 
 func show_cell(at_cell):
 	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:
 		occupant.show()
+	MaskTiles.set_cellv(at_cell, 1)
 	FogOfWar.set_cellv(at_cell, -1)
 	Unexplored.set_cellv(at_cell, -1)

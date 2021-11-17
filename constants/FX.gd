@@ -31,14 +31,15 @@ func spawn_puff(game_position):
 	FXManager.add_child(new_puff)
 
 func bump_into(bumper, bumpee):
-	var tween:Tween = get_free_tween()
-	managed_tweens.append(tween)
-	tween.connect("tween_all_completed", self, "_on_tween_all_completed")
+	if WRLD.cell_is_visible(bumper.game_position) or WRLD.cell_is_visible(bumpee.game_position):
+		var tween:Tween = get_free_tween()
+		managed_tweens.append(tween)
+		tween.connect("tween_all_completed", self, "_on_tween_all_completed")
+		var from = bumper.position
+		var to = from + ((bumpee.position - from) * 1/2)
+		tween.interpolate_property(bumper, "position", from, to, 0.025,Tween.TRANS_CUBIC, Tween.EASE_IN)
+		tween.interpolate_property(bumper, "position", to, from, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, 0.025)
 	fx_count += 1
-	var from = bumper.position
-	var to = from + ((bumpee.position - from) * 1/2)
-	tween.interpolate_property(bumper, "position", from, to, 0.025,Tween.TRANS_CUBIC, Tween.EASE_IN)
-	tween.interpolate_property(bumper, "position", to, from, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, 0.25)
 
 func ready(count):
 	fx_count -= count
@@ -54,7 +55,7 @@ func _on_tween_all_completed():
 	running_count -= 1
 	if running_count <= 0:
 		for tween in managed_tweens:
-			tween.disconnect("tween_all_completed", self, "_on_tween_all_complete")
+			tween.disconnect("tween_all_completed", self, "_on_tween_all_completed")
 		managed_tweens = []
 		EVNT.emit_signal("FX_complete")
 

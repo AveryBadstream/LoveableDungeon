@@ -56,7 +56,9 @@ func is_tile_walkable(at_cell):
 	return true
 
 func can_see_player(actor):
-	return FOV.can_see_point(actor.game_position, GameWorld.Player.game_position, SIGHT_RANGE)
+	if GameWorld.last_visiblilty_rect.has_point(actor.game_position):
+		return FOV.can_see_point(actor.game_position, GameWorld.Player.game_position, SIGHT_RANGE)
+	return false
 
 func path_to_player(actor):
 	return path_to_point(actor, GameWorld.Player.game_position)
@@ -135,7 +137,14 @@ func get_action_hints(at_cell):
 	return all_hints
 	
 func get_mouse_game_position():
-	return GameWorld.TMap.world_to_map(GameWorld.get_global_mouse_position())
+	if not is_ready:
+		return false
+	var pgp = GameWorld.Player.game_position
+	var mgp = GameWorld.get_global_mouse_position()
+	var ofs = mgp + pgp
+	var pos = ofs/16
+	var tiles:TileMap = TMap
+	return tiles.world_to_map(GameWorld.get_global_mouse_position()) + GameWorld.Player.game_position
 
 func cell_is_visible(at_cell):
 	if is_ready:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://Player.gd" type="Script" id=1]
 [ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://actors/GameStats.gd" type="Script" id=10]
 [ext_resource path="res://effects/MeleeAttack.gd" type="Script" id=11]
 [ext_resource path="res://actions/action_resources/forcewave.tres" type="Resource" id=12]
+[ext_resource path="res://actors/AI/player_chaser.tres" type="Resource" id=13]
 
 [sub_resource type="StreamTexture" id=3]
 load_path = "res://.import/loveable_rogue.png-a26341772e79e32042028726586e34e4.stex"
@@ -191,6 +192,7 @@ is_player = true
 cim = 48
 sam = 352
 game_stats = SubResource( 14 )
+mob_ai = [ ExtResource( 13 ) ]
 actions = [ ExtResource( 12 ) ]
 default_actions = {
 1: SubResource( 4 ),

@@ -28,7 +28,7 @@ func should_choose():
 func choose_action():
 	if attached_actor.local_default_actions.has(ACT.Type.Attack):
 		var attack:GameAction = attached_actor.local_default_actions[ACT.Type.Attack]
-		if attack.test_action_at(to_player_path[current_path_i+1]) and WRLD.get_player_position() == to_player_path[current_path_i+1]:
+		if WRLD.get_player_position() == to_player_path[current_path_i+1] and attack.test_action_at(to_player_path[current_path_i+1]):
 			next_action = attack
 			return
 	if attached_actor.local_default_actions.has(ACT.Type.Move):

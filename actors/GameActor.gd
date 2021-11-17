@@ -41,8 +41,6 @@ func own_fucking_actions(): #fuck this dogshit inconsistent game engine to hell
 	
 func activate():
 	acting_state = ACT.ActingState.Act
-	if is_player:
-		return
 	var chosen_ai_script = null
 	if local_ai.size() > 0:
 		for ai_script in local_ai:
@@ -76,7 +74,7 @@ func attack_roll(target):
 
 func take_damage(damage):
 	self.game_stats.hp -= damage
-	if self.game_stats.hp < 0:
+	if self.game_stats.hp < 0 and not is_player:
 		EVNT.emit_signal("died", self)
 
 func get_damage_dealt(_target):

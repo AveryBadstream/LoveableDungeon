@@ -10,8 +10,9 @@ onready var GameWorld = $GameWorld
 onready var TileHighlight = $GameWorld/TileHighlight
 onready var LineHighlight = $GameUI/LineHighlight
 onready var BlueHighlight = $GameWorld/TileHighlight2
+onready var LevelActors = $GameWorld/WorldView/LevelActors
 onready var OnlyTween = $Tweens/Tween
-onready var Camerah = $Camera2D
+onready var Camerah = $PlayerCamera
 export var random_seed: int
 export var use_seed: bool = false
 
@@ -47,7 +48,7 @@ func _ready():
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
 	EVNT.subscribe("turn_over", self, "_on_turn_over")
-	EVNT.subscribe("died", self, "_on_died")
+	#EVNT.subscribe("died", self, "_on_died")
 
 func _on_world_ready():
 	MSG.MessageBox = $GameUI/CanvasLayer/VBoxContainer/MessageBox
@@ -59,9 +60,9 @@ func _on_world_ready():
 	EVNT.emit_signal("update_fov")
 	turn_order = $GameWorld/LevelActors.get_children()
 	current_actor = Player
-	remove_child(Camerah)
-	Player.add_child(Camerah)
-	Camerah.global_position = Player.global_position
+	#remove_child(Camerah)
+	#Player.add_child(Camerah)
+	#Camerah.global_position = Player.global_position
 	Player.activate()
 
 func _on_do_action(action):
@@ -90,21 +91,15 @@ func _on_action_complete(action):
 
 func _on_turn_over():
 	var current_i = current_actor.get_index()
-	if current_i + 1 >= $GameWorld/LevelActors.get_child_count():
-		current_actor = $GameWorld/LevelActors.get_child(0)
+	if current_i + 1 >= LevelActors.get_child_count():
+		current_actor = LevelActors.get_child(0)
 	else:
-		current_actor = $GameWorld/LevelActors.get_child(current_i+1)
+		current_actor = LevelActors.get_child(current_i+1)
 	current_actor.call_deferred("activate")
 
 
 func _on_action_failed(action):
-	var current_i = turn_order.find(action.action_actor)
-	if current_i >= turn_order.size():
-		current_actor = turn_order[0]
-	else:
-		current_actor = turn_order[current_i+1]
-	current_actor.activate()
-
+	_on_turn_over()
 
 func _on_action_impossible(action):
-	current_actor.activate() # Replace with function body.
+	_on_turn_over() # Replace with function body.

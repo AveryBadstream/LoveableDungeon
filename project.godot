@@ -84,6 +84,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://actors/AI/PlayerChaser.gd"
 }, {
+"base": "GameAI",
+"class": "PlayerControlled",
+"language": "GDScript",
+"path": "res://actors/AI/PlayerControlled.gd"
+}, {
 "base": "GameItem",
 "class": "Potion",
 "language": "GDScript",
@@ -110,6 +115,7 @@ _global_script_class_icons={
 "ITile": "",
 "MapDefinition": "",
 "PlayerChaser": "",
+"PlayerControlled": "",
 "Potion": "",
 "UTile": ""
 }
@@ -218,4 +224,5 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"

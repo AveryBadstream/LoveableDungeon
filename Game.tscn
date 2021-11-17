@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://map/TileSets/Loveable.tres" type="TileSet" id=1]
 [ext_resource path="res://art/black_tile.tres" type="TileSet" id=2]
@@ -10,6 +10,8 @@
 [ext_resource path="res://RectrRoomHighlighter.gd" type="Script" id=8]
 [ext_resource path="res://Hider.gd" type="Script" id=9]
 [ext_resource path="res://GameWorld.gd" type="Script" id=10]
+[ext_resource path="res://art/mask_tiles.png" type="Texture" id=11]
+[ext_resource path="res://PlayerFollowCamera.gd" type="Script" id=12]
 [ext_resource path="res://map/LoveableBasic.gd" type="Script" id=13]
 [ext_resource path="res://art/slap.wav" type="AudioStream" id=15]
 [ext_resource path="res://art/FF_punch.wav" type="AudioStream" id=16]
@@ -17,6 +19,80 @@
 [ext_resource path="res://art/hit2.wav" type="AudioStream" id=18]
 [ext_resource path="res://FXManager.gd" type="Script" id=19]
 [ext_resource path="res://GameUI.gd" type="Script" id=20]
+
+[sub_resource type="TileSet" id=8]
+0/name = "Red"
+0/texture = ExtResource( 11 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 16, 16 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shape_offset = Vector2( 0, 0 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/shape_one_way = false
+0/shape_one_way_margin = 0.0
+0/shapes = [  ]
+0/z_index = 0
+1/name = "Green"
+1/texture = ExtResource( 11 )
+1/tex_offset = Vector2( 0, 0 )
+1/modulate = Color( 1, 1, 1, 1 )
+1/region = Rect2( 16, 0, 16, 16 )
+1/tile_mode = 0
+1/occluder_offset = Vector2( 0, 0 )
+1/navigation_offset = Vector2( 0, 0 )
+1/shape_offset = Vector2( 0, 0 )
+1/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+1/shape_one_way = false
+1/shape_one_way_margin = 0.0
+1/shapes = [  ]
+1/z_index = 0
+2/name = "Blue"
+2/texture = ExtResource( 11 )
+2/tex_offset = Vector2( 0, 0 )
+2/modulate = Color( 1, 1, 1, 1 )
+2/region = Rect2( 0, 16, 16, 16 )
+2/tile_mode = 0
+2/occluder_offset = Vector2( 0, 0 )
+2/navigation_offset = Vector2( 0, 0 )
+2/shape_offset = Vector2( 0, 0 )
+2/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+2/shape_one_way = false
+2/shape_one_way_margin = 0.0
+2/shapes = [  ]
+2/z_index = 0
+
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+
+uniform sampler2D WorldView;
+uniform sampler2D ShadowView;
+
+void fragment() {
+	vec4 mask_c = texture(TEXTURE, UV);
+	vec4 wv_c = texture(WorldView, UV);
+	vec4 sv_c = texture(ShadowView, UV);
+	COLOR = wv_c*mask_c.g + sv_c*mask_c.r;
+	//COLOR = wv_c*mask_c.g;
+	//COLOR = sv_c;
+}"
+
+[sub_resource type="ViewportTexture" id=9]
+viewport_path = NodePath("GameWorld/ShadowWorldView")
+
+[sub_resource type="ViewportTexture" id=10]
+viewport_path = NodePath("GameWorld/WorldView")
+
+[sub_resource type="ShaderMaterial" id=7]
+resource_local_to_scene = true
+shader = SubResource( 6 )
+shader_param/WorldView = SubResource( 10 )
+shader_param/ShadowView = SubResource( 9 )
+
+[sub_resource type="ViewportTexture" id=11]
+viewport_path = NodePath("GameWorld/MaskWorld")
 
 [sub_resource type="Theme" id=3]
 
@@ -35,16 +111,6 @@ shader = SubResource( 4 )
 script = ExtResource( 3 )
 random_seed = -4554876820186044928
 use_seed = true
-
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 1152, 608 )
-current = true
-limit_left = 0
-limit_top = 0
-limit_right = 1280
-limit_bottom = 928
-drag_margin_h_enabled = true
-drag_margin_v_enabled = true
 
 [node name="DebugGui" type="CanvasLayer" parent="."]
 script = ExtResource( 6 )
@@ -151,22 +217,62 @@ __meta__ = {
 script = ExtResource( 10 )
 
 [node name="WorldView" type="Viewport" parent="GameWorld"]
+size = Vector2( 1280, 720 )
+hdr = false
+usage = 0
+render_target_v_flip = true
+render_target_update_mode = 3
+gui_disable_input = true
 
 [node name="WorldTiles" type="TileMap" parent="GameWorld/WorldView"]
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="LevelObjects" type="Node2D" parent="GameWorld/WorldView"]
 
 [node name="LevelActors" type="Node2D" parent="GameWorld/WorldView"]
 
+[node name="WorldCamera" type="Camera2D" parent="GameWorld/WorldView"]
+current = true
+script = ExtResource( 12 )
+
 [node name="ShadowWorldView" type="Viewport" parent="GameWorld"]
+size = Vector2( 1280, 720 )
+usage = 0
+render_target_v_flip = true
+render_target_update_mode = 3
 
 [node name="ShadowWorldTiles" type="TileMap" parent="GameWorld/ShadowWorldView"]
+modulate = Color( 0.192157, 0.184314, 0.184314, 1 )
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="FOWGhosts" type="Node2D" parent="GameWorld/ShadowWorldView"]
+modulate = Color( 0.192157, 0.184314, 0.184314, 1 )
+
+[node name="ShadowCamera" type="Camera2D" parent="GameWorld/ShadowWorldView"]
+current = true
+script = ExtResource( 12 )
+
+[node name="MaskWorld" type="Viewport" parent="GameWorld"]
+size = Vector2( 1280, 720 )
+usage = 0
+render_target_v_flip = true
+render_target_update_mode = 3
+
+[node name="MaskTiles" type="TileMap" parent="GameWorld/MaskWorld"]
+tile_set = SubResource( 8 )
+cell_size = Vector2( 16, 16 )
+format = 1
+
+[node name="MaskCamera" type="Camera2D" parent="GameWorld/MaskWorld"]
+current = true
+script = ExtResource( 12 )
 
 [node name="LoveableBasic" type="TileMap" parent="GameWorld"]
+visible = false
 tile_set = ExtResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
@@ -174,38 +280,26 @@ script = ExtResource( 13 )
 tile_type_map = [ 1, 0, 2, 4, 3, 4, 5 ]
 
 [node name="LevelObjects" type="Node2D" parent="GameWorld"]
+visible = false
 
 [node name="LevelActors" type="Node2D" parent="GameWorld"]
+visible = false
 
 [node name="FOWGhosts" type="Node2D" parent="GameWorld"]
+visible = false
 
 [node name="FogOfWar" type="TileMap" parent="GameWorld"]
+visible = false
 modulate = Color( 1, 1, 1, 0.678431 )
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="Unexplored" type="TileMap" parent="GameWorld"]
+visible = false
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 16, 16 )
 format = 1
-
-[node name="ColorRect" type="ColorRect" parent="GameWorld"]
-margin_left = -1120.0
-margin_top = -544.0
-margin_right = 1312.0
-color = Color( 0, 0, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ColorRect2" type="ColorRect" parent="GameWorld"]
-margin_left = -864.0
-margin_bottom = 720.0
-color = Color( 0, 0, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="TileHighlight" type="ColorRect" parent="GameWorld"]
 margin_left = -32.0
@@ -225,9 +319,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FXManager" type="Node2D" parent="."]
-script = ExtResource( 19 )
-
 [node name="GameUI" type="Node2D" parent="."]
 script = ExtResource( 20 )
 
@@ -237,6 +328,15 @@ width = 4.0
 [node name="AreaHighlight" type="Node2D" parent="GameUI"]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="GameUI"]
+
+[node name="GameView" type="TextureRect" parent="GameUI/CanvasLayer"]
+material = SubResource( 7 )
+margin_right = 1280.0
+margin_bottom = 720.0
+texture = SubResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ColorRect" type="ColorRect" parent="GameUI/CanvasLayer"]
 visible = false
@@ -296,13 +396,17 @@ margin_bottom = 176.0
 
 [node name="ColorRect3" type="ColorRect" parent="GameUI/CanvasLayer"]
 material = SubResource( 5 )
-margin_top = 512.0
-margin_right = 208.0
-margin_bottom = 720.0
+margin_left = -62.0
+margin_top = 854.0
+margin_right = 1218.0
+margin_bottom = 1568.0
 color = Color( 0.121569, 0.121569, 0.121569, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="FXManager" type="Node2D" parent="."]
+script = ExtResource( 19 )
 
 [node name="Tweens" type="Node" parent="."]
 
@@ -323,5 +427,9 @@ stream = ExtResource( 16 )
 
 [node name="Door" type="AudioStreamPlayer" parent="SFX"]
 stream = ExtResource( 18 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true
 
 [connection signal="world_ready" from="GameWorld" to="." method="_on_world_ready"]

@@ -57,9 +57,11 @@ signal end_fov()
 signal ai_request_info(actor, ai_info_type, extra_info)
 
 #FX Signals
-signal FX_done(FX)
+signal FX_done(FXObj)
 signal FX_complete()
-#UI Targetting Hint Signals
+#UI/Display Signals
+signal player_position(global_position)
+signal player_active(player)
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()
 signal hint_action(action)
