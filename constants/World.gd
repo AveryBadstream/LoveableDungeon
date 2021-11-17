@@ -33,27 +33,8 @@ func set_game_world(new_game_world):
 	cell_interaction_mask_map = GameWorld.cell_interaction_mask_map
 	cell_occupancy_map = GameWorld.cell_occupancy_map
 
-func get_free_tween():
-	return Tween.new()
-	var next_tween = null
-	if len(free_tweens) == 0:
-		next_tween = Tween.new()
-		tweens.append(next_tween)
-		tween_stash.add_child(next_tween)
-	else:
-		next_tween = free_tweens.pop_back()
-	return next_tween
-
-func set_tween_stash(stash):
-	tween_stash = stash
-	tweens = tween_stash.get_children()
-	free_tweens = tweens.duplicate()
-
 func is_tile_walkable(at_cell):
-	for thing in GameWorld.everything_at_cell(at_cell):
-		if !thing.supports_action(ACT.DummyMove):
-			return false
-	return true
+	return ~(cell_occupancy_map[at_cell.x][at_cell.y] & TIL.CellInteractions.BlocksWalk)
 
 func can_see_player(actor):
 	if GameWorld.last_visiblilty_rect.has_point(actor.game_position):
@@ -105,7 +86,6 @@ func get_action_targets_area(action, at_cell:Vector2, area_radius:float=1) -> Ar
 	var targets = []
 	for x in range(origin_cell.x - area_radius_int, origin_cell.x + area_radius_int + 1):
 		for y in range(origin_cell.y - area_radius_int, origin_cell.y + area_radius_int + 1):
-			var distance = Vector2(x, y).distance_to(action.get_origin_cell())
 			if Vector2(x, y).distance_to(action.get_origin_cell()) <= area_radius:
 				targets.append_array(get_action_targets_cell(action, Vector2(x,y)))
 	return targets
@@ -121,14 +101,16 @@ func get_action_targets_cone(action, at_cell:Vector2) -> Array:
 
 func get_action_hint(at_cell):
 	var highest_action_hint = 0
-	for thing in GameWorld.everything_at_cell(at_cell):
+	for thing in cell_occupancy_map[at_cell.x][at_cell.y]:
 		if thing.default_action > highest_action_hint:
 			highest_action_hint = thing.default_action
 	return highest_action_hint
 
 func get_action_hints(at_cell):
 	var all_hints = []
-	for thing in GameWorld.everything_at_cell(at_cell):
+	if at_cell.x < 0 or at_cell.y < 0 or at_cell.x >= world_dimensions.x or at_cell.y >= world_dimensions.y:
+		return []
+	for thing in cell_occupancy_map[at_cell.x][at_cell.y]:
 			var thing_default_action = thing.default_action
 			if thing_default_action > ACT.Type.None:
 				all_hints.append(thing_default_action)
@@ -139,12 +121,8 @@ func get_action_hints(at_cell):
 func get_mouse_game_position():
 	if not is_ready:
 		return false
-	var pgp = GameWorld.Player.game_position
-	var mgp = GameWorld.get_global_mouse_position()
-	var ofs = mgp + pgp
-	var pos = ofs/16
 	var tiles:TileMap = TMap
-	return tiles.world_to_map(GameWorld.get_global_mouse_position()) + GameWorld.Player.game_position
+	return tiles.world_to_map(tiles.get_global_mouse_position())
 
 func cell_is_visible(at_cell):
 	if is_ready:
@@ -161,7 +139,7 @@ func cell_occupied(at_cell):
 func get_targets_at_by_mask(at_cell, target_mask):
 	var found_targets = []
 	for target in cell_occupancy_map[at_cell.x][at_cell.y]:
-		if target.thin_type & target_mask:
+		if target.thing_type & target_mask:
 			found_targets.append(target)
 	return found_targets
 # Called every frame. 'delta' is the elapsed time since the previous frame.

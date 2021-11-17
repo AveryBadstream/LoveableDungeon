@@ -82,7 +82,7 @@ func action_log(action, msg, format_info=[]):
 	format_dict["object"] = ("" if action.action_targets[0].is_player else "the ")+action.action_targets[0].display_name if action.action_targets.size() >0 else ""
 	add_log(msg.format(format_dict))
 
-func effect_log(effect, msg):
+func effect_log(effect, msg, extra_dict={}):
 	msg = "[color={log_color}]"+msg+"[/color]"
 	var format_dict = {
 			"pt3ps": "" if effect.effect_actor.is_player else "s",
@@ -92,6 +92,8 @@ func effect_log(effect, msg):
 			"object": ("" if effect.effect_target.is_player else "the ")+effect.effect_target.display_name,
 			"log_color": first_party_log_color if effect.effect_actor.is_player else third_party_log_color
 	}
+	for key in extra_dict.keys():
+		format_dict[key] = extra_dict[key]
 	add_log(msg.format(format_dict))
 
 func game_log(msg):

@@ -53,14 +53,8 @@ func build(build_rng):
 	world_gen_timer = OS.get_system_time_msecs()
 	LevelGenerator.build_map(build_rng)
 
-func try_move(actor, direction):
-	if TMap.is_tile_walkable(actor.game_position.x, actor.game_position.y):
-		return
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	.connect("message_0", MSG, "_on_message_0")
-	.connect("log_2", MSG, "_on_log_2")
 	EVNT.subscribe("build_finished", TMap, "_on_build_finished")
 	EVNT.subscribe("export_generator_config", WRLD, "_on_export_generator_config")
 	EVNT.subscribe("player_start_position", self, "_on_player_start_position")
@@ -80,7 +74,6 @@ func _ready():
 	EVNT.subscribe("try_action_at", self, "_on_actor_try_action_at")
 	EVNT.subscribe("update_cimmap", self, "_on_update_cimmap")
 	EVNT.subscribe("slammed", self, "_on_slammed")
-	EVNT.subscribe("died", self, "_on_died")
 
 func _on_build_finished(tiles):
 	var fov_block_tiles = []
@@ -93,12 +86,18 @@ func _on_build_finished(tiles):
 			ShadowWorldTiles.set_cell(x,y,til_i)
 	WorldTiles.update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
 	ShadowWorldTiles.update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
-
-func _on_died(thing):
-	MSG.game_log(thing.display_name + " died!")
-	remove_from_maps(thing)
-	LevelActors.remove_child(thing)
-	thing.queue_free()
+	var ShadowTransform = RemoteTransform2D.new()
+	Player.add_child(ShadowTransform)
+	ShadowTransform.remote_path = "../../../../ShadowWorldView/FakePlayer"
+	var MaskTransform = RemoteTransform2D.new()
+	Player.add_child(MaskTransform)
+	MaskTransform.remote_path = "../../../../MaskWorld/FakePlayer"
+	var WorldTransform = RemoteTransform2D.new()
+	Player.add_child(WorldTransform)
+	WorldTransform.remote_path = "../../../FakePlayer"
+	var OverlayTransform = RemoteTransform2D.new()
+	Player.add_child(OverlayTransform)
+	OverlayTransform.remote_path = "../../../../OverlayWorld/FakePlayer"
 
 func _on_object_moved(thing, from_cell, to_cell):
 	move_in_maps(thing, from_cell, to_cell)

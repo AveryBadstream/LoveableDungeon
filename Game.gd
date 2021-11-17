@@ -12,9 +12,13 @@ onready var LineHighlight = $GameUI/LineHighlight
 onready var BlueHighlight = $GameWorld/TileHighlight2
 onready var LevelActors = $GameWorld/WorldView/LevelActors
 onready var OnlyTween = $Tweens/Tween
-onready var Camerah = $PlayerCamera
+onready var GameUI = $GameUI
+onready var OverlayTiles = $GameWorld/OverlayWorld/OverlayTiles
+#onready var Camerah = $PlayerCamera
 export var random_seed: int
 export var use_seed: bool = false
+
+var dead_queue = []
 
 var Player
 
@@ -48,14 +52,14 @@ func _ready():
 	EVNT.subscribe("action_failed", self, "_on_action_failed")
 	EVNT.subscribe("action_impossible", self, "_on_action_impossible")
 	EVNT.subscribe("turn_over", self, "_on_turn_over")
-	#EVNT.subscribe("died", self, "_on_died")
+	EVNT.subscribe("died", self, "_on_died")
 
 func _on_world_ready():
 	MSG.MessageBox = $GameUI/CanvasLayer/VBoxContainer/MessageBox
 	MSG.LogBox = $GameUI/CanvasLayer/VBoxContainer/ScrollContainer/LogBox
 	WRLD.set_game_world($GameWorld)
 	WRLD.GameWorld = $GameWorld
-	WRLD.TMap = $GameWorld/LoveableBasic
+	WRLD.TMap = $GameWorld/WorldView/WorldTiles
 	WRLD.is_ready = true
 	EVNT.emit_signal("update_fov")
 	turn_order = $GameWorld/LevelActors.get_children()
@@ -63,6 +67,8 @@ func _on_world_ready():
 	#remove_child(Camerah)
 	#Player.add_child(Camerah)
 	#Camerah.global_position = Player.global_position
+	GameUI.OverlayTiles = OverlayTiles
+	GameUI.pause_mode = Node.PAUSE_MODE_PROCESS
 	Player.activate()
 
 func _on_do_action(action):
@@ -90,13 +96,24 @@ func _on_action_complete(action):
 	EVNT.emit_signal("turn_over")
 
 func _on_turn_over():
-	var current_i = current_actor.get_index()
-	if current_i + 1 >= LevelActors.get_child_count():
-		current_actor = LevelActors.get_child(0)
-	else:
-		current_actor = LevelActors.get_child(current_i+1)
+	for thing in dead_queue:
+		GameWorld.remove_object(thing)
+	dead_queue = []
+	var next_actor = next_actor(current_actor)
+	while not is_instance_valid(next_actor) or next_actor.acting_state == ACT.ActingState.Dead:
+		next_actor = next_actor(next_actor)
+	current_actor = next_actor
 	current_actor.call_deferred("activate")
 
+func next_actor(actor):
+	var current_i = actor.get_index()
+	if current_i + 1 >= LevelActors.get_child_count():
+		return LevelActors.get_child(0)
+	else:
+		return LevelActors.get_child(current_i+1)
+
+func _on_died(thing):
+	dead_queue.append(thing)
 
 func _on_action_failed(action):
 	_on_turn_over()

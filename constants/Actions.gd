@@ -13,7 +13,7 @@ var rType = {}
 
 enum ActionClass {PositionBased, Atomic, TargetBased}
 
-enum ActingState {Wait, Act}
+enum ActingState {Wait, Act, Dead}
 
 enum ActionState {Failed, Ready, Acting, Complete, Impossible}
 

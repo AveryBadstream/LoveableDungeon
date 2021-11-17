@@ -30,16 +30,41 @@ func spawn_puff(game_position):
 	new_puff.position = game_position * 16
 	FXManager.add_child(new_puff)
 
-func bump_into(bumper, bumpee):
+func bump_into(bumper, bumpee, after=0):
 	if WRLD.cell_is_visible(bumper.game_position) or WRLD.cell_is_visible(bumpee.game_position):
 		var tween:Tween = get_free_tween()
 		managed_tweens.append(tween)
-		tween.connect("tween_all_completed", self, "_on_tween_all_completed")
 		var from = bumper.position
-		var to = from + ((bumpee.position - from) * 1/2)
-		tween.interpolate_property(bumper, "position", from, to, 0.025,Tween.TRANS_CUBIC, Tween.EASE_IN)
-		tween.interpolate_property(bumper, "position", to, from, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, 0.025)
-	fx_count += 1
+		var to = from + ((bumpee.position - from) * 3/5)
+		tween.interpolate_property(bumper, "position", from, to, 0.025,Tween.TRANS_CUBIC, Tween.EASE_IN, after)
+		tween.interpolate_property(bumper, "position", to, from, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, 0.025+after)
+		fx_count += 1
+		return 0.05
+	return 0.05
+
+func fast_wobble(wobbler, after=0):
+	if WRLD.cell_is_visible(wobbler.game_position):
+		var target_rest = wobbler.position
+		var target_l = Vector2(target_rest.x - 5, target_rest.y)
+		var target_r = Vector2(target_rest.x + 5, target_rest.y)
+		var tween:Tween = get_free_tween()
+		managed_tweens.append(tween)
+		tween.interpolate_property(wobbler, "position", target_rest, target_l, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, after)
+		tween.interpolate_property(wobbler, "position", target_l, target_r, 0.05, Tween.TRANS_LINEAR, Tween.EASE_OUT, 0.025+after)
+		tween.interpolate_property(wobbler, "position", target_l, target_rest, 0.025, Tween.TRANS_CUBIC, Tween.EASE_OUT, 0.05+after)
+		fx_count += 1
+		return 0.075
+	return 0
+
+func die(dead_thing, after=0):
+	if WRLD.cell_is_visible(dead_thing.game_position):
+		var tween:Tween = get_free_tween()
+		managed_tweens.append(tween)
+		for i in range(5):
+			tween.interpolate_property(dead_thing, "modulate:a", 1, 0, 0.005 + (i*0.005), Tween.TRANS_LINEAR, Tween.EASE_IN, after+(i*0.005))
+		fx_count += 1
+		return 0.025
+	return 0
 
 func ready(count):
 	fx_count -= count
@@ -48,6 +73,7 @@ func ready(count):
 
 func start_fx():
 	for tween in managed_tweens:
+		tween.connect("tween_all_completed", self, "_on_tween_all_completed")
 		running_count += 1
 		tween.call_deferred("start")
 

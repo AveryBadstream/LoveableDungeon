@@ -145,6 +145,7 @@ FOV="*res://constants/FOVRPAS.gd"
 window/size/width=1280
 window/size/height=720
 window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [input]
 
@@ -224,5 +225,6 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+2d/snapping/use_gpu_pixel_snap=true
 environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"

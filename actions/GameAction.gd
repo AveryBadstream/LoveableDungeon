@@ -46,7 +46,8 @@ func get_target_hints(target_point:Vector2 = action_actor.game_position):
 	if target_area == ACT.TargetArea.TargetCone:
 		var hint_area = FOV.cast_area(action_actor.game_position, action_range, c_cim, x_cim)
 		var effect_area = FOV.cast_psuedo_cone(action_actor.game_position, target_point, action_area, action_range, c_cim, x_cim)
-		var valid_area = []
+		hint_area.erase(action_actor.game_position)
+		var valid_area = [action_actor.game_position]
 		for cell in effect_area:
 			var cell_targets = WRLD.get_action_targets_cell(self, cell)
 			if cell_targets.size() > 0:

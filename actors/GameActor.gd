@@ -6,6 +6,8 @@ export(Array, Resource) var mob_ai
 export(Array, Resource) var actions
 export(Dictionary) var default_actions
 
+const damage_effect = preload("res://effects/TakeDamage.gd")
+const die_effect = preload("res://effects/DieEffect.gd")
 
 var local_ai = []
 var local_actions = []
@@ -72,10 +74,15 @@ func attack_roll(target):
 	return WRLD.rng.randi()%100 < defence
 
 
-func take_damage(damage):
-	self.game_stats.hp -= damage
-	if self.game_stats.hp < 0 and not is_player:
-		EVNT.emit_signal("died", self)
+func take_damage(from, damage, type=0):
+	EFCT.queue_next(damage_effect.new(from, self, damage))
+#	if self.game_stats.hp < 0 and not is_player:
+#		EVNT.emit_signal("died", self)
+
+func check_dead():
+	if game_stats.hp <= 0 and not is_player:
+		acting_state = ACT.ActingState.Dead
+		EFCT.queue_next(die_effect.new(self))
 
 func get_damage_dealt(_target):
 	if not self.game_stats:

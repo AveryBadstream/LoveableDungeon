@@ -405,6 +405,8 @@ static func  _forward_lerpish_line(origin:Vector2, target:Vector2, oct:Dictionar
 										NOT_VISIBLE_BLOCKS_VISION := NVBV, \
 										RESTRICTIVENESS := R, 
 										VISIBLE_ON_EQUAL := VOE) -> Array:
+	if origin == target:
+		return [target]
 	var iteration = 1
 	var visible_cells = []
 	var obstructions = []

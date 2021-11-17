@@ -18,6 +18,7 @@ var active_player
 
 var ui_state = UI_STATES.Wait
 
+var OverlayTiles
 var hint_area_type = ACT.TargetArea.TargetNone
 var currently_hinting
 var last_mouse_game_position = Vector2.ZERO
@@ -45,22 +46,14 @@ func _on_hint_action(action):
 func display_hints(hint_lists):
 	clear_hints()
 	for cell in hint_lists[0]:
-		var new_hint:ColorRect = area_hint_indicator.instance()
-		new_hint.rect_position = cell * 16
-		area_highlight.add_child(new_hint)
+		OverlayTiles.set_cellv(cell, 0)
 	for cell in hint_lists[1]:
-		var new_hint:ColorRect = effect_hint_indicator.instance()
-		new_hint.rect_position = cell * 16
-		area_highlight.add_child(new_hint)
+		OverlayTiles.set_cellv(cell, 1)
 	for cell in hint_lists[2]:
-		var new_hint:ColorRect = target_hint_indicator.instance()
-		new_hint.rect_position = cell * 16
-		area_highlight.add_child(new_hint)
+		OverlayTiles.set_cellv(cell, 2)
 
 func clear_hints():
-	for child in area_highlight.get_children():
-		area_highlight.remove_child(child)
-		child.queue_free()
+	OverlayTiles.clear()
 
 func hint_update(mouse_pos):
 	display_hints(currently_hinting.get_target_hints(mouse_pos))
@@ -71,7 +64,7 @@ func _input(event):
 	if event is InputEventMouseButton:
 			if event.button_index == BUTTON_LEFT and event.pressed:
 				var m_cell = WRLD.get_mouse_game_position()
-				if active_player.act_at_location(m_cell):
+				if not active_player.act_at_location(m_cell):
 					var at_cell = FOV.cast_nearest_point(active_player.get_game_position(), m_cell, 1)
 					active_player.act_at_location(at_cell)
 	if event.is_action("move_left"):
