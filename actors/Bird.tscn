@@ -11,12 +11,14 @@
 [sub_resource type="Resource" id=1]
 resource_local_to_scene = true
 script = ExtResource( 2 )
-max_hp = 3.0
-hp = 0
-might = 0
-agility = 2.0
+hp = 3
 stamina = 0
+might = 0
+agility = 0
+fortitude = 0
 armor = 0
+wizardlyness = 0
+basic_attack = [ [ "+1", 1 ] ]
 
 [sub_resource type="Resource" id=4]
 script = ExtResource( 8 )

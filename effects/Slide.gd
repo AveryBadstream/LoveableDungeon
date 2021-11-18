@@ -30,10 +30,10 @@ func prep():
 func run():
 	if WRLD.cell_is_visible(from) or WRLD.cell_is_visible(to):
 		var tween:Tween = FX.get_free_tween()
-		tween.interpolate_property(effect_target, "position", from * 16, to * 16, 0.02, Tween.TRANS_LINEAR, Tween.EASE_IN)
+		var _t = tween.interpolate_property(effect_target, "position", from * 16, to * 16, 0.05, Tween.TRANS_LINEAR, Tween.EASE_IN)
 		FX.spawn_puff(from)
 		AUD.play_sound(AUD.SFX.Footstep)
-		tween.start()
+		_t = tween.start()
 		yield(tween, "tween_all_completed")
 		effect_target.set_game_position(to, false)
 	else:

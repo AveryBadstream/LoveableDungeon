@@ -16,10 +16,12 @@ func run():
 	FX.ready(1)
 	AUD.play_sound(AUD.SFX.Swing)
 	yield(EVNT, "FX_complete")
-	if not effect_actor.attack_roll(effect_target):
+	if not ACT.attack_roll(effect_actor.game_stats.get_stat(GameStats.AGILITY) + effect_actor.game_stats.get_stat(GameStats.MIGHT), \
+		effect_target.game_stats.get_stat(GameStats.ARMOR) + effect_target.game_stats.get_stat(GameStats.AGILITY)):
 		MSG.effect_log(self, "{subject}{spos} attack missed {object}")
 	else:
-		effect_target.take_damage(effect_actor, effect_actor.get_damage_dealt(effect_target))
+		for attack_part in effect_actor.game_stats.basic_attack:
+			effect_target.take_damage(effect_actor, ACT.roll_damage(attack_part[0], effect_actor.game_stats), attack_part[0])
 	EVNT.emit_signal("effect_done", self)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

@@ -6,14 +6,11 @@ export(Array, Resource) var mob_ai
 export(Array, Resource) var actions
 export(Dictionary) var default_actions
 
-const damage_effect = preload("res://effects/TakeDamage.gd")
-const die_effect = preload("res://effects/DieEffect.gd")
 
 var local_ai = []
 var local_actions = []
 var local_default_actions = {}
 var active = false
-var acting_state = ACT.ActingState.Wait
 var fail_count = 0
 # Declare member variables here. Examples:
 # var a = 2
@@ -42,7 +39,7 @@ func own_fucking_actions(): #fuck this dogshit inconsistent game engine to hell
 	 # Replace with function body.
 	
 func activate():
-	acting_state = ACT.ActingState.Act
+	self.acting_state = ACT.ActingState.Act
 	var chosen_ai_script = null
 	if local_ai.size() > 0:
 		for ai_script in local_ai:
@@ -65,30 +62,6 @@ func action_impossible(action):
 func action_failed(_action):
 	self.acting_state = ACT.ActingState.Wait
 
-func attack_roll(target):
-	if not self.game_stats:
-		return false
-	if not target.game_stats:
-		return true
-	var defence = clamp(((50 + (target.game_stats.armor * 5) ) - (self.game_stats.agility * 5)),5,95) 
-	return WRLD.rng.randi()%100 < defence
-
-
-func take_damage(from, damage, type=0):
-	EFCT.queue_next(damage_effect.new(from, self, damage))
-#	if self.game_stats.hp < 0 and not is_player:
-#		EVNT.emit_signal("died", self)
-
-func check_dead():
-	if game_stats.hp <= 0 and not is_player:
-		acting_state = ACT.ActingState.Dead
-		EFCT.queue_next(die_effect.new(self))
-
-func get_damage_dealt(_target):
-	if not self.game_stats:
-		return false
-	var damage = (WRLD.rng.randi() % 4) + self.game_stats.might
-	return damage
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

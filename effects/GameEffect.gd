@@ -2,8 +2,6 @@ extends Reference
 
 class_name GameEffect
 
-signal effect_done(effect) #coroutines are confusing :(
-
 const is_action = false
 # Declare member variables here. Examples:
 # var a = 2
@@ -37,7 +35,7 @@ func finish():
 func setup():
 	pass
 
-func pre_notify(effect_queue_i):
+func pre_notify(_effect_queue_i):
 	process_pre_effect_response(effect_target.effect_pre(self))
 
 func run():

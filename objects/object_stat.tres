@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://actors/GameStats.gd" type="Script" id=1]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource( 1 )
+hp = 100
+stamina = 0
+might = 0
+agility = 0
+fortitude = 0
+armor = 0
+wizardlyness = 0
+basic_attack = [ [ "+1d4;+s:m", 0 ] ]

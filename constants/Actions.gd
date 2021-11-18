@@ -39,6 +39,28 @@ func _ready():
 
 func TypeKey(val:int):
 	return rType[val]
+
+func roll_damage(dam_str, game_stats):
+	var damage_tally = 0
+	for component in dam_str.split(";"):
+		var next_part = 0
+		var d_split = component.split("d")
+		if d_split.size() == 1:
+			if component[1] == "s":
+				next_part = game_stats.get_stat(component.split(":")[1])
+			else:
+				next_part = component.substr(1).to_int()
+		else:
+			for i in range(d_split[0].substr(1).to_int()):
+				next_part += WRLD.rng.randi() % d_split[1].to_int()
+		if component[0] == "+":
+			damage_tally += next_part
+		else:
+			damage_tally -= next_part
+	return max(0, damage_tally)
+
+func attack_roll(to_hit, defence):
+	return WRLD.rng.randi()%100 < clamp(((50 + (to_hit * 5) ) - (defence * 5)),5,95)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

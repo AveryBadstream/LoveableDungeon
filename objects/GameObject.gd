@@ -19,6 +19,7 @@ var blocks_vision setget set_blocks_vision, get_blocks_vision
 var player_remembers setget set_player_remembers, get_player_remembers
 export(int) var cim
 export(int) var sam
+var acting_state = ACT.ActingState.Wait
 export(Resource) var game_stats
 var last_game_position = position/16
 var _game_position = last_game_position
@@ -29,6 +30,8 @@ var my_ghost
 var triggers = []
 var thing_type = ACT.TargetType.TargetObject
 var inventory = []
+const damage_effect = preload("res://effects/TakeDamage.gd")
+const die_effect = preload("res://effects/DieEffect.gd")
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -38,6 +41,7 @@ var game_position: Vector2 setget set_game_position, get_game_position
 func set_initial_game_position(at_cell:Vector2):
 	position = at_cell * 16
 	last_game_position = at_cell
+	game_stats.initialize()
 	EVNT.emit_signal("update_cimmap", at_cell)
 
 func supports_action(action) -> bool:
@@ -224,6 +228,32 @@ func check_adjacent(object):
 
 func effect_done(effect):
 	pass
+
+func attack_roll(target):
+	if not self.game_stats:
+		return false
+	if not target.game_stats:
+		return true
+	var defence = clamp(((50 + (target.game_stats.armor * 5) ) - (self.game_stats.agility * 5)),5,95) 
+	return WRLD.rng.randi()%100 < defence
+
+
+
+func take_damage(from, damage, type=0):
+	EFCT.queue_next(damage_effect.new(from, self, damage, type))
+#	if self.game_stats.hp < 0 and not is_player:
+#		EVNT.emit_signal("died", self)
+
+func check_dead():
+	if game_stats.get_resource(GameStats.HP) <= 0 and not is_player:
+		acting_state = ACT.ActingState.Dead
+		EFCT.queue_next(die_effect.new(self))
+
+func get_damage_dealt(_target):
+	if not self.game_stats:
+		return false
+	var damage = (WRLD.rng.randi() % 4) + self.game_stats.might
+	return damage
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

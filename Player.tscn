@@ -12,7 +12,7 @@
 [ext_resource path="res://actors/GameStats.gd" type="Script" id=10]
 [ext_resource path="res://effects/MeleeAttack.gd" type="Script" id=11]
 [ext_resource path="res://actions/action_resources/forcewave.tres" type="Resource" id=12]
-[ext_resource path="res://actors/AI/player_chaser.tres" type="Resource" id=13]
+[ext_resource path="res://actors/AI/PlayerControlled.tres" type="Resource" id=13]
 
 [sub_resource type="StreamTexture" id=3]
 load_path = "res://.import/loveable_rogue.png-a26341772e79e32042028726586e34e4.stex"
@@ -20,12 +20,14 @@ load_path = "res://.import/loveable_rogue.png-a26341772e79e32042028726586e34e4.s
 [sub_resource type="Resource" id=14]
 resource_local_to_scene = true
 script = ExtResource( 10 )
-max_hp = 10.0
-hp = 0
-might = 1.0
-agility = 1.0
-stamina = 1.0
+hp = 10
+stamina = 2
+might = 1
+agility = 1
+fortitude = 1
 armor = 0
+wizardlyness = 0
+basic_attack = [ [ "+1d4;+s:m", 0 ] ]
 
 [sub_resource type="Resource" id=4]
 resource_local_to_scene = true

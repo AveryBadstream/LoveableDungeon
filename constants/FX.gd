@@ -60,10 +60,13 @@ func die(dead_thing, after=0):
 	if WRLD.cell_is_visible(dead_thing.game_position):
 		var tween:Tween = get_free_tween()
 		managed_tweens.append(tween)
-		for i in range(5):
-			tween.interpolate_property(dead_thing, "modulate:a", 1, 0, 0.005 + (i*0.005), Tween.TRANS_LINEAR, Tween.EASE_IN, after+(i*0.005))
+		for i in range(10):
+			tween.interpolate_property(dead_thing, "modulate:a", 1, 0, 0.01, Tween.TRANS_LINEAR, Tween.EASE_IN, after+(i*0.02))
+			tween.interpolate_property(dead_thing, "modulate:a", 0, 1, 0.01, Tween.TRANS_LINEAR, Tween.EASE_IN, after+(i*0.02)+0.01)
+			tween.interpolate_property(dead_thing, "scale", Vector2(1,1), Vector2(1.5, 1.5), 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+			tween.interpolate_property(dead_thing, "offset", Vector2(0,0), Vector2(-4, -4), 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)
 		fx_count += 1
-		return 0.025
+		return 0.2
 	return 0
 
 func ready(count):
