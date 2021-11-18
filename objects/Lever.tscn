@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://objects/Lever.gd" type="Script" id=1]
 [ext_resource path="res://art/Openables.png" type="Texture" id=2]
 [ext_resource path="res://art/blunk.wav" type="AudioStream" id=3]
-[ext_resource path="res://objects/object_stat.tres" type="Resource" id=4]
 
 [sub_resource type="Animation" id=1]
 resource_name = "Off"
@@ -78,7 +77,6 @@ default_action = 128
 display_name = "lever"
 cim = 56
 sam = 132
-game_stats = ExtResource( 4 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Off = SubResource( 1 )

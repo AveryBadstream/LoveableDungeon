@@ -62,6 +62,7 @@ signal FX_complete()
 #UI/Display Signals
 signal player_position(global_position)
 signal player_active(player)
+signal player_stats(player)
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()
 signal hint_action(action)

@@ -29,23 +29,11 @@ var current_mod_id = -INF
 # var a = 2
 # var b = "text"
 var stats = {
-	HP: hp,
-	STAMINA: stamina,
-	MIGHT: might,
-	AGILITY: agility,
-	FORTITUDE: fortitude,
-	ARMOR: armor,
-	WIZARDLYNESS: wizardlyness,
 }
 
-var resources ={
-	HP: hp,
-	STAMINA: stamina,
-}
+var resources = [HP, STAMINA]
 
 var cur_resources = {
-	HP: hp,
-	STAMINA: stamina,
 }
 
 var eff_stats = {}
@@ -53,6 +41,12 @@ var eff_stats = {}
 var stat_mods = {}
 
 func initialize():
+	stats[HP] = hp
+	stats[STAMINA] = stamina
+	stats[MIGHT] = might
+	stats[AGILITY] = agility
+	stats[FORTITUDE] = fortitude
+	stats[ARMOR] = armor
 	for stat in stats.keys():
 		eff_stats[stat] = stats[stat]
 		stat_mods[stat] = []

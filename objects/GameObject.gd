@@ -41,7 +41,10 @@ var game_position: Vector2 setget set_game_position, get_game_position
 func set_initial_game_position(at_cell:Vector2):
 	position = at_cell * 16
 	last_game_position = at_cell
-	game_stats.initialize()
+	if game_stats:
+		game_stats.initialize()
+	if is_player:
+		EVNT.emit_signal("player_stats", self)
 	EVNT.emit_signal("update_cimmap", at_cell)
 
 func supports_action(action) -> bool:
@@ -230,24 +233,32 @@ func effect_done(effect):
 	pass
 
 func attack_roll(target):
-	if not self.game_stats:
+	if not game_stats or not target.game_stats:
 		return false
-	if not target.game_stats:
-		return true
 	var defence = clamp(((50 + (target.game_stats.armor * 5) ) - (self.game_stats.agility * 5)),5,95) 
 	return WRLD.rng.randi()%100 < defence
 
-
-
 func take_damage(from, damage, type=0):
+	if not game_stats:
+		return
+	game_stats.change_resource(GameStats.HP, -1 * damage)
 	EFCT.queue_next(damage_effect.new(from, self, damage, type))
+	if is_player:
+		EVNT.emit_signal("player_stats", self)
 #	if self.game_stats.hp < 0 and not is_player:
 #		EVNT.emit_signal("died", self)
 
 func check_dead():
+	if not game_stats:
+		return
 	if game_stats.get_resource(GameStats.HP) <= 0 and not is_player:
 		acting_state = ACT.ActingState.Dead
 		EFCT.queue_next(die_effect.new(self))
+
+func resist_effect(stat, penalty):
+	if not game_stats:
+		return true
+	return WRLD.rng.randi() % 100 < 50 + (game_stats.get_stat(stat) * 5) - (penalty * 5)
 
 func get_damage_dealt(_target):
 	if not self.game_stats:

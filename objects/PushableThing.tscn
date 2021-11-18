@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://objects/PushableThing.gd" type="Script" id=1]
 [ext_resource path="res://art/loveable-extended.png" type="Texture" id=2]
-[ext_resource path="res://objects/object_stat.tres" type="Resource" id=3]
 
 [node name="PushableThing" type="Sprite"]
 modulate = Color( 0.635294, 0.501961, 0.439216, 1 )
@@ -15,4 +14,3 @@ default_action = 32
 display_name = "Thing"
 cim = 56
 sam = 352
-game_stats = ExtResource( 3 )

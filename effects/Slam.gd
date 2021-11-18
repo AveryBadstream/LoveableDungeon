@@ -18,7 +18,7 @@ func _init(actor, target, direction, from_whence, current_magnitude).(actor, tar
 	to = (towards).snapped(Vector2.ONE)  + from
 
 func prep():
-	if WRLD.cell_occupied(to):
+	if WRLD.cell_occupied(to) and magnitude > 0:
 		return true
 	return false
 
@@ -30,4 +30,6 @@ func run():
 		_t = tween.interpolate_property(effect_target, "position", slam_point, from * 16, 0.03, Tween.TRANS_QUAD, Tween.EASE_IN, 0.03)
 		_t = tween.start()
 		yield(tween, "tween_all_completed")
+	if not effect_target.resist_effect(GameStats.MIGHT, magnitude):
+		effect_target.take_damage(effect_actor, magnitude, GameStats.DamageTypes.Blunt)
 	EVNT.emit_signal("effect_done", self)

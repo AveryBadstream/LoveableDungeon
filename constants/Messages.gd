@@ -8,8 +8,8 @@ extends Node
 var MessageBox: Label = null
 var LogBox: RichTextLabel = null
 
-var first_party_log_color = "blue"
-var third_party_log_color = "red"
+var first_party_log_color = "teal"
+var third_party_log_color = "maroon"
 
 var full_log = []
 
