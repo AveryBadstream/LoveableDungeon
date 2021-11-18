@@ -10,10 +10,6 @@ var effect_hint_indicator = preload("res://ui/EffectHint.tscn")
 
 enum UI_STATES {Wait, Active}
 
-onready var angle_line = $Line2D
-
-onready var area_highlight = $AreaHighlight
-
 var active_player
 
 var ui_state = UI_STATES.Wait
@@ -23,7 +19,7 @@ var hint_area_type = ACT.TargetArea.TargetNone
 var currently_hinting
 var last_mouse_game_position = Vector2.ZERO
 var last_octant = null
-# Called when the node enters the scene tree for the first time.
+
 func _ready():
 	EVNT.subscribe("hint_action", self, "_on_hint_action")
 	EVNT.subscribe("action_complete", self, "_on_end_hint")
@@ -97,6 +93,3 @@ func _process(delta):
 		if mouse_pos != last_mouse_game_position:
 			hint_update(mouse_pos)
 		last_mouse_game_position = mouse_pos
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

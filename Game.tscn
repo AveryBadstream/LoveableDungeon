@@ -181,6 +181,13 @@ script = ExtResource( 3 )
 random_seed = -4554876820186044928
 use_seed = true
 
+[node name="Control" type="Control" parent="."]
+margin_right = 1280.0
+margin_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="DebugGui" type="CanvasLayer" parent="."]
 script = ExtResource( 6 )
 

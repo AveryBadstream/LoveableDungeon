@@ -15,9 +15,9 @@ var magnitude
 var direction
 # Called when the node enters the scene tree for the first time.
 
-func _init(actor, target, max_magnitude).(actor, target):
+func _init(actor, target, set_magnitude).(actor, target):
 	from = target.game_position
-	magnitude = min(max_magnitude, actor.game_stats.get_stat(GameStats.MIGHT))
+	magnitude = max(set_magnitude, actor.game_stats.get_stat(GameStats.MIGHT))
 	direction = (from - actor.game_position).normalized()
 	var possible_target = ((direction * magnitude) + from).snapped(Vector2.ONE)
 	steps = FOV.lerp_line(target.game_position, possible_target, magnitude, TIL.CellInteractions.None)
