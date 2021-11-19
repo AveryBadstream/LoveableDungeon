@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=2]
+[gd_scene load_steps=53 format=2]
 
 [ext_resource path="res://map/TileSets/Loveable.tres" type="TileSet" id=1]
 [ext_resource path="res://art/compute.wav" type="AudioStream" id=2]
@@ -33,6 +33,7 @@
 [ext_resource path="res://art/48_button_hover.png" type="Texture" id=31]
 [ext_resource path="res://art/48_button_pressed.png" type="Texture" id=32]
 [ext_resource path="res://ui/MainScreenButtons.gd" type="Script" id=33]
+[ext_resource path="res://art/LoveableTheme.tres" type="Theme" id=34]
 
 [sub_resource type="TileSet" id=8]
 0/name = "Red"
@@ -200,6 +201,16 @@ anim_speed = 1.03
 [sub_resource type="AtlasTexture" id=24]
 atlas = ExtResource( 6 )
 region = Rect2( 96, 144, 16, 16 )
+
+[sub_resource type="StyleBoxTexture" id=25]
+texture = ExtResource( 5 )
+region_rect = Rect2( 0, 0, 32, 32 )
+margin_left = 6.0
+margin_right = 7.0
+margin_top = 8.0
+margin_bottom = 8.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
@@ -642,6 +653,49 @@ margin_right = 40.0
 margin_bottom = 40.0
 texture = SubResource( 24 )
 stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GameMenu" type="PanelContainer" parent="CanvasLayer"]
+margin_right = 1280.0
+margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 25 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer/GameMenu"]
+margin_left = 6.0
+margin_top = 8.0
+margin_right = 1273.0
+margin_bottom = 712.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 34 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/GameMenu/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/GameMenu/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -6.0
+margin_top = -8.0
+margin_right = -6.0
+margin_bottom = -28.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
