@@ -1,19 +1,29 @@
-[gd_resource type="Resource" load_steps=2 format=2]
+[gd_resource type="Resource" load_steps=3 format=2]
 
 [ext_resource path="res://actions/action_scripts/Push.gd" type="Script" id=1]
+[ext_resource path="res://effects/Push.gd" type="Script" id=2]
 
 [resource]
 script = ExtResource( 1 )
 action_name = "force wave"
 action_type = 32
+target_hints = 0
 action_range = 5.0
 action_area = 5.0
 target_type = 14
 target_area = 3
 target_priority = [ 2, 8, 4, 1 ]
+target_cim = 16
 x_cim = 0
 c_cim = 0
 action_radius = 0.785398
 pending_message = "Shout where?"
+impossible_message = ""
+failed_message = ""
+success_message = ""
+impossible_log = ""
+failed_log = ""
 success_log = "FUS RO DAH!"
+pertarget_log = ""
+push_effect = ExtResource( 2 )
 push_effect_magnitude = "5"

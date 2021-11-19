@@ -2,42 +2,19 @@ extends GameActor
 
 var opens_doors = true
 var pending_action = ACT.Type.None
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-#func _input(event):
-#	if !event.is_pressed() or self.acting_state == ACT.ActingState.Wait:
-#		return
-#	if event is InputEventMouseButton:
-#			if event.button_index == BUTTON_LEFT and event.pressed:
-#				var m_cell = WRLD.get_mouse_game_position()
-#				if not act_at_location(m_cell):
-#					var at_cell = FOV.cast_nearest_point(get_game_position(), m_cell, 1)
-#					act_at_location(at_cell)
-#	if event.is_action("move_left"):
-#		act_in_direction(Vector2.LEFT)
-#	elif event.is_action("move_right"):
-#		act_in_direction(Vector2.RIGHT)
-#	elif event.is_action("move_up"):
-#		act_in_direction(Vector2.UP)
-#	elif event.is_action("move_down"):
-#		act_in_direction(Vector2.DOWN)
-#	elif event.is_action("open"):
-#		pending_action = local_default_actions[ACT.Type.Open]
-#		pending_action.mark_pending()
-#	elif event.is_action("close"):
-#		pending_action = local_default_actions[ACT.Type.Close]
-#		pending_action.mark_pending()
-#	elif event.is_action("push"):
-#		pending_action = local_default_actions[ACT.Type.Push]
-#		pending_action.mark_pending()
-#	elif event.is_action("move"):
-#		pending_action = local_default_actions[ACT.Type.Move]
-#		pending_action.mark_pending()
-#	elif event.is_action("forcewave"):
-#		pending_action = local_actions[0]
-#		pending_action.mark_pending()
-		
+var experience = 0
+var pending_levelup = false
+
+func gain_experience(t_level):
+	var xp_mult = clamp(game_stats.get_stat(GameStats.LEVEL) + ((t_level - game_stats.get_stat(GameStats.LEVEL)) * 0.2),0,2)
+	var n_exp = clamp(100 - ( (game_stats.get_stat(GameStats.LEVEL) - 3 ) * 10), 50, 100) if game_stats.get_stat(GameStats.LEVEL) > 1 else 200
+	experience += n_exp*xp_mult
+	if experience > 1000 and not pending_levelup:
+		MSG.game_log("[rainbow freq=0.2 sat=10 val=20][shake rate=5 level=10]You level up![/shake][/rainbow]")
+		AUD.play_sound(AUD.SFX.LevelUp)
+		pending_levelup = true
+	EVNT.emit_signal("player_stats", self)
+
 func act_at_location(at_cell: Vector2):
 	if self.acting_state != ACT.ActingState.Act:
 		return
@@ -51,8 +28,6 @@ func act_at_location(at_cell: Vector2):
 						acting_state = ACT.ActingState.Wait
 						candidate_action.do_action_at(at_cell)
 						return true
-#					for action in local_default_actions.values():
-#						if action.range <= distance_to:
 	else:
 		var next_action = pending_action
 		pending_action = ACT.Type.None

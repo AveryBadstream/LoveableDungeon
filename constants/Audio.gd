@@ -4,7 +4,7 @@ extends Node
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-enum SFX {Footstep, Switch, JailBars, Door, Swing, Miss, Hit, Die}
+enum SFX {Footstep, Switch, JailBars, Door, Swing, Miss, Hit, Die, Heal, LevelUp}
 
 var presounds = {
 	SFX.Footstep: "/root/Game/SFX/Footsteps",
@@ -15,6 +15,8 @@ var presounds = {
 	SFX.Miss: "/root/Game/SFX/Miss",
 	SFX.Hit: "/root/Game/SFX/Hit",
 	SFX.Die: "/root/Game/SFX/Die",
+	SFX.Heal: "/root/Game/SFX/Heal",
+	SFX.LevelUp: "/root/Game/SFX/LevelUp"
 }
 
 var sounds = {}

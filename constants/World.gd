@@ -142,6 +142,12 @@ func get_targets_at_by_mask(at_cell, target_mask):
 		if target.thing_type & target_mask:
 			found_targets.append(target)
 	return found_targets
+
+func get_cell_occupier(at_cell):
+	for target in cell_occupancy_map[at_cell.x][at_cell.y]:
+		if target.cell_interaction_mask & TIL.CellInteractions.Occupies:
+			return target
+	return null
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

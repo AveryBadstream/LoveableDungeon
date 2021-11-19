@@ -14,6 +14,7 @@ var is_walkable setget set_is_walkable, get_is_walkable
 var is_flyable setget set_is_flyable, get_is_flyable
 var is_phaseable setget set_is_phaseable, get_is_phaseable
 var occupies_cell setget set_occupies_cell, get_occupies_cell
+var is_immovable setget set_is_immovable, get_is_immovable
 export var is_player := false
 var blocks_vision setget set_blocks_vision, get_blocks_vision
 var player_remembers setget set_player_remembers, get_player_remembers
@@ -226,6 +227,15 @@ func set_player_remembers(should_remember):
 		
 func get_player_remembers():
 	return cim & TIL.CellInteractions.PlayerRemembers > 0
+
+func set_is_immovable(should_move):
+	if should_move:
+		cim &= ~(TIL.CellInteractions.Immovable)
+	else:
+		cim |= TIL.CellInteractions.Immovable
+
+func get_is_immovable():
+	return cim & TIL.CellInteractions.Immovable 
 
 func connect_to(target_object):
 	self.connects_to.append(target_object)

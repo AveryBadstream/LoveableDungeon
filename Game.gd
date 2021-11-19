@@ -112,6 +112,8 @@ func next_actor(actor):
 
 func _on_died(thing):
 	dead_queue.append(thing)
+	if thing.game_stats:
+		Player.gain_experience(thing.game_stats.level)
 
 func _on_action_failed(action):
 	_on_turn_over()

@@ -10,6 +10,7 @@ const AGILITY = "a"
 const FORTITUDE = "f"
 const ARMOR = "ac"
 const WIZARDLYNESS = "w"
+const LEVEL = "l"
 
 enum ModTypes {Add, Subtract, Multiply, Divide}
 
@@ -24,7 +25,9 @@ export(int) var agility
 export(int) var fortitude
 export(int) var armor
 export(int) var wizardlyness
-export(Array, Array) var basic_attack = [["+1d4;+s:m", DamageTypes.Blunt]] 
+export(int) var level
+export(int) var xp
+export(Array, Array) var basic_attack = [["1d4;s:m", DamageTypes.Blunt]] 
 
 var current_mod_id = -INF
 # Declare member variables here. Examples:
@@ -48,7 +51,9 @@ func initialize():
 	stats[MIGHT] = might
 	stats[AGILITY] = agility
 	stats[FORTITUDE] = fortitude
+	stats[WIZARDLYNESS] = wizardlyness
 	stats[ARMOR] = armor
+	stats[LEVEL] = level
 	for stat in stats.keys():
 		eff_stats[stat] = stats[stat]
 		stat_mods[stat] = []

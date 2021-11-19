@@ -38,27 +38,37 @@ func _ready():
 func TypeKey(val:int):
 	return rType[val]
 
-func roll_damage(dam_str, game_stats):
+func roll_damage(dam_str, game_stats, extra_stats=[]):
 	var damage_tally = 0
 	for component in dam_str.split(";"):
-		var next_part = 0
-		var d_split = component.split("d")
-		if d_split.size() == 1:
-			if component[1] == "s":
-				next_part = game_stats.get_stat(component.split(":")[1])
-			else:
-				next_part = component.substr(1).to_int()
-		else:
-			for i in range(d_split[0].substr(1).to_int()):
-				next_part += WRLD.rng.randi() % d_split[1].to_int()
-		if component[0] == "+":
-			damage_tally += next_part
-		else:
-			damage_tally -= next_part
+		damage_tally += reduce_part(component, game_stats, extra_stats)
 	return max(0, damage_tally)
 
+func reduce_part(component, game_stats, extra_stats=[]):
+	var d_split = component.split("d")
+	var x_split = component.split("x")
+	var part = 0
+	var part_mult = 1
+	if component[0] == "-":
+		part_mult = -1
+		component = component.substr(1)
+	elif component[0] == "+":
+		component = component.substr(1)
+	if d_split.size() == 2:
+		var d_size = reduce_part(d_split[1], game_stats, extra_stats)
+		for i in range(reduce_part(d_split[0], game_stats, extra_stats)):
+			part += (WRLD.rng.randi() % d_size) + 1
+	elif x_split.size() == 2:
+		part = reduce_part(x_split[0], game_stats, extra_stats) * reduce_part(x_split[1], game_stats, extra_stats)
+	else:
+		if component[0] == "s":
+			part = game_stats.get_stat(component.split(":")[1])
+		else:
+			part = component.to_int()
+	return part_mult * part
+
 func attack_roll(to_hit, defence):
-	return WRLD.rng.randi()%100 < clamp(((50 + (to_hit * 5) ) - (defence * 5)),5,95)
+	return WRLD.rng.randi()%100 < clamp(((70 + (to_hit * 5) ) - (defence * 5)),5,95)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

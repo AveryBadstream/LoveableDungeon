@@ -15,6 +15,7 @@ export var is_flyable := false
 export var is_phaseable := false
 export var occupies_cell := true
 export var blocks_vision := false
+const is_player = false
 var triggers = []
 var claiming_effects = []
 var cell_interaction_mask = 0
@@ -51,6 +52,7 @@ func _init(name, is_walkable, is_flyable, is_phaseable, blocks_fov, occupies_cel
 		cell_interaction_mask |= TIL.CellInteractions.BlocksWalk
 	if occupies_cell:
 		cell_interaction_mask |= TIL.CellInteractions.Occupies
+	cell_interaction_mask |= TIL.CellInteractions.Immovable
 
 func supports_action(action) -> bool:
 	if self.has_method("_can_support_"+ACT.TypeKey(action.action_type)):
