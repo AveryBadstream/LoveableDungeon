@@ -1,6 +1,8 @@
 extends Resource
 class_name GameStats
 
+signal stats_changed()
+
 const HP = "h"
 const STAMINA = "s"
 const MIGHT = "m"
@@ -54,7 +56,8 @@ func initialize():
 			cur_resources[stat] = stats[stat]
 
 func change_resource(res, amount):
-	cur_resources[res] = clamp(0, cur_resources[res] + amount, eff_stats[res])
+	cur_resources[res] = clamp(cur_resources[res] + amount,0, eff_stats[res])
+	emit_signal("stats_changed")
 	return cur_resources[res]
 
 func change_stat(stat, amount):
@@ -79,13 +82,14 @@ func recalc_eff_stat(stat):
 				new_effective -= mod[3]
 			ModTypes.Multiply:
 				new_effective *= mod[3]
+	emit_signal("stats_changed")
 
 func add_mod(stat, amount, type, source_type, source):
 	var next_id = current_mod_id
 	current_mod_id += 1
 	stat_mods[stat].append([next_id, stat, type, amount, source_type, source])
 	recalc_eff_stat(stat)
-	return next_id
+	emit_signal("stats_changed")
 
 func remove_mod(id):
 	var found_stat

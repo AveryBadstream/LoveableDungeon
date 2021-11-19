@@ -35,6 +35,7 @@ display_name = "Bird"
 cim = 16
 sam = 288
 game_stats = SubResource( 1 )
+thing_type = 4
 mob_ai = [ ExtResource( 9 ), SubResource( 4 ) ]
 default_actions = {
 1: ExtResource( 3 ),

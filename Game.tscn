@@ -1,18 +1,10 @@
-[gd_scene load_steps=44 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://map/TileSets/Loveable.tres" type="TileSet" id=1]
-[ext_resource path="res://art/black_tile.tres" type="TileSet" id=2]
 [ext_resource path="res://Game.gd" type="Script" id=3]
-[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=4]
-[ext_resource path="res://RectHighlight.gd" type="Script" id=5]
-[ext_resource path="res://DebugGui.gd" type="Script" id=6]
-[ext_resource path="res://NodeTree.gd" type="Script" id=7]
-[ext_resource path="res://RectrRoomHighlighter.gd" type="Script" id=8]
-[ext_resource path="res://Hider.gd" type="Script" id=9]
 [ext_resource path="res://GameWorld.gd" type="Script" id=10]
 [ext_resource path="res://art/mask_tiles.png" type="Texture" id=11]
 [ext_resource path="res://art/overlays.png" type="Texture" id=12]
-[ext_resource path="res://map/LoveableBasic.gd" type="Script" id=13]
 [ext_resource path="res://art/bounce.wav" type="AudioStream" id=14]
 [ext_resource path="res://art/slap.wav" type="AudioStream" id=15]
 [ext_resource path="res://art/FF_punch.wav" type="AudioStream" id=16]
@@ -28,6 +20,8 @@
 [ext_resource path="res://art/v_fill.png" type="Texture" id=26]
 [ext_resource path="res://art/HeartBar.png" type="Texture" id=27]
 [ext_resource path="res://art/loveablefont.fnt" type="BitmapFont" id=28]
+[ext_resource path="res://art/h_bar_over_264.png" type="Texture" id=29]
+[ext_resource path="res://art/h_bar_240.png" type="Texture" id=30]
 
 [sub_resource type="TileSet" id=8]
 0/name = "Red"
@@ -165,129 +159,10 @@ default_font = ExtResource( 28 )
 bg_color = Color( 0, 0, 0, 1 )
 corner_detail = 1
 
-[sub_resource type="Shader" id=4]
-code = "shader_type canvas_item;
-uniform sampler2D viewport1;
-
-void fragment() {
-    COLOR = vec4(UV.x, UV.y, 0.5, 1.0);
-}"
-
-[sub_resource type="ShaderMaterial" id=5]
-shader = SubResource( 4 )
-
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
 random_seed = -4554876820186044928
 use_seed = true
-
-[node name="Control" type="Control" parent="."]
-margin_right = 1280.0
-margin_bottom = 720.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="DebugGui" type="CanvasLayer" parent="."]
-script = ExtResource( 6 )
-
-[node name="Hider" type="Node2D" parent="DebugGui"]
-visible = false
-script = ExtResource( 9 )
-
-[node name="LeafHighlight" type="ColorRect" parent="DebugGui/Hider"]
-margin_right = 40.0
-margin_bottom = 40.0
-color = Color( 0.423529, 0.988235, 0.109804, 0.364706 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="RectHighlight" type="ColorRect" parent="DebugGui/Hider"]
-margin_left = -395.107
-margin_top = 437.76
-margin_right = -355.107
-margin_bottom = 477.76
-color = Color( 0.968627, 0.0431373, 0.0431373, 0.443137 )
-script = ExtResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="RectrRoomHighlighter" type="ColorRect" parent="DebugGui/Hider"]
-margin_right = 40.0
-margin_bottom = 40.0
-color = Color( 0.0823529, 0.00392157, 1, 0.596078 )
-script = ExtResource( 8 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="NodeLayer" type="CanvasLayer" parent="DebugGui/Hider"]
-
-[node name="NodeTree" type="Tree" parent="DebugGui/Hider/NodeLayer"]
-visible = false
-modulate = Color( 1, 1, 1, 0.666667 )
-margin_top = 24.6942
-margin_right = 292.0
-margin_bottom = 613.694
-script = ExtResource( 7 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HideTree" type="Button" parent="DebugGui/Hider/NodeLayer"]
-margin_right = 12.0
-margin_bottom = 20.0
-text = "Toggle Tree"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="NextLeaf" type="Button" parent="DebugGui/Hider"]
-margin_left = 1241.69
-margin_top = 675.59
-margin_right = 1261.69
-margin_bottom = 695.59
-text = "+"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HighlightLeaf" type="Button" parent="DebugGui/Hider"]
-margin_left = 1132.13
-margin_top = 675.47
-margin_right = 1231.13
-margin_bottom = 695.47
-text = "Highlight Leaf"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="PreviousLeaf" type="Button" parent="DebugGui/Hider"]
-margin_left = 1103.0
-margin_top = 675.0
-margin_right = 1120.0
-margin_bottom = 695.0
-text = "-"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="CenterMark" type="Sprite" parent="DebugGui/Hider"]
-scale = Vector2( 4, 4 )
-texture = ExtResource( 4 )
-region_enabled = true
-region_rect = Rect2( 128, 208, 16, 16 )
-
-[node name="Seed" type="Label" parent="DebugGui/Hider"]
-margin_left = 93.3395
-margin_top = 4.20448
-margin_right = 133.34
-margin_bottom = 18.2045
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="GameWorld" type="Node2D" parent="."]
 script = ExtResource( 10 )
@@ -374,14 +249,6 @@ format = 1
 [node name="OverlayCamera" type="Camera2D" parent="GameWorld/OverlayWorld/FakePlayer"]
 current = true
 
-[node name="LoveableBasic" type="TileMap" parent="GameWorld"]
-visible = false
-tile_set = ExtResource( 1 )
-cell_size = Vector2( 16, 16 )
-format = 1
-script = ExtResource( 13 )
-tile_type_map = [ 1, 0, 2, 4, 3, 4, 5 ]
-
 [node name="LevelObjects" type="Node2D" parent="GameWorld"]
 visible = false
 
@@ -390,37 +257,6 @@ visible = false
 
 [node name="FOWGhosts" type="Node2D" parent="GameWorld"]
 visible = false
-
-[node name="FogOfWar" type="TileMap" parent="GameWorld"]
-visible = false
-modulate = Color( 1, 1, 1, 0.678431 )
-tile_set = ExtResource( 2 )
-cell_size = Vector2( 16, 16 )
-format = 1
-
-[node name="Unexplored" type="TileMap" parent="GameWorld"]
-visible = false
-tile_set = ExtResource( 2 )
-cell_size = Vector2( 16, 16 )
-format = 1
-
-[node name="TileHighlight" type="ColorRect" parent="GameWorld"]
-margin_left = -32.0
-margin_top = -16.0
-margin_right = -16.0
-color = Color( 0.427451, 1, 0.290196, 0.490196 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TileHighlight2" type="ColorRect" parent="GameWorld"]
-margin_left = -32.0
-margin_top = -16.0
-margin_right = -16.0
-color = Color( 0.290196, 0.615686, 1, 0.490196 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="GameUI" type="Node2D" parent="."]
 pause_mode = 1
@@ -432,6 +268,7 @@ script = ExtResource( 20 )
 material = SubResource( 7 )
 margin_right = 1280.0
 margin_bottom = 720.0
+mouse_filter = 2
 texture = SubResource( 11 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -440,6 +277,7 @@ __meta__ = {
 [node name="OverlayRect" type="TextureRect" parent="GameUI/CanvasLayer"]
 margin_right = 40.0
 margin_bottom = 40.0
+mouse_filter = 2
 texture = SubResource( 17 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -574,26 +412,49 @@ margin_right = 292.0
 margin_bottom = 196.0
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="XPBar" type="TextureProgress" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
 margin_right = 264.0
-margin_bottom = 19.0
+margin_bottom = 8.0
+rect_min_size = Vector2( 0, 8 )
+max_value = 20.0
+value = 20.0
+texture_over = ExtResource( 29 )
+texture_progress = ExtResource( 30 )
+texture_progress_offset = Vector2( 12, 0 )
+tint_progress = Color( 0, 0.321569, 1, 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
+margin_top = 12.0
+margin_right = 264.0
+margin_bottom = 188.0
+size_flags_vertical = 3
 
 [node name="HPLabel" type="Label" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+margin_top = 157.0
 margin_right = 24.0
-margin_bottom = 19.0
+margin_bottom = 176.0
+size_flags_vertical = 8
 text = "HP
 0/0"
 align = 1
 
 [node name="StaminaLabel" type="Label" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 margin_left = 240.0
+margin_top = 157.0
 margin_right = 264.0
-margin_bottom = 19.0
+margin_bottom = 176.0
 size_flags_horizontal = 10
+size_flags_vertical = 8
 custom_fonts/font = ExtResource( 28 )
 text = "STA
 0/0"
 align = 1
+
+[node name="HSeparator" type="CenterContainer" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
+margin_top = 192.0
+margin_right = 264.0
+margin_bottom = 196.0
+rect_min_size = Vector2( 0, 4 )
 
 [node name="StaminaRect" type="TextureProgress" parent="GameUI/CanvasLayer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
 margin_left = 296.0
@@ -608,17 +469,6 @@ texture_progress = ExtResource( 26 )
 texture_progress_offset = Vector2( 0, 8 )
 fill_mode = 3
 tint_progress = Color( 1, 0.721569, 0.0588235, 1 )
-
-[node name="ColorRect3" type="ColorRect" parent="GameUI/CanvasLayer"]
-material = SubResource( 5 )
-margin_left = -62.0
-margin_top = 854.0
-margin_right = 1218.0
-margin_bottom = 1568.0
-color = Color( 0.121569, 0.121569, 0.121569, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Tweens" type="Node" parent="."]
 

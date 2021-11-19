@@ -8,14 +8,11 @@ signal message_0(msg)
 signal log_2(msg, subject, object)
 
 
-onready var TMap = $LoveableBasic
 #onready var LevelObjects = $LevelObjects
 onready var LevelObjects = $WorldView/LevelObjects
 #onready var LevelActors = $LevelActors
 onready var LevelActors = $WorldView/LevelActors
 var Player: Sprite
-onready var FogOfWar = $FogOfWar
-onready var Unexplored = $Unexplored
 #onready var FOWGhosts = $FOWGhosts
 onready var FOWGhosts = $ShadowWorldView/FOWGhosts
 onready var WorldView = $WorldView
@@ -55,18 +52,15 @@ func build(build_rng):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	EVNT.subscribe("build_finished", TMap, "_on_build_finished")
 	EVNT.subscribe("export_generator_config", WRLD, "_on_export_generator_config")
 	EVNT.subscribe("player_start_position", self, "_on_player_start_position")
 	EVNT.subscribe("place_thing", self, "_on_place_thing")
 	EVNT.subscribe("remove_thing", self, "_on_remove_thing")
 	EVNT.subscribe("connect_things", self, "_on_connect_things")
-	LevelGenerator.connect("build_finished", TMap, "_on_build_finished")
 	LevelGenerator.connect("build_finished", self, "_on_build_finished")
 	LevelGenerator.connect("place_door", self, "_on_place_door")
 	LevelGenerator.connect("player_start_position", self, "_on_player_start_position")
 	LevelGenerator.connect("export_generator_config", WRLD, "_on_export_generator_config")
-	TMap.connect("tiles_ready", self, "_on_tiles_ready")
 	EVNT.subscribe("create_ghost", self, "_on_create_ghost")
 	EVNT.subscribe("end_ghost", self, "_on_end_ghost")
 	EVNT.subscribe("update_fov", self, "_on_update_fov")
@@ -78,10 +72,19 @@ func _ready():
 func _on_build_finished(tiles):
 	var fov_block_tiles = []
 	for x in range(tiles.size()):
-		fov_block_tiles.append([])
+		cell_interaction_mask_map.append([])
+		cell_occupancy_map.append([])
 		for y in range(tiles[x].size()):
 			var tile_type = tiles[x][y]
 			var til_i = tile_type_map.find(tile_type)
+#			if til_i == 4:
+#				til_i = 1
+			if x == 0 or x == tiles.size()-1 or y == 0 or y == tiles[x].size()-1:
+				if til_i != 0:
+					til_i = 4
+			var utile = TIL.utiles[tile_type_map[til_i]]
+			cell_occupancy_map[x].append([ITile.new(utile, Vector2(x,y))])
+			cell_interaction_mask_map[x].append(utile.cell_interaction_mask)
 			WorldTiles.set_cell(x,y,til_i)
 			ShadowWorldTiles.set_cell(x,y,til_i)
 	WorldTiles.update_bitmask_region(Vector2(0,0), Vector2(tiles.size(), tiles[0].size()))
@@ -98,6 +101,17 @@ func _on_build_finished(tiles):
 	var OverlayTransform = RemoteTransform2D.new()
 	Player.add_child(OverlayTransform)
 	OverlayTransform.remote_path = "../../../../OverlayWorld/FakePlayer"
+	rebuild_pathfinding(walk_pathf, TIL.CellInteractions.BlocksWalk)
+	WRLD.path_map = walk_pathf
+	var total_time = OS.get_system_time_msecs() - world_gen_timer
+	process_add_queue()
+	process_remove_queue()
+	print("Worldgen Took: " + str(total_time))
+	EVNT.emit_signal("world_ready")
+	process_add_queue()
+	process_remove_queue()
+	process_connection_queue()
+	process_cimmap_updates()
 
 func _on_object_moved(thing, from_cell, to_cell):
 	move_in_maps(thing, from_cell, to_cell)
@@ -148,40 +162,16 @@ func _on_actor_try_action_at(actor, target_position, action = null):
 		emit_signal("action_impossible")
 		return
 	if !target_thing or ((action == ACT.Type.Move or (action == ACT.Type.None and target_thing.default_action == ACT.Type.Move)) and target_thing.is_walkable):
-		if (action == ACT.Type.Move or action == ACT.Type.None) and TMap.is_tile_walkable(target_position):
-			actor.game_position = target_position # Replace with function body.
-			emit_signal("action_complete", actor, null, ACT.Type.Move)
-			return
-		else:
-			emit_signal("action_failed", actor, null, ACT.Type.Move)
-			return
+#		if (action == ACT.Type.Move or action == ACT.Type.None) and TMap.is_tile_walkable(target_position):
+#			actor.game_position = target_position # Replace with function body.
+#			emit_signal("action_complete", actor, null, ACT.Type.Move)
+#			return
+#		else:
+		emit_signal("action_failed", actor, null, ACT.Type.Move)
+		return
 	else:
 		emit_signal("action_failed", actor, null, null)
 	actor_do_action_to(actor, target_thing.default_action if action == ACT.Type.None else action, target_thing)
-
-func can_do_action_at_location(at_location, action):
-	var found_object = object_at_cell(at_location)
-	var found_actor = actor_at_cell(at_location)
-	var found_target = false
-	var failed_target = false
-	if found_object:
-		if found_object.supports_action(action):
-			found_target = true
-		else:
-			failed_target = true
-	if found_actor:
-		if found_actor.supports_action(action):
-			found_target = true
-		else:
-			failed_target = true
-	if TMap.can_tile_support_action(at_location, action):
-		found_target = true
-	else:
-		failed_target = true
-	if action.action_target.has(ACT.ActionTargetHint.WholeCellMustSupport):
-		return found_target and !failed_target
-	else:
-		return found_target
 
 func _on_create_ghost(ghost):
 	FOWGhosts.add_child(ghost)
@@ -309,25 +299,13 @@ func actors_at_cell(at_cell: Vector2) -> Array:
 	return found
 
 func tiles_at_cell(at_cell: Vector2) -> Array:
-	return [TMap.get_tile_objv(at_cell)]
+	return everything_at_cell(at_cell, ACT.TargetType.TargetTile)
 
-func tile_at_cell(at_cell: Vector2):
-	return TMap.get_tile_objv(at_cell)
-	
 func everything_at_cell(at_cell: Vector2, target_mask:int = ~0):
 	var everything = []
-	if target_mask & ACT.TargetType.TargetActor:
-		var actors = actors_at_cell(at_cell)
-		if actors:
-			everything.append_array(actors)
-	if target_mask & ACT.TargetType.TargetObject:
-		var objects = objects_at_cell(at_cell)
-		if objects:
-			everything.append_array(objects)
-	if target_mask & ACT.TargetType.TargetTile:
-		var tiles = tiles_at_cell(at_cell)
-		if tiles:
-			everything.append_array(tiles)
+	for thing in cell_occupancy_map[at_cell.x][at_cell.y]:
+		if thing.thing_type & target_mask:
+			everything.append(thing)
 	return everything
 
 func thing_at_position(position, prefer_actor=true):
@@ -342,27 +320,6 @@ func _on_player_start_position(start_pos):
 	Player.set_initial_game_position(start_pos)
 	EVNT.emit_signal("player_position", Player.global_position)
 	
-func _on_tiles_ready():
-	for x in range(WRLD.world_dimensions.x):
-		cell_interaction_mask_map.append([])
-		cell_occupancy_map.append([])
-		for y in range(WRLD.world_dimensions.y):
-			FogOfWar.set_cell(x, y, 0)
-			Unexplored.set_cell(x, y, 0)
-			var utile = TMap.get_utile(x, y)
-			cell_occupancy_map[x].append([utile])
-			cell_interaction_mask_map[x].append(utile.cell_interaction_mask)
-	rebuild_pathfinding(walk_pathf, TIL.CellInteractions.BlocksWalk)
-	WRLD.path_map = walk_pathf
-	var total_time = OS.get_system_time_msecs() - world_gen_timer
-	process_add_queue()
-	process_remove_queue()
-	print("Worldgen Took: " + str(total_time))
-	EVNT.emit_signal("world_ready")
-	process_add_queue()
-	process_remove_queue()
-	process_connection_queue()
-	process_cimmap_updates()
 
 func rebuild_pathfinding(astar: AStar2D, block_mask):
 	var point_map = []
@@ -410,32 +367,6 @@ func process_remove_queue():
 	for thing in old_queue:
 		remove_thing(thing[0], thing[1], thing[2])
 
-func update_path(to_update, tile_pos, is_connected, tile_mask, exclude_objects = [], create_point = false, remove_point = false, first_pass=false):	
-	var points_to_connect = []
-	var point_id
-	if create_point:
-		point_id = to_update.get_available_point_id()
-		to_update.add_point(point_id, tile_pos)
-	if tile_pos.y > 0:
-		var up_pos = tile_pos + Vector2.UP
-		if tile_mask[TMap.get_tilev(up_pos)] and !exclude_objects.has(up_pos):
-			points_to_connect.append(to_update.get_closest_point(up_pos))
-	if tile_pos.x > 0:
-		var left_pos = tile_pos + Vector2.LEFT
-		if tile_mask[TMap.get_tilev(left_pos)] and !exclude_objects.has(left_pos):
-			points_to_connect.append(to_update.get_closest_point(left_pos))
-	if !first_pass:
-		if tile_pos < WRLD.world_dimensions.y:
-			var down_pos = tile_pos + Vector2.DOWN
-			if tile_mask[TMap.get_tilev(down_pos)] and !exclude_objects.has(down_pos):
-				points_to_connect.append(to_update.get_closest_point(down_pos))
-		if tile_pos < WRLD.world_dimensions.x:
-			var right_pos = tile_pos + Vector2.RIGHT
-			if tile_mask[TMap.get_tilev(right_pos)] and !exclude_objects.has(right_pos):
-				points_to_connect.append(to_update.get_closest_point(right_pos))
-	for point in points_to_connect:
-		to_update.connect_points(point_id, point)
-			
 func _on_update_fov():
 	update_fov_by_location(Player.game_position)
 
@@ -467,11 +398,8 @@ func hide_cell(at_cell):
 	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:
 		occupant.hide()
 	MaskTiles.set_cellv(at_cell, 0)
-	FogOfWar.set_cellv(at_cell, 0)
 
 func show_cell(at_cell):
 	for occupant in cell_occupancy_map[at_cell.x][at_cell.y]:
 		occupant.show()
 	MaskTiles.set_cellv(at_cell, 1)
-	FogOfWar.set_cellv(at_cell, -1)
-	Unexplored.set_cellv(at_cell, -1)

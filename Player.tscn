@@ -1,10 +1,9 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://Player.gd" type="Script" id=1]
-[ext_resource path="res://actions/action_scripts/Move.gd" type="Script" id=2]
-[ext_resource path="res://effects/Move.gd" type="Script" id=3]
+[ext_resource path="res://actions/action_resources/move.tres" type="Resource" id=2]
+[ext_resource path="res://actions/action_resources/vital_burst.tres" type="Resource" id=3]
 [ext_resource path="res://actions/action_scripts/Push.gd" type="Script" id=4]
-[ext_resource path="res://effects/Push.gd" type="Script" id=5]
 [ext_resource path="res://actions/action_scripts/Use.gd" type="Script" id=6]
 [ext_resource path="res://effects/Use.gd" type="Script" id=7]
 [ext_resource path="res://effects/Open.gd" type="Script" id=8]
@@ -28,32 +27,6 @@ fortitude = 1
 armor = 0
 wizardlyness = 0
 basic_attack = [ [ "+1d4;+s:m", 0 ] ]
-
-[sub_resource type="Resource" id=4]
-resource_local_to_scene = true
-script = ExtResource( 2 )
-action_name = "move"
-action_type = 1
-target_hints = 1
-action_range = 1.5
-action_area = 0.0
-target_type = 1
-target_area = 1
-target_priority = [ 1, 2, 8, 4 ]
-target_cim = 2
-x_cim = 16
-c_cim = 0
-action_radius = 0.0
-pending_message = "Move where?"
-impossible_message = ""
-failed_message = ""
-success_message = ""
-impossible_log = ""
-failed_log = ""
-success_log = ""
-pertarget_log = ""
-test_thing = 0
-move_effect = ExtResource( 3 )
 
 [sub_resource type="Resource" id=9]
 resource_local_to_scene = true
@@ -110,26 +83,15 @@ resource_local_to_scene = true
 script = ExtResource( 4 )
 action_name = "push"
 action_type = 32
-target_hints = 0
-action_range = 1.5
-action_area = 0.0
 target_type = 14
-target_area = 1
 target_priority = [ 4, 2, 8, 1 ]
-target_cim = 16
 x_cim = 64
 c_cim = 0
-action_radius = 0.0
 pending_message = "Push what?"
 impossible_message = "You can't push that."
-failed_message = ""
-success_message = ""
-impossible_log = ""
 failed_log = "{subject} tried to push {object} but failed."
 success_log = "{subject} pushed {object}!"
-pertarget_log = ""
-push_effect = ExtResource( 5 )
-push_effect_magnitude = 1
+push_effect_magnitude = "m"
 
 [sub_resource type="Resource" id=8]
 resource_local_to_scene = true
@@ -194,13 +156,15 @@ is_player = true
 cim = 48
 sam = 352
 game_stats = SubResource( 14 )
+thing_type = 4
 mob_ai = [ ExtResource( 13 ) ]
 actions = [ ExtResource( 12 ) ]
 default_actions = {
-1: SubResource( 4 ),
+1: ExtResource( 2 ),
 8: SubResource( 9 ),
 16: SubResource( 11 ),
 32: SubResource( 12 ),
 128: SubResource( 8 ),
-256: SubResource( 15 )
+256: SubResource( 15 ),
+512: ExtResource( 3 )
 }

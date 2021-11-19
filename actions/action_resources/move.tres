@@ -26,5 +26,4 @@ impossible_log = ""
 failed_log = ""
 success_log = ""
 pertarget_log = ""
-test_thing = 0
 move_effect = ExtResource( 2 )

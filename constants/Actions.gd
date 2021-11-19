@@ -6,7 +6,7 @@ extends Node
 # var a = 2
 # var b = "text"
 
-enum Type {None = 0, Move = 1, Fly = 2, Phase = 4, Open = 8, Close = 16, Push = 32, Take = 64, Use = 128, Attack = 256}
+enum Type {None = 0, Move = 1, Fly = 2, Phase = 4, Open = 8, Close = 16, Push = 32, Take = 64, Use = 128, Attack = 256, Heal = 512}
 const TYPE_FLAGS = "Move,Fly,Phase,Open,Close,Push,Pull,Use,Attack"
 var rType = {}
 # Called when the node enters the scene tree for the first time.
@@ -17,17 +17,15 @@ enum ActingState {Wait, Act, Dead}
 
 enum ActionState {Failed, Ready, Acting, Complete, Impossible}
 
-enum ActionResponse {Stop, Impossible, Proceed, Hijacked, Failed, Done}
+enum ActionResponse {Stop, Impossible, Proceed, Hijacked, Failed, Done, RemoveTarget}
 
 enum ActionPhase {Supports, Can, Pre, Do, Post}
 
-enum TargetHint {None = 0, WholeCellMustSupport = 1}
+enum TargetHint {None = 0, WholeCellMustSupport = 1, StaminaSpender = 2}
 
 enum TargetType {TargetNone = 0, TargetTile = 1, TargetObject = 2, TargetActor = 4, TargetItem = 8}
 
-enum TargetArea {TargetNone, TargetSingle, TargetCell, TargetCone, TargetWideBeam}
-
-enum Actions {BasicMove, BasicOpen, BasicClose, Push, BasicUse, Wait, Forcewave, RocketteLauncher}
+enum TargetArea {TargetNone, TargetSingle, TargetCell, TargetCone, TargetWideBeam, TargetSelf}
 
 var TargetAll = 0
 

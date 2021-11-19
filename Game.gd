@@ -5,11 +5,7 @@ signal log_action(subject, object, action)
 
 const player_scene = preload("res://Player.tscn")
 
-onready var DebugSeed = $DebugGui/Hider/Seed
 onready var GameWorld = $GameWorld
-onready var TileHighlight = $GameWorld/TileHighlight
-onready var LineHighlight = $GameUI/LineHighlight
-onready var BlueHighlight = $GameWorld/TileHighlight2
 onready var LevelActors = $GameWorld/WorldView/LevelActors
 onready var OnlyTween = $Tweens/Tween
 onready var GameUI = $GameUI
@@ -38,9 +34,6 @@ func _ready():
 	Player = player_scene.instance()
 	GameWorld.Player = Player
 	current_actor = Player
-	DBG.TileHighlight = TileHighlight
-	DBG.HighlightGroup = LineHighlight
-	DebugSeed.text = "Seed: " + str(rng.seed)
 	EVNT.subscribe("world_ready", self, "_on_world_ready")
 	GameWorld.build(rng)
 	WRLD.rng = rng
@@ -74,6 +67,7 @@ func _on_world_ready():
 func _on_do_action(action):
 	if action.target_type == ACT.TargetType.TargetNone:
 		action.finish()
+	var ignore_targets = []
 	for target in action.action_targets:
 		var target_response = target.can_do_action(action)
 		var action_response = action.process_action_response(ACT.ActionPhase.Can, target_response, target)
@@ -83,6 +77,10 @@ func _on_do_action(action):
 		elif action_response == ACT.ActionResponse.Failed:
 			EVNT.emit_signal("action_failed", action)
 			return
+		elif action_response == ACT.ActionResponse.RemoveTarget:
+			ignore_targets.append(target)
+	for target in ignore_targets:
+		action.action_targets.erase(target)
 	action.execute()
 
 func _on_action_complete(action):

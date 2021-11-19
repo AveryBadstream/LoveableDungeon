@@ -139,6 +139,7 @@ DBG="*res://constants/Debug.gd"
 AUD="*res://constants/Audio.gd"
 FX="*res://constants/FX.gd"
 FOV="*res://constants/FOVRPAS.gd"
+ITM="*res://constants/Item.gd"
 
 [display]
 
@@ -212,6 +213,11 @@ wheel_down={
 rock={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":82,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+vital_burst={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":86,"unicode":0,"echo":false,"script":null)
  ]
 }
 

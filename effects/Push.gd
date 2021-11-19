@@ -17,7 +17,10 @@ var direction
 
 func _init(actor, target, set_magnitude).(actor, target):
 	from = target.game_position
-	magnitude = max(set_magnitude, actor.game_stats.get_stat(GameStats.MIGHT))
+	if set_magnitude.is_valid_integer():
+		magnitude = int(set_magnitude)
+	else:
+		magnitude = actor.game_stats.get_stat(set_magnitude)
 	direction = (from - actor.game_position).normalized()
 	var possible_target = ((direction * magnitude) + from).snapped(Vector2.ONE)
 	steps = FOV.lerp_line(target.game_position, possible_target, magnitude, TIL.CellInteractions.None)

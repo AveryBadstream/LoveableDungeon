@@ -5,6 +5,7 @@ signal priority_over()
 # var a = 2
 # var b = "text"
 var puff = preload("res://fx/Puff.tscn")
+var heal_bubble = preload("res://fx/HealBubble.tscn")
 
 var in_priority = false
 
@@ -29,6 +30,11 @@ func spawn_puff(game_position):
 	var new_puff = puff.instance()
 	new_puff.position = game_position * 16
 	FXManager.add_child(new_puff)
+
+func spawn_heal_bubble(game_position):
+	var new_heal_bubble = heal_bubble.instance()
+	new_heal_bubble.position = game_position * 16
+	FXManager.add_child(new_heal_bubble)
 
 func bump_into(bumper, bumpee, after=0):
 	if WRLD.cell_is_visible(bumper.game_position) or WRLD.cell_is_visible(bumpee.game_position):

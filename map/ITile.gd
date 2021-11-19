@@ -12,13 +12,18 @@ class_name ITile
 var game_position: Vector2
 var actual_utile
 var claiming_effects = []
+const thing_type = ACT.TargetType.TargetTile
 
 var blocks_vision setget , get_blocks_vision
 
 var default_action setget ,get_default_action
+var cell_interaction_mask setget ,get_cell_interaction_mask
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
+
+func get_cell_interaction_mask():
+	return actual_utile.cell_interaction_mask
 
 func get_blocks_vision():
 	return actual_utile.blocks_vision
@@ -59,7 +64,9 @@ func effect_claim(effect):
 
 func effect_release(effect):
 	claiming_effects.erase(effect)
-# Called when the node enters the scene tree for the first time.
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+
+func show():
+	actual_utile.show()
+
+func hide():
+	actual_utile.hide()

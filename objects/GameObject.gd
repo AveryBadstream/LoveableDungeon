@@ -28,8 +28,9 @@ var claiming_effects = []
 var cell_interaction_mask setget ,get_cim
 var my_ghost
 var triggers = []
-var thing_type = ACT.TargetType.TargetObject
+export(ACT.TargetType) var thing_type = ACT.TargetType.TargetObject
 var inventory = []
+var equipped = {}
 const damage_effect = preload("res://effects/TakeDamage.gd")
 const die_effect = preload("res://effects/DieEffect.gd")
 # Declare member variables here. Examples:
@@ -44,10 +45,11 @@ func set_initial_game_position(at_cell:Vector2):
 	if game_stats:
 		game_stats.initialize()
 	if is_player:
+		game_stats.connect("stats_changed", self, "_on_stats_changed")
 		EVNT.emit_signal("player_stats", self)
 	EVNT.emit_signal("update_cimmap", at_cell)
 
-func supports_action(action) -> bool:
+func supports_action(action) -> int:
 	var funcname = "_can_support_"+ACT.TypeKey(action.action_type)
 	if self.has_method(funcname):
 		return self.call(funcname, action)
@@ -55,6 +57,11 @@ func supports_action(action) -> bool:
 		return ACT.ActionResponse.Proceed
 	else:
 		return ACT.ActionResponse.Stop
+
+func _can_support_Heal(action) -> int:
+	if game_stats and game_stats.get_resource(GameStats.HP) < game_stats.get_stat(GameStats.HP):
+		return ACT.ActionResponse.Proceed
+	return ACT.ActionResponse.RemoveTarget
 
 func effect_pre(effect):
 	return null
@@ -133,7 +140,8 @@ func show():
 	.show()
 
 func set_game_position(new_position: Vector2, update_real_position=true):
-	if new_position != last_game_position:
+	if new_position != last_game_position and new_position.x > 0 and new_position.y > 0 \
+		and new_position.x < WRLD.world_dimensions.x and new_position.y < WRLD.world_dimensions.y:
 		if update_real_position:
 			self.position = new_position * 16
 		var last_last_game_position = last_game_position
@@ -243,10 +251,11 @@ func take_damage(from, damage, type=0):
 		return
 	game_stats.change_resource(GameStats.HP, -1 * damage)
 	EFCT.queue_next(damage_effect.new(from, self, damage, type))
-	if is_player:
-		EVNT.emit_signal("player_stats", self)
 #	if self.game_stats.hp < 0 and not is_player:
 #		EVNT.emit_signal("died", self)
+
+func _on_stats_changed():
+	EVNT.emit_signal("player_stats", self)
 
 func check_dead():
 	if not game_stats:

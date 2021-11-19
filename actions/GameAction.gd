@@ -101,6 +101,8 @@ func get_target_hints(target_point:Vector2 = action_actor.game_position):
 		for cell in valid_area:
 			effect_area.erase(cell)
 		return [hint_area, effect_area, valid_area]
+	elif target_area == ACT.TargetArea.TargetSelf:
+		return [[], [], [action_actor.game_position]]
 
 func get_viable_targets():
 	pass
@@ -111,7 +113,17 @@ func complete():
 func get_origin_cell():
 	return self.action_actor.game_position
 
+func action_viable():
+	if target_hints & ACT.TargetHint.StaminaSpender and action_actor.game_stats.get_resource(GameStats.STAMINA) <= 0:
+		if action_actor.is_player:
+			MSG.action_message(self, "{subject} don't have enough stamina!")
+		return false
+	return true
+
 func do_action_at(target_cell):
+	if not action_viable():
+		impossible()
+		return false
 	var targets = []
 	action_targets = []
 	targeted_cell_range = []
@@ -140,6 +152,11 @@ func do_action_at(target_cell):
 		targeted_cell_range = WRLD.get_cone_action_cells(self, target_cell)
 		for target_cell in targeted_cell_range:
 			targets.append_array(WRLD.get_action_targets_cell(self, target_cell))
+	elif target_area == ACT.TargetArea.TargetSelf and target_cell == action_actor.game_position:
+		targets = [action_actor]
+	if not post_validate(targets):
+		self.impossible()
+		return false
 	if targets.size() == 0:
 		self.impossible()
 		return false
@@ -163,8 +180,15 @@ func do_action_at(target_cell):
 				actual_targets.append(target)
 		self.do_action(targets)
 		return true
+	elif target_area == ACT.TargetArea.TargetSelf:
+		if targets.size() == 1 and targets[0] == action_actor:
+			self.do_action(targets)
+			return true
 	self.impossible()
 	return false
+
+func post_validate(targets):
+	return true
 
 func test_action_at(at_cell):
 	if action_actor.game_position.distance_to(at_cell) > action_range:
@@ -211,6 +235,8 @@ func do():
 	pass
 
 func execute():
+	if target_hints & ACT.TargetHint.StaminaSpender:
+		action_actor.game_stats.change_resource(GameStats.STAMINA, -1)
 	self.do()
 	if self.success_message != "":
 		MSG.action_message(self, self.success_message)

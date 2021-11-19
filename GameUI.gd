@@ -54,7 +54,7 @@ func clear_hints():
 func hint_update(mouse_pos):
 	display_hints(currently_hinting.get_target_hints(mouse_pos))
 
-func _input(event):
+func _unhandled_input(event):
 	if !event.is_pressed() or ui_state == UI_STATES.Wait:
 		return
 	if event is InputEventMouseButton:
@@ -85,6 +85,9 @@ func _input(event):
 		active_player.pending_action.mark_pending()
 	elif event.is_action("forcewave"):
 		active_player.pending_action = active_player.local_actions[0]
+		active_player.pending_action.mark_pending()
+	elif event.is_action("vital_burst"):
+		active_player.pending_action = active_player.local_default_actions[ACT.Type.Heal]
 		active_player.pending_action.mark_pending()
 
 func _process(delta):

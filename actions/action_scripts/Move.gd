@@ -5,8 +5,6 @@ extends GameAction
 # var a = 2
 # var b = "text"
 
-export var test_thing = 0
-
 export(Script) var move_effect = preload("res://effects/Move.gd")
 # Called when the node enters the scene tree for the first time.
 
