@@ -4,7 +4,6 @@
 [ext_resource path="res://objects/Door.gd" type="Script" id=2]
 [ext_resource path="res://assets/sounds/hit2.wav" type="AudioStream" id=3]
 
-
 [sub_resource type="Animation" id=1]
 resource_name = "Close"
 length = 0.08

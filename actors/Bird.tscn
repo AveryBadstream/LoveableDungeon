@@ -8,7 +8,6 @@
 [ext_resource path="res://actors/AI/AimlessWander.gd" type="Script" id=8]
 [ext_resource path="res://actors/AI/PlayerChaser.tres" type="Resource" id=9]
 
-
 [sub_resource type="Resource" id=1]
 resource_local_to_scene = true
 script = ExtResource( 2 )
