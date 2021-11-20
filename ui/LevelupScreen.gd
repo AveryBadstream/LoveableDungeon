@@ -27,11 +27,6 @@ func _on_show_levelup():
 func _on_player_ready(player_obj):
 	player = player_obj
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
-
 func _on_MightButton_mouse_entered():
 	stat_desc.text = "Might: +5 percent chance to hit, +1 damage to weapon attacks"
 
