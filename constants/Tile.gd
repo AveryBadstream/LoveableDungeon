@@ -16,7 +16,9 @@ const TILE_BLOCK_FOV = [0,1,0,1,1,0]
 var utiles = {}
 
 const IceTile = preload("res://map/Ice.gd")
-
+#Since Godot is "Do repeat yourself" if this is changed all exports with 
+# "#FLAG_CELL_INTERACTION" need to be updated too.  Really can't wait for this to be
+#fixed
 enum CellInteractions {None = 0, BlocksFOV = 1, BlocksWalk = 2, BlocksFly = 4, BlocksPhase = 8, Occupies = 16, PlayerRemembers = 32, Immovable = 64}
 
 # Called when the node enters the scene tree for the first time.

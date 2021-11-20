@@ -5,7 +5,9 @@ extends Node
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-
+#Since Godot is "Do repeat yourself" if this is changed all exports with 
+# "#FLAG_ACTION_TYPE" need to be updated too.  Really can't wait for this to be
+#fixed
 enum Type {None = 0, Move = 1, Fly = 2, Phase = 4, Open = 8, Close = 16, Push = 32, Take = 64, Use = 128, Attack = 256, Heal = 512}
 const TYPE_FLAGS = "Move,Fly,Phase,Open,Close,Push,Pull,Use,Attack"
 var rType = {}
