@@ -1,5 +1,7 @@
 extends Node
 
+const default_size = Vector2(1280, 720)
+
 var GameWorld = null
 var TMap = null
 var world_dimensions = Vector2(0,0)

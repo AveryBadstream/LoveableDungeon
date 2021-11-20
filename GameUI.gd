@@ -8,6 +8,9 @@ var area_hint_indicator = preload("res://ui/AreaHint.tscn")
 var target_hint_indicator = preload("res://ui/TargetHint.tscn")
 var effect_hint_indicator = preload("res://ui/EffectHint.tscn")
 
+onready var MessageBox = $CanvasLayer/PanelContainer/LogBox/VBoxContainer/MessageBox
+onready var LogBox = $CanvasLayer/PanelContainer/LogBox/VBoxContainer/ScrollContainer/LogBox
+
 enum UI_STATES {Wait, Active}
 
 var active_player
@@ -21,6 +24,8 @@ var last_mouse_game_position = Vector2.ZERO
 var last_octant = null
 
 func _ready():
+	MSG.MessageBox = MessageBox
+	MSG.LogBox = LogBox
 	EVNT.subscribe("hint_action", self, "_on_hint_action")
 	EVNT.subscribe("action_complete", self, "_on_end_hint")
 	EVNT.subscribe("action_impossible", self, "_on_end_hint")

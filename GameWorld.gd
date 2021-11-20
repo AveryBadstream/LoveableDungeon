@@ -16,6 +16,7 @@ var Player: Sprite
 #onready var FOWGhosts = $FOWGhosts
 onready var FOWGhosts = $ShadowWorldView/FOWGhosts
 onready var WorldView = $WorldView
+onready var WorldCamera = $WorldView/FakePlayer/WorldCamera
 
 onready var WorldTiles = $WorldView/WorldTiles
 onready var ShadowWorldTiles = $ShadowWorldView/ShadowWorldTiles
