@@ -276,6 +276,8 @@ static func lerp_line(origin:Vector2, target:Vector2, \
 							RESTRICTIVENESS := R, \
 							tiles:Array = WRLD.cell_interaction_mask_map) -> Array:
 	var cells = []
+	print(origin)
+	print(target)
 	var delta = origin - target
 	var N = max(abs(delta.x), abs(delta.y))
 	#var N = target.distance_to(origin)
@@ -284,6 +286,7 @@ static func lerp_line(origin:Vector2, target:Vector2, \
 			continue
 		var t = i/N
 		var new_cell = Vector2( round(lerp(origin.x, target.x, t)), round(lerp(origin.y, target.y, t)))
+		print(new_cell)
 		if !cells.has(new_cell):
 			cells.append(new_cell)
 	return cells

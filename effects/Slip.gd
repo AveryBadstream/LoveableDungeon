@@ -22,6 +22,7 @@ func _init(actor, target, in_direction).(actor, target):
 	steps.append_array(FOV.lerp_line(target.game_position, possible_target, 1, TIL.CellInteractions.None))
 	step = 1
 	to = steps[1]
+	print(len(steps))
 
 func prep():
 	if WRLD.cell_occupied(steps[step]):

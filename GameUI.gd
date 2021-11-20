@@ -1,4 +1,4 @@
-extends Node2D
+extends CanvasLayer
 
 
 # Declare member variables here. Examples:
@@ -9,8 +9,8 @@ var target_hint_indicator = preload("res://ui/TargetHint.tscn")
 var effect_hint_indicator = preload("res://ui/EffectHint.tscn")
 
 onready var Canvas = $CanvasLayer
-onready var MessageBox = $CanvasLayer/PanelContainer/LogBox/VBoxContainer/MessageBox
-onready var LogBox = $CanvasLayer/PanelContainer/LogBox/VBoxContainer/ScrollContainer/LogBox
+onready var MessageBox = $PanelContainer/LogBox/VBoxContainer/MessageBox
+onready var LogBox = $PanelContainer/LogBox/VBoxContainer/ScrollContainer/LogBox
 
 enum UI_STATES {Wait, Active}
 

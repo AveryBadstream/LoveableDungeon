@@ -358,13 +358,9 @@ visible = false
 [node name="FOWGhosts" type="Node2D" parent="GameWorld"]
 visible = false
 
-[node name="GameUI" type="Node2D" parent="."]
-pause_mode = 1
-script = ExtResource( 20 )
+[node name="GameView" type="CanvasLayer" parent="."]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="GameUI"]
-
-[node name="GameView" type="TextureRect" parent="GameUI/CanvasLayer"]
+[node name="GameView" type="TextureRect" parent="GameView"]
 material = SubResource( 7 )
 margin_right = 1280.0
 margin_bottom = 720.0
@@ -374,25 +370,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="OverlayRect" type="TextureRect" parent="GameUI/CanvasLayer"]
-margin_right = 40.0
-margin_bottom = 40.0
+[node name="OverlayRect" type="TextureRect" parent="GameView"]
+margin_right = 1280.0
+margin_bottom = 480.0
 mouse_filter = 2
 texture = SubResource( 17 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="GameUI/CanvasLayer"]
-visible = false
-margin_right = 256.0
-margin_bottom = 512.0
-color = Color( 0.121569, 0.0941176, 0.0941176, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="GameUI" type="CanvasLayer" parent="."]
+script = ExtResource( 20 )
 
-[node name="PanelContainer" type="Panel" parent="GameUI/CanvasLayer"]
+[node name="PanelContainer" type="Panel" parent="GameUI"]
 margin_top = 480.0
 margin_right = 1280.0
 margin_bottom = 720.0
@@ -401,7 +391,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LogBox" type="Panel" parent="GameUI/CanvasLayer/PanelContainer"]
+[node name="LogBox" type="Panel" parent="GameUI/PanelContainer"]
 margin_left = 624.0
 margin_right = 1262.0
 margin_bottom = 240.0
@@ -410,7 +400,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/LogBox"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/PanelContainer/LogBox"]
 margin_left = 16.0
 margin_top = 16.0
 margin_right = 638.0
@@ -420,7 +410,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="GameUI/CanvasLayer/PanelContainer/LogBox/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="GameUI/PanelContainer/LogBox/VBoxContainer"]
 margin_right = 622.0
 margin_bottom = 188.0
 grow_horizontal = 0
@@ -432,7 +422,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LogBox" type="RichTextLabel" parent="GameUI/CanvasLayer/PanelContainer/LogBox/VBoxContainer/ScrollContainer"]
+[node name="LogBox" type="RichTextLabel" parent="GameUI/PanelContainer/LogBox/VBoxContainer/ScrollContainer"]
 margin_right = 622.0
 margin_bottom = 188.0
 grow_vertical = 0
@@ -443,7 +433,7 @@ custom_fonts/normal_font = ExtResource( 28 )
 bbcode_enabled = true
 scroll_following = true
 
-[node name="MessageBox" type="Label" parent="GameUI/CanvasLayer/PanelContainer/LogBox/VBoxContainer"]
+[node name="MessageBox" type="Label" parent="GameUI/PanelContainer/LogBox/VBoxContainer"]
 margin_top = 192.0
 margin_right = 622.0
 margin_bottom = 208.0
@@ -451,7 +441,7 @@ rect_min_size = Vector2( 0, 16 )
 size_flags_vertical = 9
 custom_fonts/font = ExtResource( 28 )
 
-[node name="ExtraInfoPanel" type="Panel" parent="GameUI/CanvasLayer/PanelContainer"]
+[node name="ExtraInfoPanel" type="Panel" parent="GameUI/PanelContainer"]
 margin_left = 16.0
 margin_top = 16.0
 margin_right = 224.0
@@ -461,7 +451,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="YourInfoPanel" type="Panel" parent="GameUI/CanvasLayer/PanelContainer"]
+[node name="YourInfoPanel" type="Panel" parent="GameUI/PanelContainer"]
 margin_left = 224.0
 margin_top = 16.0
 margin_right = 544.0
@@ -473,7 +463,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel"]
 margin_right = 320.0
 margin_bottom = 208.0
 size_flags_horizontal = 3
@@ -482,24 +472,24 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer"]
 margin_right = 320.0
 margin_bottom = 8.0
 
-[node name="FloorLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer"]
+[node name="FloorLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer"]
 margin_right = 320.0
 margin_bottom = 8.0
 size_flags_horizontal = 3
 text = "Floor 1"
 align = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer"]
 margin_top = 12.0
 margin_right = 320.0
 margin_bottom = 208.0
 size_flags_vertical = 3
 
-[node name="HPBar" type="TextureProgress" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
+[node name="HPBar" type="TextureProgress" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
 margin_right = 24.0
 margin_bottom = 190.0
 rect_min_size = Vector2( 10, 0 )
@@ -517,13 +507,13 @@ stretch_margin_top = 2
 stretch_margin_right = 2
 stretch_margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
 margin_left = 28.0
 margin_right = 292.0
 margin_bottom = 196.0
 size_flags_horizontal = 3
 
-[node name="XPBar" type="TextureProgress" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="XPBar" type="TextureProgress" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
 margin_right = 264.0
 margin_bottom = 8.0
 rect_min_size = Vector2( 0, 8 )
@@ -534,23 +524,23 @@ texture_progress = ExtResource( 30 )
 texture_progress_offset = Vector2( 12, 0 )
 tint_progress = Color( 0, 0.321569, 1, 1 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer"]
 margin_top = 12.0
 margin_right = 264.0
 margin_bottom = 196.0
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 margin_right = 264.0
 margin_bottom = 184.0
 size_flags_horizontal = 3
 
-[node name="XPLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="XPLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
 margin_right = 264.0
 margin_bottom = 8.0
 align = 1
 
-[node name="StatGrid" type="GridContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="StatGrid" type="GridContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
 margin_top = 12.0
 margin_right = 264.0
 margin_bottom = 161.0
@@ -558,7 +548,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
 
-[node name="LevelLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
+[node name="LevelLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
 margin_top = 19.0
 margin_right = 130.0
 margin_bottom = 27.0
@@ -567,7 +557,7 @@ size_flags_vertical = 6
 text = "test"
 align = 1
 
-[node name="WizardlynessLabel" type="RichTextLabel" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
+[node name="WizardlynessLabel" type="RichTextLabel" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
 margin_left = 134.0
 margin_top = 5.0
 margin_right = 264.0
@@ -580,7 +570,7 @@ text = "[rainbow freq=0.2 sat=10 val=20]test[/rainbow]"
 fit_content_height = true
 scroll_active = false
 
-[node name="ArmorLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
+[node name="ArmorLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
 margin_top = 70.0
 margin_right = 130.0
 margin_bottom = 78.0
@@ -589,7 +579,7 @@ size_flags_vertical = 6
 text = "test"
 align = 1
 
-[node name="MightLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
+[node name="MightLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
 margin_left = 134.0
 margin_top = 70.0
 margin_right = 264.0
@@ -599,7 +589,7 @@ size_flags_vertical = 6
 text = "test"
 align = 1
 
-[node name="AgilityLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
+[node name="AgilityLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
 margin_top = 121.0
 margin_right = 130.0
 margin_bottom = 129.0
@@ -608,7 +598,7 @@ size_flags_vertical = 6
 text = "test"
 align = 1
 
-[node name="FortitudeLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
+[node name="FortitudeLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/StatGrid"]
 margin_left = 134.0
 margin_top = 121.0
 margin_right = 264.0
@@ -618,12 +608,12 @@ size_flags_vertical = 6
 text = "test"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
 margin_top = 165.0
 margin_right = 264.0
 margin_bottom = 184.0
 
-[node name="HPLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="HPLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 margin_right = 24.0
 margin_bottom = 19.0
 size_flags_vertical = 8
@@ -631,7 +621,7 @@ text = "HP
 0/0"
 align = 1
 
-[node name="StaminaLabel" type="Label" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="StaminaLabel" type="Label" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 margin_left = 236.0
 margin_right = 260.0
 margin_bottom = 19.0
@@ -642,13 +632,13 @@ text = "STA
 0/0"
 align = 1
 
-[node name="HSeparator" type="CenterContainer" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="HSeparator" type="CenterContainer" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 margin_left = 264.0
 margin_right = 264.0
 margin_bottom = 19.0
 rect_min_size = Vector2( 0, 4 )
 
-[node name="StaminaBar" type="TextureProgress" parent="GameUI/CanvasLayer/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
+[node name="StaminaBar" type="TextureProgress" parent="GameUI/PanelContainer/YourInfoPanel/VBoxContainer/HBoxContainer2"]
 margin_left = 296.0
 margin_right = 320.0
 margin_bottom = 196.0
@@ -662,7 +652,7 @@ texture_progress_offset = Vector2( 0, 8 )
 fill_mode = 3
 tint_progress = Color( 1, 0.721569, 0.0588235, 1 )
 
-[node name="Buttons" type="PanelContainer" parent="GameUI/CanvasLayer/PanelContainer"]
+[node name="Buttons" type="PanelContainer" parent="GameUI/PanelContainer"]
 margin_left = 560.0
 margin_right = 624.0
 margin_bottom = 240.0
@@ -672,7 +662,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/PanelContainer/Buttons"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/PanelContainer/Buttons"]
 margin_left = 16.0
 margin_top = 16.0
 margin_right = 48.0
@@ -680,7 +670,7 @@ margin_bottom = 216.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CharacterSheetButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+[node name="CharacterSheetButton" type="TextureButton" parent="GameUI/PanelContainer/Buttons/VBoxContainer"]
 margin_right = 32.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
@@ -695,7 +685,7 @@ texture_disabled = ExtResource( 9 )
 texture_focused = ExtResource( 9 )
 expand = true
 
-[node name="LevelUpParticles" type="Particles2D" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton"]
+[node name="LevelUpParticles" type="Particles2D" parent="GameUI/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton"]
 material = SubResource( 23 )
 position = Vector2( 16, 16 )
 emitting = false
@@ -704,7 +694,7 @@ fract_delta = false
 process_material = SubResource( 22 )
 texture = ExtResource( 7 )
 
-[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton"]
+[node name="TextureRect" type="TextureRect" parent="GameUI/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton"]
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 24.0
@@ -715,7 +705,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InventoryButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+[node name="InventoryButton" type="TextureButton" parent="GameUI/PanelContainer/Buttons/VBoxContainer"]
 margin_top = 36.0
 margin_right = 32.0
 margin_bottom = 68.0
@@ -730,7 +720,7 @@ texture_disabled = ExtResource( 9 )
 texture_focused = ExtResource( 9 )
 expand = true
 
-[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/InventoryButton"]
+[node name="TextureRect" type="TextureRect" parent="GameUI/PanelContainer/Buttons/VBoxContainer/InventoryButton"]
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 24.0
@@ -741,7 +731,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SkillsButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+[node name="SkillsButton" type="TextureButton" parent="GameUI/PanelContainer/Buttons/VBoxContainer"]
 margin_top = 72.0
 margin_right = 32.0
 margin_bottom = 104.0
@@ -756,7 +746,7 @@ texture_disabled = ExtResource( 9 )
 texture_focused = ExtResource( 9 )
 expand = true
 
-[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/SkillsButton"]
+[node name="TextureRect" type="TextureRect" parent="GameUI/PanelContainer/Buttons/VBoxContainer/SkillsButton"]
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 24.0
@@ -767,7 +757,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ExitButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+[node name="ExitButton" type="TextureButton" parent="GameUI/PanelContainer/Buttons/VBoxContainer"]
 margin_top = 108.0
 margin_right = 32.0
 margin_bottom = 140.0
@@ -782,7 +772,7 @@ texture_disabled = ExtResource( 9 )
 texture_focused = ExtResource( 9 )
 expand = true
 
-[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/ExitButton"]
+[node name="TextureRect" type="TextureRect" parent="GameUI/PanelContainer/Buttons/VBoxContainer/ExitButton"]
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 24.0
@@ -793,7 +783,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Levelup Screen" type="Panel" parent="GameUI/CanvasLayer"]
+[node name="Levelup Screen" type="Panel" parent="GameUI"]
 visible = false
 margin_left = 352.0
 margin_top = 48.0
@@ -805,7 +795,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="StatUp" type="PanelContainer" parent="GameUI/CanvasLayer/Levelup Screen"]
+[node name="StatUp" type="PanelContainer" parent="GameUI/Levelup Screen"]
 margin_left = 16.0
 margin_right = 586.0
 margin_bottom = 398.0
@@ -813,61 +803,61 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/Levelup Screen/StatUp"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/Levelup Screen/StatUp"]
 margin_left = 8.0
 margin_top = 16.0
 margin_right = 562.0
 margin_bottom = 382.0
 
-[node name="LevelLabel" type="Label" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+[node name="LevelLabel" type="Label" parent="GameUI/Levelup Screen/StatUp/VBoxContainer"]
 margin_right = 554.0
 margin_bottom = 8.0
 theme = ExtResource( 34 )
 text = "Test"
 align = 1
 
-[node name="Label" type="Label" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+[node name="Label" type="Label" parent="GameUI/Levelup Screen/StatUp/VBoxContainer"]
 margin_top = 12.0
 margin_right = 554.0
 margin_bottom = 20.0
 text = "Pick a stat to raise by 1"
 
-[node name="GridContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+[node name="GridContainer" type="HBoxContainer" parent="GameUI/Levelup Screen/StatUp/VBoxContainer"]
 margin_top = 24.0
 margin_right = 554.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="MightButton" type="Button" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
+[node name="MightButton" type="Button" parent="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
 margin_left = 156.0
 margin_right = 234.0
 margin_bottom = 14.0
 rect_min_size = Vector2( 78, 0 )
 text = "Might"
 
-[node name="AgilityButton" type="Button" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
+[node name="AgilityButton" type="Button" parent="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
 margin_left = 238.0
 margin_right = 316.0
 margin_bottom = 14.0
 rect_min_size = Vector2( 78, 0 )
 text = "Agility"
 
-[node name="FortitudeButton" type="Button" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
+[node name="FortitudeButton" type="Button" parent="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
 margin_left = 320.0
 margin_right = 398.0
 margin_bottom = 14.0
 text = "Fortitude"
 
-[node name="StatDesc" type="Label" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+[node name="StatDesc" type="Label" parent="GameUI/Levelup Screen/StatUp/VBoxContainer"]
 margin_top = 42.0
 margin_right = 554.0
 margin_bottom = 50.0
 autowrap = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="GameMenus" type="CanvasLayer" parent="."]
 
-[node name="GameMenu" type="Panel" parent="CanvasLayer"]
+[node name="GameMenu" type="Panel" parent="GameMenus"]
 visible = false
 margin_right = 1280.0
 margin_bottom = 720.0
@@ -875,7 +865,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 25 )
 
-[node name="CharacterScreen" type="PanelContainer" parent="CanvasLayer/GameMenu"]
+[node name="CharacterScreen" type="PanelContainer" parent="GameMenus/GameMenu"]
 modulate = Color( 0.137255, 0.133333, 0.133333, 1 )
 margin_left = 16.0
 margin_right = 1264.0
@@ -885,22 +875,22 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameMenu/CharacterScreen"]
+[node name="MarginContainer" type="MarginContainer" parent="GameMenus/GameMenu/CharacterScreen"]
 margin_left = 8.0
 margin_top = 16.0
 margin_right = 1240.0
 margin_bottom = 704.0
 
-[node name="VBoxContainer" type="HBoxContainer" parent="CanvasLayer/GameMenu/CharacterScreen/MarginContainer"]
+[node name="VBoxContainer" type="HBoxContainer" parent="GameMenus/GameMenu/CharacterScreen/MarginContainer"]
 margin_right = 1232.0
 margin_bottom = 688.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameMenu/CharacterScreen/MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameMenus/GameMenu/CharacterScreen/MarginContainer/VBoxContainer"]
 margin_bottom = 688.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameMenu/CharacterScreen/MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="GameMenus/GameMenu/CharacterScreen/MarginContainer/VBoxContainer/VBoxContainer"]
 
-[node name="MenuButtons" type="PanelContainer" parent="CanvasLayer/GameMenu"]
+[node name="MenuButtons" type="PanelContainer" parent="GameMenus/GameMenu"]
 margin_left = 25.0
 margin_right = 89.0
 margin_bottom = 128.0
@@ -909,7 +899,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CloseButton" type="TextureButton" parent="CanvasLayer/GameMenu"]
+[node name="CloseButton" type="TextureButton" parent="GameMenus/GameMenu"]
 margin_left = 1209.0
 margin_top = 16.0
 margin_right = 1241.0
@@ -921,7 +911,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/GameMenu/CloseButton"]
+[node name="TextureRect" type="TextureRect" parent="GameMenus/GameMenu/CloseButton"]
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 24.0
@@ -971,19 +961,19 @@ anchor_mode = 0
 current = true
 
 [connection signal="world_ready" from="GameWorld" to="." method="_on_world_ready"]
-[connection signal="pressed" from="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton" to="GameUI/CanvasLayer/PanelContainer/Buttons" method="_on_CharacterSheetButton_pressed"]
-[connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_mouse_entered"]
-[connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
-[connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_mouse_entered"]
-[connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
-[connection signal="pressed" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_pressed"]
-[connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
-[connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="." method="_on_StatButton_exited"]
-[connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
-[connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/PanelContainer/Buttons" method="_on_StatButton_exited"]
-[connection signal="pressed" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_pressed"]
-[connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
-[connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
-[connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
-[connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
-[connection signal="pressed" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_pressed"]
+[connection signal="pressed" from="GameUI/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton" to="GameUI/PanelContainer/Buttons" method="_on_CharacterSheetButton_pressed"]
+[connection signal="focus_entered" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/Levelup Screen" method="_on_MightButton_mouse_entered"]
+[connection signal="focus_exited" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="mouse_entered" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/Levelup Screen" method="_on_MightButton_mouse_entered"]
+[connection signal="mouse_exited" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="pressed" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/Levelup Screen" method="_on_MightButton_pressed"]
+[connection signal="focus_entered" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
+[connection signal="focus_exited" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="." method="_on_StatButton_exited"]
+[connection signal="mouse_entered" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
+[connection signal="mouse_exited" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/PanelContainer/Buttons" method="_on_StatButton_exited"]
+[connection signal="pressed" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/Levelup Screen" method="_on_AgilityButton_pressed"]
+[connection signal="focus_entered" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
+[connection signal="focus_exited" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="mouse_entered" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
+[connection signal="mouse_exited" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="pressed" from="GameUI/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/Levelup Screen" method="_on_FortitudeButton_pressed"]

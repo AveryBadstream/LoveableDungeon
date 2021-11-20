@@ -38,8 +38,6 @@ func _ready():
 	GameWorld.build(rng)
 	WRLD.rng = rng
 	WRLD.tween = OnlyTween
-	connect("msg_0", MSG, "_on_message_0")
-	connect("log_action", MSG, "_on_log_action")
 	EVNT.subscribe("do_action", self, "_on_do_action")
 	EVNT.subscribe("action_complete", self, "_on_action_complete")
 	EVNT.subscribe("action_failed", self, "_on_action_failed")

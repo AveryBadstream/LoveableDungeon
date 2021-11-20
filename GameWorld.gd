@@ -78,8 +78,8 @@ func _on_build_finished(tiles):
 		for y in range(tiles[x].size()):
 			var tile_type = tiles[x][y]
 			var til_i = tile_type_map.find(tile_type)
-			if til_i == 4:
-				til_i = 1
+#			if til_i == 4:
+#				til_i = 1
 			if x == 0 or x == tiles.size()-1 or y == 0 or y == tiles[x].size()-1:
 				if til_i != 0:
 					til_i = 4
