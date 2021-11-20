@@ -60,23 +60,24 @@ func initialize():
 		if resources.has(stat):
 			cur_resources[stat] = stats[stat]
 
-func change_resource(res, amount):
+func change_resource(res, amount, supress_update=false):
 	cur_resources[res] = clamp(cur_resources[res] + amount,0, eff_stats[res])
-	emit_signal("stats_changed")
+	if not supress_update:
+		emit_signal("stats_changed")
 	return cur_resources[res]
 
-func change_stat(stat, amount):
-	stat[stat] += amount
-	recalc_eff_stat(stat)
+func change_stat(stat, amount, supress_update=false):
+	stats[stat] += amount
+	recalc_eff_stat(stat, supress_update)
 
-func set_stat(stat, value):
-	stat[stat] = value
-	recalc_eff_stat(stat)
+func set_stat(stat, value, supress_update=false):
+	stats[stat] = value
+	recalc_eff_stat(stat, supress_update)
 
 func get_resource(res):
 	return cur_resources[res]
 
-func recalc_eff_stat(stat):
+func recalc_eff_stat(stat, supress_update=false):
 	var base = stats[stat]
 	var new_effective = base
 	for mod in stat_mods[stat]:
@@ -87,16 +88,17 @@ func recalc_eff_stat(stat):
 				new_effective -= mod[3]
 			ModTypes.Multiply:
 				new_effective *= mod[3]
-	emit_signal("stats_changed")
+	eff_stats[stat] = new_effective
+	if not supress_update:
+		emit_signal("stats_changed")
 
-func add_mod(stat, amount, type, source_type, source):
+func add_mod(stat, amount, type, source_type, source, supress_update=false):
 	var next_id = current_mod_id
 	current_mod_id += 1
 	stat_mods[stat].append([next_id, stat, type, amount, source_type, source])
-	recalc_eff_stat(stat)
-	emit_signal("stats_changed")
+	recalc_eff_stat(stat, supress_update)
 
-func remove_mod(id):
+func remove_mod(id, supress_update=false):
 	var found_stat
 	var found_i = -1
 	for stat in stat_mods.keys():
@@ -109,10 +111,13 @@ func remove_mod(id):
 			break
 	if found_i >= 0:
 		stat_mods[found_stat].remove(found_i)
-		recalc_eff_stat(found_stat)
+		recalc_eff_stat(found_stat, supress_update)
 		return true
 	else:
 		return false
 
 func get_stat(stat):
 	return eff_stats[stat]
+
+func get_raw_stat(stat):
+	return stats[stat]

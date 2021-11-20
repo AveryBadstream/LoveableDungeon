@@ -1,7 +1,7 @@
 info face="loveablefont" size=8 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=0 aa=1 padding=0,0,0,0 spacing=0,0 outline=0
-common lineHeight=8 base=0 scaleW=208 scaleH=24 pages=1 packed=0 alphaChnl=0 redChnl=4 greenChnl=4 blueChnl=4
+common lineHeight=8 base=0 scaleW=208 scaleH=32 pages=1 packed=0 alphaChnl=0 redChnl=4 greenChnl=4 blueChnl=4
 page id=0 file="loveablefont.png"
-chars count=75
+chars count=83
 char id=97 x=0 y=0 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=98 x=8 y=0 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=99 x=16 y=0 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
@@ -65,8 +65,8 @@ char id=55 x=56 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl
 char id=56 x=64 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=57 x=72 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=58 x=80 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
-char id=40 x=88 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
-char id=41 x=96 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=123 x=88 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=125 x=96 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=47 x=104 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=46 x=112 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=44 x=120 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
@@ -76,5 +76,14 @@ char id=34 x=144 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chn
 char id=39 x=152 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=169 x=160 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 char id=45 x=168 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
-char id=32 x=176 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=37 x=176 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=62 x=184 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=60 x=192 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=43 x=200 y=16 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=124 x=0 y=24 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=92 x=8 y=24 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=126 x=16 y=24 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=94 x=24 y=24 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=96 x=32 y=24 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
+char id=32 x=40 y=24 width=8 height=8 xoffset=0 yoffset=0 xadvance=8 page=0 chnl=15
 kernings count=0

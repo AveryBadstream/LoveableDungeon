@@ -9,10 +9,30 @@ func gain_experience(t_level):
 	var xp_mult = clamp(game_stats.get_stat(GameStats.LEVEL) + ((t_level - game_stats.get_stat(GameStats.LEVEL)) * 0.2),0,2)
 	var n_exp = clamp(100 - ( (game_stats.get_stat(GameStats.LEVEL) - 3 ) * 10), 50, 100) if game_stats.get_stat(GameStats.LEVEL) > 1 else 200
 	experience += n_exp*xp_mult
-	if experience > 1000 and not pending_levelup:
+	if experience >= 1000 and not pending_levelup:
 		MSG.game_log("[rainbow freq=0.2 sat=10 val=20][shake rate=5 level=10]You level up![/shake][/rainbow]")
 		AUD.play_sound(AUD.SFX.LevelUp)
 		pending_levelup = true
+	EVNT.emit_signal("player_stats", self)
+
+func level_up(stat):
+	if experience < 1000:
+		return
+	experience -= 1000
+	var old_hp_max = game_stats.get_raw_stat(GameStats.HP)
+	var old_max_stamina = game_stats.get_raw_stat(GameStats.STAMINA)
+	game_stats.change_stat(stat, 1, true)
+	game_stats.change_stat(GameStats.LEVEL, 1, true)
+	var level = game_stats.get_raw_stat(GameStats.LEVEL)
+	var fortitude = game_stats.get_raw_stat(GameStats.FORTITUDE)
+	var new_hp = 10 + (fortitude * level)
+	var new_stamina = fortitude + 1
+	game_stats.set_stat(GameStats.HP, new_hp, true)
+	game_stats.change_resource(GameStats.HP, new_hp - old_hp_max)
+	game_stats.set_stat(GameStats.STAMINA, new_stamina, true)
+	game_stats.change_resource(GameStats.STAMINA, new_stamina - old_max_stamina, true)
+	if experience < 1000:
+		pending_levelup = false
 	EVNT.emit_signal("player_stats", self)
 
 func act_at_location(at_cell: Vector2):

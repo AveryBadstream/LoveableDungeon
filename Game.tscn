@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=2]
+[gd_scene load_steps=61 format=2]
 
 [ext_resource path="res://map/TileSets/Loveable.tres" type="TileSet" id=1]
 [ext_resource path="res://art/compute.wav" type="AudioStream" id=2]
@@ -213,6 +213,18 @@ anim_speed = 1.03
 [sub_resource type="AtlasTexture" id=24]
 atlas = ExtResource( 6 )
 region = Rect2( 96, 144, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=31]
+atlas = ExtResource( 6 )
+region = Rect2( 176, 160, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=32]
+atlas = ExtResource( 6 )
+region = Rect2( 176, 176, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=33]
+atlas = ExtResource( 6 )
+region = Rect2( 80, 176, 16, 16 )
 
 [sub_resource type="StyleBoxTexture" id=25]
 texture = ExtResource( 5 )
@@ -703,6 +715,84 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="InventoryButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+margin_top = 36.0
+margin_right = 32.0
+margin_bottom = 68.0
+rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Character Sheet"
+size_flags_horizontal = 3
+shortcut_in_tooltip = false
+texture_normal = ExtResource( 9 )
+texture_pressed = ExtResource( 13 )
+texture_hover = ExtResource( 31 )
+texture_disabled = ExtResource( 9 )
+texture_focused = ExtResource( 9 )
+expand = true
+
+[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/InventoryButton"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 24.0
+margin_bottom = 24.0
+texture = SubResource( 31 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SkillsButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+margin_top = 72.0
+margin_right = 32.0
+margin_bottom = 104.0
+rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Character Sheet"
+size_flags_horizontal = 3
+shortcut_in_tooltip = false
+texture_normal = ExtResource( 9 )
+texture_pressed = ExtResource( 13 )
+texture_hover = ExtResource( 31 )
+texture_disabled = ExtResource( 9 )
+texture_focused = ExtResource( 9 )
+expand = true
+
+[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/SkillsButton"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 24.0
+margin_bottom = 24.0
+texture = SubResource( 32 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExitButton" type="TextureButton" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer"]
+margin_top = 108.0
+margin_right = 32.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Character Sheet"
+size_flags_horizontal = 3
+shortcut_in_tooltip = false
+texture_normal = ExtResource( 9 )
+texture_pressed = ExtResource( 13 )
+texture_hover = ExtResource( 31 )
+texture_disabled = ExtResource( 9 )
+texture_focused = ExtResource( 9 )
+expand = true
+
+[node name="TextureRect" type="TextureRect" parent="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/ExitButton"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 24.0
+margin_bottom = 24.0
+texture = SubResource( 33 )
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Levelup Screen" type="Panel" parent="GameUI/CanvasLayer"]
 visible = false
 margin_left = 352.0
@@ -773,6 +863,7 @@ text = "Fortitude"
 margin_top = 42.0
 margin_right = 554.0
 margin_bottom = 50.0
+autowrap = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -885,11 +976,14 @@ current = true
 [connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
 [connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_mouse_entered"]
 [connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="pressed" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_pressed"]
 [connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
 [connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="." method="_on_StatButton_exited"]
 [connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
 [connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/PanelContainer/Buttons" method="_on_StatButton_exited"]
+[connection signal="pressed" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_pressed"]
 [connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
 [connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
 [connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
 [connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="pressed" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_pressed"]

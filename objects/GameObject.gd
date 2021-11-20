@@ -59,6 +59,10 @@ func supports_action(action) -> int:
 	else:
 		return ACT.ActionResponse.Stop
 
+func get_basic_attack():
+	if equipped.has(ITM.WEAPON):
+		return equipped[ITM.WEAPON].get_attack()
+
 func _can_support_Heal(action) -> int:
 	if game_stats and game_stats.get_resource(GameStats.HP) < game_stats.get_stat(GameStats.HP):
 		return ACT.ActionResponse.Proceed
