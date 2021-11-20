@@ -1,8 +1,20 @@
-[gd_resource type="Theme" load_steps=7 format=2]
+[gd_resource type="Theme" load_steps=10 format=2]
 
 [ext_resource path="res://art/48_button_focused.png" type="Texture" id=1]
 [ext_resource path="res://art/loveablefont.fnt" type="BitmapFont" id=2]
 [ext_resource path="res://art/9p_decoratvice_64x.png" type="Texture" id=3]
+[ext_resource path="res://art/9p_scroll_64long.png" type="Texture" id=4]
+
+[sub_resource type="StyleBoxFlat" id=29]
+content_margin_left = 3.0
+content_margin_right = 3.0
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
 
 [sub_resource type="StyleBoxTexture" id=27]
 texture = ExtResource( 3 )
@@ -12,6 +24,17 @@ margin_right = 16.0
 margin_top = 16.0
 margin_bottom = 16.0
 axis_stretch_vertical = 2
+
+[sub_resource type="StyleBoxTexture" id=28]
+texture = ExtResource( 4 )
+region_rect = Rect2( 0, 0, 64, 128 )
+margin_left = 8.0
+margin_right = 8.0
+margin_top = 16.0
+margin_bottom = 16.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+modulate_color = Color( 0.203922, 0.156863, 0.105882, 1 )
 
 [sub_resource type="StyleBoxFlat" id=25]
 bg_color = Color( 0, 0, 0, 1 )
@@ -27,7 +50,11 @@ axis_stretch_horizontal = 2
 axis_stretch_vertical = 1
 
 [resource]
+Button/fonts/font = ExtResource( 2 )
+Button/styles/normal = SubResource( 29 )
+Label/fonts/font = ExtResource( 2 )
 Panel/styles/panel = SubResource( 27 )
+PanelContainer/styles/panel = SubResource( 28 )
 TabContainer/colors/font_color_bg = Color( 0.69, 0.69, 0.69, 1 )
 TabContainer/colors/font_color_disabled = Color( 0.462745, 0.462745, 0.462745, 0.2 )
 TabContainer/colors/font_color_fg = Color( 1, 1, 1, 1 )

@@ -113,6 +113,7 @@ func _on_build_finished(tiles):
 	process_remove_queue()
 	process_connection_queue()
 	process_cimmap_updates()
+	EVNT.emit_signal("player_ready", Player)
 
 func _on_object_moved(thing, from_cell, to_cell):
 	move_in_maps(thing, from_cell, to_cell)

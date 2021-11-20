@@ -96,6 +96,8 @@ func _unhandled_input(event):
 	elif event.is_action("vital_burst"):
 		active_player.pending_action = active_player.local_default_actions[ACT.Type.Heal]
 		active_player.pending_action.mark_pending()
+	elif event.is_action("LevelUp"):
+		active_player.gain_experience(100)
 
 func _process(delta):
 	if currently_hinting:

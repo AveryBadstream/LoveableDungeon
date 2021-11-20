@@ -63,9 +63,11 @@ signal FX_complete()
 signal player_position(global_position)
 signal player_active(player)
 signal player_stats(player)
+signal player_ready(player)
 signal hint_area_cone(from, radius, width)
 signal hint_area_none()
 signal hint_action(action)
+signal show_levelup(player)
 # Called when the node enters the scene tree for the first time.
 
 enum TriggerType {Connection, MovedTo, EndedMovement, SlammedInto }

@@ -1,10 +1,10 @@
-[gd_scene load_steps=53 format=2]
+[gd_scene load_steps=58 format=2]
 
 [ext_resource path="res://map/TileSets/Loveable.tres" type="TileSet" id=1]
 [ext_resource path="res://art/compute.wav" type="AudioStream" id=2]
 [ext_resource path="res://Game.gd" type="Script" id=3]
 [ext_resource path="res://art/reflect.wav" type="AudioStream" id=4]
-[ext_resource path="res://art/9p_decorative.png" type="Texture" id=5]
+[ext_resource path="res://art/9p_decoratvice_64x.png" type="Texture" id=5]
 [ext_resource path="res://art/loveable_rogue-transparent.png" type="Texture" id=6]
 [ext_resource path="res://art/plus_particle_animation.tres" type="Texture" id=7]
 [ext_resource path="res://art/9p_pennant_taper.png" type="Texture" id=8]
@@ -34,6 +34,8 @@
 [ext_resource path="res://art/9p_scroll_64long.png" type="Texture" id=32]
 [ext_resource path="res://ui/MainScreenButtons.gd" type="Script" id=33]
 [ext_resource path="res://art/LoveableTheme.tres" type="Theme" id=34]
+[ext_resource path="res://art/9p_pennant_taper_nofold.png" type="Texture" id=35]
+[ext_resource path="res://ui/LevelupScreen.gd" type="Script" id=36]
 
 [sub_resource type="TileSet" id=8]
 0/name = "Red"
@@ -214,13 +216,36 @@ region = Rect2( 96, 144, 16, 16 )
 
 [sub_resource type="StyleBoxTexture" id=25]
 texture = ExtResource( 5 )
-region_rect = Rect2( 0, 0, 32, 32 )
-margin_left = 6.0
-margin_right = 7.0
-margin_top = 8.0
-margin_bottom = 8.0
+region_rect = Rect2( 0, 0, 64, 64 )
+margin_left = 16.0
+margin_right = 16.0
+margin_top = 16.0
+margin_bottom = 16.0
 axis_stretch_horizontal = 2
 axis_stretch_vertical = 2
+
+[sub_resource type="StyleBoxTexture" id=28]
+texture = ExtResource( 32 )
+region_rect = Rect2( 0, 0, 64, 128 )
+margin_left = 8.0
+margin_right = 8.0
+margin_top = 16.0
+margin_bottom = 16.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[sub_resource type="StyleBoxTexture" id=29]
+texture = ExtResource( 35 )
+region_rect = Rect2( 0, 0, 64, 64 )
+margin_left = 8.0
+margin_right = 8.0
+margin_top = 16.0
+margin_bottom = 32.0
+modulate_color = Color( 1, 0.227451, 0.227451, 1 )
+
+[sub_resource type="AtlasTexture" id=30]
+atlas = ExtResource( 6 )
+region = Rect2( 80, 176, 16, 16 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 3 )
@@ -678,46 +703,138 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Levelup Screen" type="Panel" parent="GameUI/CanvasLayer"]
+margin_left = 352.0
+margin_top = 48.0
+margin_right = 954.0
+margin_bottom = 446.0
+theme = ExtResource( 34 )
+script = ExtResource( 36 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StatUp" type="PanelContainer" parent="GameUI/CanvasLayer/Levelup Screen"]
+margin_left = 16.0
+margin_right = 586.0
+margin_bottom = 398.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameUI/CanvasLayer/Levelup Screen/StatUp"]
+margin_left = 8.0
+margin_top = 16.0
+margin_right = 562.0
+margin_bottom = 382.0
+
+[node name="LevelLabel" type="Label" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+margin_right = 554.0
+margin_bottom = 8.0
+theme = ExtResource( 34 )
+text = "Test"
+align = 1
+
+[node name="Label" type="Label" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+margin_top = 12.0
+margin_right = 554.0
+margin_bottom = 20.0
+text = "Pick a stat to raise by 1"
+
+[node name="GridContainer" type="HBoxContainer" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+margin_top = 24.0
+margin_right = 554.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="MightButton" type="Button" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
+margin_left = 156.0
+margin_right = 234.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 78, 0 )
+text = "Might"
+
+[node name="AgilityButton" type="Button" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
+margin_left = 238.0
+margin_right = 316.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 78, 0 )
+text = "Agility"
+
+[node name="FortitudeButton" type="Button" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer"]
+margin_left = 320.0
+margin_right = 398.0
+margin_bottom = 14.0
+text = "Fortitude"
+
+[node name="StatDesc" type="Label" parent="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer"]
+margin_top = 42.0
+margin_right = 554.0
+margin_bottom = 50.0
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="GameMenu" type="PanelContainer" parent="CanvasLayer"]
+[node name="GameMenu" type="Panel" parent="CanvasLayer"]
 visible = false
 margin_right = 1280.0
 margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 25 )
+
+[node name="CharacterScreen" type="PanelContainer" parent="CanvasLayer/GameMenu"]
+modulate = Color( 0.137255, 0.133333, 0.133333, 1 )
+margin_left = 16.0
+margin_right = 1264.0
+margin_bottom = 720.0
+custom_styles/panel = SubResource( 28 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TabContainer" type="TabContainer" parent="CanvasLayer/GameMenu"]
-margin_left = 6.0
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameMenu/CharacterScreen"]
+margin_left = 8.0
+margin_top = 16.0
+margin_right = 1240.0
+margin_bottom = 704.0
+
+[node name="VBoxContainer" type="HBoxContainer" parent="CanvasLayer/GameMenu/CharacterScreen/MarginContainer"]
+margin_right = 1232.0
+margin_bottom = 688.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameMenu/CharacterScreen/MarginContainer/VBoxContainer"]
+margin_bottom = 688.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameMenu/CharacterScreen/MarginContainer/VBoxContainer/VBoxContainer"]
+
+[node name="MenuButtons" type="PanelContainer" parent="CanvasLayer/GameMenu"]
+margin_left = 25.0
+margin_right = 89.0
+margin_bottom = 128.0
+custom_styles/panel = SubResource( 29 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CloseButton" type="TextureButton" parent="CanvasLayer/GameMenu"]
+margin_left = 1209.0
+margin_top = 16.0
+margin_right = 1241.0
+margin_bottom = 48.0
+texture_normal = ExtResource( 9 )
+texture_pressed = ExtResource( 13 )
+texture_hover = ExtResource( 31 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/GameMenu/CloseButton"]
+margin_left = 8.0
 margin_top = 8.0
-margin_right = 1273.0
-margin_bottom = 712.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme = ExtResource( 34 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/GameMenu/TabContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 20.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/GameMenu/TabContainer"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_top = 20.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_right = 24.0
+margin_bottom = 24.0
+texture = SubResource( 30 )
 
 [node name="Tweens" type="Node" parent="."]
 
@@ -762,3 +879,16 @@ anchor_mode = 0
 current = true
 
 [connection signal="world_ready" from="GameWorld" to="." method="_on_world_ready"]
+[connection signal="pressed" from="GameUI/CanvasLayer/PanelContainer/Buttons/VBoxContainer/CharacterSheetButton" to="GameUI/CanvasLayer/PanelContainer/Buttons" method="_on_CharacterSheetButton_pressed"]
+[connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_mouse_entered"]
+[connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_MightButton_mouse_entered"]
+[connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/MightButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
+[connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="." method="_on_StatButton_exited"]
+[connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_AgilityButton_mouse_entered"]
+[connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/AgilityButton" to="GameUI/CanvasLayer/PanelContainer/Buttons" method="_on_StatButton_exited"]
+[connection signal="focus_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
+[connection signal="focus_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]
+[connection signal="mouse_entered" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_FortitudeButton_mouse_entered"]
+[connection signal="mouse_exited" from="GameUI/CanvasLayer/Levelup Screen/StatUp/VBoxContainer/GridContainer/FortitudeButton" to="GameUI/CanvasLayer/Levelup Screen" method="_on_StatButton_exited"]

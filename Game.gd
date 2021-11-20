@@ -118,3 +118,7 @@ func _on_action_failed(action):
 
 func _on_action_impossible(action):
 	_on_turn_over() # Replace with function body.
+
+
+func _on_StatButton_exited():
+	pass # Replace with function body.
