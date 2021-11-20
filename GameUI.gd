@@ -8,6 +8,7 @@ var area_hint_indicator = preload("res://ui/AreaHint.tscn")
 var target_hint_indicator = preload("res://ui/TargetHint.tscn")
 var effect_hint_indicator = preload("res://ui/EffectHint.tscn")
 
+onready var Canvas = $CanvasLayer
 onready var MessageBox = $CanvasLayer/PanelContainer/LogBox/VBoxContainer/MessageBox
 onready var LogBox = $CanvasLayer/PanelContainer/LogBox/VBoxContainer/ScrollContainer/LogBox
 
@@ -26,6 +27,7 @@ var last_octant = null
 func _ready():
 	MSG.MessageBox = MessageBox
 	MSG.LogBox = LogBox
+	WRLD.canvas_layer = Canvas
 	EVNT.subscribe("hint_action", self, "_on_hint_action")
 	EVNT.subscribe("action_complete", self, "_on_end_hint")
 	EVNT.subscribe("action_impossible", self, "_on_end_hint")

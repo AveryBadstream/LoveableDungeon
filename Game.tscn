@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=2]
+[gd_scene load_steps=53 format=2]
 
 [ext_resource path="res://map/TileSets/Loveable.tres" type="TileSet" id=1]
 [ext_resource path="res://art/compute.wav" type="AudioStream" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://GameWorld.gd" type="Script" id=10]
 [ext_resource path="res://art/mask_tiles.png" type="Texture" id=11]
 [ext_resource path="res://art/overlays.png" type="Texture" id=12]
+[ext_resource path="res://art/32_button_alt.png" type="Texture" id=13]
 [ext_resource path="res://art/bounce.wav" type="AudioStream" id=14]
 [ext_resource path="res://art/slap.wav" type="AudioStream" id=15]
 [ext_resource path="res://art/FF_punch.wav" type="AudioStream" id=16]
@@ -29,9 +30,10 @@
 [ext_resource path="res://art/loveablefont.fnt" type="BitmapFont" id=28]
 [ext_resource path="res://art/h_bar_over_264.png" type="Texture" id=29]
 [ext_resource path="res://art/h_bar_240.png" type="Texture" id=30]
+[ext_resource path="res://art/32_button_alt_2.png" type="Texture" id=31]
+[ext_resource path="res://art/9p_scroll_64long.png" type="Texture" id=32]
 [ext_resource path="res://ui/MainScreenButtons.gd" type="Script" id=33]
 [ext_resource path="res://art/LoveableTheme.tres" type="Theme" id=34]
-[ext_resource path="res://art/YellowScroll.tres" type="Texture" id=36]
 
 [sub_resource type="TileSet" id=8]
 0/name = "Red"
@@ -156,8 +158,8 @@ viewport_path = NodePath("GameWorld/OverlayWorld")
 
 [sub_resource type="StyleBoxTexture" id=26]
 resource_local_to_scene = true
-texture = ExtResource( 36 )
-region_rect = Rect2( 0, 0, 64, 64 )
+texture = ExtResource( 32 )
+region_rect = Rect2( 0, 0, 64, 128 )
 margin_left = 8.0
 margin_right = 8.0
 margin_top = 16.0
@@ -650,8 +652,8 @@ focus_mode = 0
 size_flags_horizontal = 3
 shortcut_in_tooltip = false
 texture_normal = ExtResource( 9 )
-texture_pressed = ExtResource( 9 )
-texture_hover = ExtResource( 9 )
+texture_pressed = ExtResource( 13 )
+texture_hover = ExtResource( 31 )
 texture_disabled = ExtResource( 9 )
 texture_focused = ExtResource( 9 )
 expand = true

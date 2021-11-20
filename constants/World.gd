@@ -20,6 +20,8 @@ var free_tweens = []
 var object_types
 var actor_types
 
+var canvas_layer:CanvasLayer
+
 enum GeneratorSignal {MapDimension, ActorList, ObjectList, TileList}
 # Declare member variables here. Examples:
 # var a = 2
@@ -123,8 +125,7 @@ func get_action_hints(at_cell):
 func get_mouse_game_position():
 	if not is_ready:
 		return false
-	var tiles:TileMap = TMap
-	return tiles.world_to_map(tiles.get_global_mouse_position())
+	return TMap.world_to_map(TMap.get_viewport().canvas_transform.inverse().xform(get_viewport().get_mouse_position()))
 
 func cell_is_visible(at_cell):
 	if is_ready:
