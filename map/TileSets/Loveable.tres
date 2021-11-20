@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=4 format=2]
 
-[ext_resource path="res://art/loveable-extended.png" type="Texture" id=1]
-[ext_resource path="res://art/ice_tile.png" type="Texture" id=2]
+[ext_resource path="res://assets/tiles/loveable-extended.png" type="Texture" id=1]
+[ext_resource path="res://assets/tiles/ice_tile.png" type="Texture" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://art/heal_bubbles.png" type="Texture" id=1]
+[ext_resource path="res://assets/fx/heal_bubbles.png" type="Texture" id=1]
 [ext_resource path="res://fx/SimpleFXSprite.gd" type="Script" id=2]
 
 [node name="HealBubble" type="Sprite"]

@@ -1,7 +1,8 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://objects/PushableThing.gd" type="Script" id=1]
-[ext_resource path="res://art/loveable-extended.png" type="Texture" id=2]
+[ext_resource path="res://assets/tiles/loveable-extended.png" type="Texture" id=2]
+
 
 [node name="PushableThing" type="Sprite"]
 modulate = Color( 0.635294, 0.501961, 0.439216, 1 )

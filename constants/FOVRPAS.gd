@@ -485,7 +485,8 @@ static func  _visible_cells_in_octant_from(origin:Vector2, oct:Dictionary, \
 											(float(step + .5) * angle_allocation),
 											(float(step + 1) * angle_allocation))
 				if _cell_is_visible(cell_angles, obstructions, RESTRICTIVENESS, VISIBLE_ON_EQUAL):
-					if cell_list.has(cell) or tiles[cell.x][cell.y] & xmask:
+					if tiles[cell.x][cell.y] & xmask or \
+						((abs(cell.x) == abs(cell.y) or cell.x == 0 or cell.y == 0 ) and cell_list.has(cell)):
 						pass
 					else:
 						cell_list.append(cell)

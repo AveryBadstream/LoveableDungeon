@@ -3,10 +3,11 @@
 [ext_resource path="res://actors/GameActor.gd" type="Script" id=1]
 [ext_resource path="res://actors/GameStats.gd" type="Script" id=2]
 [ext_resource path="res://actions/action_resources/move.tres" type="Resource" id=3]
-[ext_resource path="res://art/loveable_rogue.png" type="Texture" id=4]
+[ext_resource path="res://assets/sprites/loveable_rogue.png" type="Texture" id=4]
 [ext_resource path="res://actions/action_resources/basic_attack.tres" type="Resource" id=5]
 [ext_resource path="res://actors/AI/AimlessWander.gd" type="Script" id=8]
 [ext_resource path="res://actors/AI/PlayerChaser.tres" type="Resource" id=9]
+
 
 [sub_resource type="Resource" id=1]
 resource_local_to_scene = true

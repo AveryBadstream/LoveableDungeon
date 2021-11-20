@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/compute.wav-8b91bc8540977a23769cc47eea8ab659.sample"
+
+[deps]
+
+source_file="res://assets/sounds/compute.wav"
+dest_files=[ "res://.import/compute.wav-8b91bc8540977a23769cc47eea8ab659.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

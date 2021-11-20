@@ -26,7 +26,7 @@ enum GeneratorSignal {MapDimension, ActorList, ObjectList, TileList}
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-const SIGHT_RANGE = 80
+const SIGHT_RANGE = 200
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
